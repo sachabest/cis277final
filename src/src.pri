@@ -13,7 +13,9 @@ SOURCES += \
     $$PWD/openGL/glwidget277.cpp \
     $$PWD/openGL/shaderprogram.cpp \
     $$PWD/scene/transform.cpp \
-    $$PWD/cameracontrolshelp.cpp
+    $$PWD/cameracontrolshelp.cpp \
+    $$PWD/terrain/terrain.cpp \
+    $$PWD/terrain/point.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -30,4 +32,7 @@ HEADERS += \
     $$PWD/scene/materials/material.h \
     $$PWD/raytracing/film.h \
     $$PWD/raytracing/integrator.h \
-    $$PWD/cameracontrolshelp.h
+    $$PWD/cameracontrolshelp.h \
+    $$PWD/scene/terrain.h \
+    $$PWD/terrain/terrain.h \
+    $$PWD/terrain/point.h
