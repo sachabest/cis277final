@@ -165,6 +165,18 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
     return rx * gradients[p][0] + ry * gradients[p][1];
 }
 
+float Terrain::getBlock(int x, int y) {
+    Point p(x, y);
+    float height;
+    if (!heightmap.contains(p)) {
+        height = getHeight(x, y);
+        heightMap[p] = height;
+    } else {
+        height = heightmap[p];
+    }
+    return height;
+}
+
 // https://en.wikipedia.org/wiki/Perlin_noise
 float Terrain::getHeight(float x, float y) {
     int x0 = (x > 0.0 ? (int)x : (int)x - 1);
