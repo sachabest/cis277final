@@ -1,4 +1,7 @@
 #include "terrain.h"
+#include <stdio.h>      /* printf, scanf, puts, NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 /**
  * @brief makeBounds - utility function to make bounding boxes
@@ -30,15 +33,26 @@ void shiftBounds(Bounds_t &bounds, int dx, int dy) {
     bounds.ymin += dy;
 }
 
+void Terrain::createSeed(int i, int j) {
+    Point p(i, j);
+    QVector<float> v;
+    float random = ((float) rand()) / (float) RAND_MAX;
+    v.push_back(random);
+    random = ((float) rand()) / (float) RAND_MAX;
+    v.push_back(random);
+    gradients.insert(p, v);
+}
+
+void Terrain::removeSeed(int i, int j) {
+    Point p(i, j);
+    gradients.remove(p);
+}
 
 Terrain::Terrain(int maxX, int maxY) {
+    srand(time(NULL));
     for (int i = 0; i < maxX; i++) {
         for (int j = 0; j < maxY; j++) {
-            Point p(i, j);
-            QVector<float> v;
-            v.push_back(0.0f);
-            v.push_back(0.0f);
-            gradients.insert(p, v);
+            createSeed(i, j);
         }
     }
     this->bounds = makeBounds(0, 0, maxX, maxY);
@@ -60,19 +74,69 @@ Terrain::Terrain(int maxX, int maxY) {
  *
  */
 void Terrain::shift(int dx, int dy) {
+    int xmin, xmax, ymin, ymax;
+    int xmin_remove, xmax_remove, ymin_remove, ymax_remove;
     // find direction of growth
     if (dx < 0) {
-        // egative x axis
+        // negative x axis
         if (dy < 0) {
             // negative y axis
+            xmin = bounds.xmin + dx;
+            xmax = bounds.xmin;
+            ymin = bounds.xmin + dy;
+            ymax = bounds.ymin;
+            xmin_remove = bounds.xmax + dx;
+            xmax_remove = bounds.xmax;
+            ymin_remove = bounds.ymax + dy;
+            ymin_remove = bounds.ymax;
         } else {
-
+            // positive y axis
+            xmin = bounds.xmin + dx;
+            xmax = bounds.xmin;
+            ymin = bounds.ymax;
+            ymax = bounds.ymax + dy;
+            xmin_remove = bounds.xmax + dx;
+            xmax_remove = bounds.xmax;
+            ymin_remove = bounds.ymax;
+            ymin_remove = bounds.ymin + dy;
         }
     } else {
-
+        // positive x axis
+        if (dy < 0) {
+            // negative y axis
+            xmin = bounds.xmax;
+            xmax = bounds.xmax + dx;
+            ymin = bounds.xmin + dy;
+            ymax = bounds.ymin;
+            xmin_remove = bounds.xmin;
+            xmax_remove = bounds.xmin + dx;
+            ymin_remove = bounds.ymax + dy;
+            ymin_remove = bounds.ymax;
+        } else {
+            // positive y axis
+            xmin = bounds.xmax;
+            xmax = bounds.xmax + dx;
+            ymin = bounds.ymax;
+            ymax = bounds.ymax + dy;
+            xmin_remove = bounds.xmin;
+            xmax_remove = bounds.xmin + dx;
+            ymin_remove = bounds.ymax;
+            ymin_remove = bounds.ymin + dy;
+        }
     }
-    shiftBounds(this->bounds, dx, dy);
 
+    for (int i = xmin; i < xmax; i++) {
+        for (int j = ymin; j < ymax; j++) {
+            createSeed(i, j);
+        }
+    }
+    for (int i = xmin_remove; i < xmax_remove; i++) {
+        for (int j = ymin_remove; j < ymax_remove; j++) {
+            removeSeed(i, j);
+        }
+    }
+
+    shiftBounds(this->bounds, dx, dy);
 }
 
 /**

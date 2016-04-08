@@ -20,6 +20,9 @@ public:
 private:
     Bounds_t bounds;
     QMap<Point, QVector<float>> gradients;
+
+    void createSeed(int i, int j);
+    void removeSeed(int i, int j);
     float dotGridGradient(int x, int y, float dx, float dy);
 };
 
