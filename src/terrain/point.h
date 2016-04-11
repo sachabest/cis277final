@@ -9,7 +9,7 @@ class Point : public QPoint {
 
 public:
     Point(int x, int y);
-    bool operator<(this, const Point& p1, const Point& p2);
+    bool operator<(const Point& p1, const Point& p2);
 };
 
 #endif // POINT_H

@@ -97,7 +97,7 @@ void MyGL::paintGL()
     glDisable(GL_DEPTH_TEST);
     //MODEL matrix is always identity so we are at the untransformed space of the cross
     prog_flat.setModelMatrix(glm::mat4(1.0f));
-    prog_flat(*this, gl_camera);
+    prog_flat.draw(*this, gl_camera);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -172,7 +172,7 @@ void MyGL::destroyBlocks() {
 
     for (int i = 0; i < scene_objs.size(); i++) {
         for (int j = 0; j < scene_objs[i].size(); j++) {
-            for (int k = 0; l < scene_objs[j].size(); k++) {
+            for (int k = 0; k < scene_objs[j].size(); k++) {
                 //if there is geoemtry here
                 if (scene_objs[i][j][k]) {
                     //test for intersect

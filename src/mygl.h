@@ -12,7 +12,6 @@
 #include <la.h>
 #include "scene/user.h"
 
-
 class MyGL
     : public GLWidget277
 {
@@ -25,7 +24,7 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
-    User* user;
+    User user;
 
     Scene scene;
 

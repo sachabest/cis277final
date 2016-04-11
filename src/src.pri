@@ -17,7 +17,8 @@ SOURCES += \
     $$PWD/terrain/terrain.cpp \
     $$PWD/terrain/point.cpp \
     $$PWD/scene/user.cpp \
-    $$PWD/scene/ray.cpp
+    $$PWD/scene/ray.cpp \
+    $$PWD/scene/geometry/cross.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -39,4 +40,5 @@ HEADERS += \
     $$PWD/terrain/terrain.h \
     $$PWD/terrain/point.h \
     $$PWD/scene/user.h \
-    $$PWD/scene/ray.h
+    $$PWD/scene/ray.h \
+    $$PWD/scene/geometry/cross.h
