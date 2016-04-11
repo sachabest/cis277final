@@ -170,7 +170,7 @@ float Terrain::getBlock(int x, int y) {
     float height;
     if (!heightmap.contains(p)) {
         height = getHeight(x, y);
-        heightMap[p] = height;
+        heightmap[p] = height;
     } else {
         height = heightmap[p];
     }

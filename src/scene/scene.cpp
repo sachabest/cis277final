@@ -2,7 +2,7 @@
 
 #include <scene/geometry/cube.h>
 
-Scene::Scene() : dimensions(64, 64, 64)
+Scene::Scene() : dimensions(64, 64, 64), terrain(64, 64)
 {
 }
 
@@ -13,17 +13,22 @@ void Scene::CreateTestScene()
         QList<QList<bool>> Ys;
         for(int y = 0; y < dimensions.y; y++)
         {
+            float height = terrain.getBlock(x, y);
             QList<bool> Zs;
-            for(int z = 0; z < dimensions.z; z++)
+            for(int z = 0; z < height; z++)
             {
-                if(y == dimensions.y/2)
-                {
-                    Zs.push_back(true);
-                }
-                else
-                {
-                    Zs.push_back(false);
-                }
+                Zs.push_back(true);
+//                if(y == dimensions.y/2)
+//                {
+//                    Zs.push_back(true);
+//                }
+//                else
+//                {
+//                    Zs.push_back(false);
+//                }
+            }
+            for (int z = (int) height; z < dimensions.z; z++) {
+                Zs.push_back(false);
             }
             Ys.push_back(Zs);
         }

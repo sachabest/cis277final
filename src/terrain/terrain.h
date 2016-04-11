@@ -16,7 +16,7 @@ class Terrain {
 public:
     Terrain(int maxX, int maxY);
     void shift(int dx, int dy);
-    void getBlock(int x, int y);
+    float getBlock(int x, int y);
 private:
     Bounds_t bounds;
     QMap<Point, QVector<float>> gradients;

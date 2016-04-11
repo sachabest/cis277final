@@ -4,11 +4,11 @@ Point::Point(int x, int y) : QPoint(x, y) {
 
 }
 
-bool Point::operator <(Point p1, Point p2) {
+bool Point::operator<(const Point &p) const {
     // x major
-    if (p1.x() == p2.x()) {
-        return p1.y() < p2.y();
+    if (this->x() == p.x()) {
+        return this->y() < p.y();
     } else {
-        return p1.x() < p2.x();
+        return this->x() < p.x();
     }
 }

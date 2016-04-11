@@ -5,11 +5,9 @@
 
 class Point : public QPoint {
 
-    Q_OBJECT
-
 public:
     Point(int x, int y);
-    bool operator<(Point p1, Point p2);
+    bool operator<(const Point &p) const;
 };
 
 #endif // POINT_H
