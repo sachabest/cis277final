@@ -9,6 +9,7 @@
 #include <scene/camera.h>
 #include <scene/scene.h>
 #include <scene/geometry/cube.h>
+#include <scene/geometry/chunk.h>
 #include <la.h>
 
 
@@ -25,6 +26,7 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
+    Chunk test_chunk;
 
     Scene scene;
 
