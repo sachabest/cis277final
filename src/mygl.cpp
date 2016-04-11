@@ -89,21 +89,9 @@ void MyGL::paintGL()
 
 void MyGL::GLDrawScene()
 {
-    for(int x = 0; x < scene.objects.size(); x++)
-    {
-        QList<QList<bool>> Xs = scene.objects[x];
-        for(int y = 0; y < Xs.size(); y++)
-        {
-            QList<bool> Ys = Xs[x];
-            for(int z = 0; z < Ys.size(); z++)
-            {
-                if(Ys[z])
-                {
-                    prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(y, x, z)));
-                    prog_lambert.draw(*this, geom_cube);
-                }
-            }
-        }
+    for (Point3 p : scene.points) {
+        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.y, p.x, p.z)));
+        prog_lambert.draw(*this, geom_cube);
     }
 }
 

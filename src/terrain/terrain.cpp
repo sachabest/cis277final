@@ -2,6 +2,7 @@
 #include <stdio.h>      /* printf, scanf, puts, NULL */
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <math.h>
 
 /**
  * @brief makeBounds - utility function to make bounding boxes
@@ -13,8 +14,8 @@
  */
 Bounds_t makeBounds(int xmin, int ymin, int xmax, int ymax) {
     Bounds_t bounds;
-    bounds.xmax = xmin;
-    bounds.ymax = ymin;
+    bounds.xmin = xmin;
+    bounds.ymin = ymin;
     bounds.xmax = xmax;
     bounds.ymax = ymax;
     return bounds;
@@ -48,14 +49,14 @@ void Terrain::removeSeed(int i, int j) {
     gradients.remove(p);
 }
 
-Terrain::Terrain(int maxX, int maxY) {
+Terrain::Terrain(int maxX, int maxY, int fequencyDivisor) {
     srand(time(NULL));
-    for (int i = 0; i < maxX; i++) {
-        for (int j = 0; j < maxY; j++) {
+    for (int i = 0; i < maxX / fequencyDivisor; i++) {
+        for (int j = 0; j < maxY / fequencyDivisor; j++) {
             createSeed(i, j);
         }
     }
-    this->bounds = makeBounds(0, 0, maxX, maxY);
+    this->bounds = makeBounds(0, 0, maxX / fequencyDivisor, maxY / fequencyDivisor);
 }
 
 
@@ -159,13 +160,13 @@ float lerp(float a0, float a1, float w) {
  * @return the value of the dot at the location x, y
  */
 float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
-    float rx = dx - x;
-    float ry = dy - y;
+    float rx = fabs(dx - x);
+    float ry = fabs( dy - y);
     Point p = Point(x, y);
     return rx * gradients[p][0] + ry * gradients[p][1];
 }
 
-float Terrain::getBlock(int x, int y) {
+float Terrain::getBlock(float x, float y) {
     Point p(x, y);
     float height;
     if (!heightmap.contains(p)) {
@@ -178,14 +179,23 @@ float Terrain::getBlock(int x, int y) {
 }
 
 // https://en.wikipedia.org/wiki/Perlin_noise
+// here the input floats are fractions we must find the closest sample for
 float Terrain::getHeight(float x, float y) {
-    int x0 = (x > 0.0 ? (int)x : (int)x - 1);
-    int x1 = x0 + 1;
-    int y0 = (y > 0.0 ? (int)y : (int)y - 1);
-    int y1 = y0 + 1;
+    // Determine grid cell coordinates
+    // send to full grid
+    float unfloored_x = (x * bounds.xmax) + abs(bounds.xmin);
+    float unfloored_y = (y * bounds.ymax) + abs(bounds.ymin);
 
-    float sx = x - (float)x0;
-    float sy = y - (float)y0;
+    int x0 = floor(x * bounds.xmax) + abs(bounds.xmin);
+    int y0 = floor(y * bounds.ymax) + abs(bounds.ymin);
+    int x1 = fmin(x0 + 1, bounds.xmax - 1);
+    int y1 = fmin(y0 + 1, bounds.ymax - 1);
+    x1 = fmax(x1, 0);
+    y1 = fmax(y1, 0);
+
+    // assign random weights?
+    float sx = unfloored_x - (float) x0;
+    float sy = unfloored_y - (float) y0;
 
     float n0, n1, ix0, ix1, value;
     n0 = dotGridGradient(x0, y0, x, y);

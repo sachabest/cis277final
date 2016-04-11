@@ -14,9 +14,9 @@ struct Bounds_t {
 
 class Terrain {
 public:
-    Terrain(int maxX, int maxY);
+    Terrain(int maxX, int maxY, int frequenceDivisor = 8);
     void shift(int dx, int dy);
-    float getBlock(int x, int y);
+    float getBlock(float x, float y);
 private:
     Bounds_t bounds;
     QMap<Point, QVector<float>> gradients;

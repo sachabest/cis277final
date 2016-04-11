@@ -1,13 +1,13 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <QPoint>
-
-class Point : public QPoint {
+class Point {
 
 public:
-    Point(int x, int y);
+    Point(float x, float y);
     bool operator<(const Point &p) const;
+    float x;
+    float y;
 };
 
 #endif // POINT_H

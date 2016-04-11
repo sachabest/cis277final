@@ -15,7 +15,8 @@ SOURCES += \
     $$PWD/scene/transform.cpp \
     $$PWD/cameracontrolshelp.cpp \
     $$PWD/terrain/terrain.cpp \
-    $$PWD/terrain/point.cpp
+    $$PWD/terrain/point.cpp \
+    $$PWD/scene/point3.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -35,4 +36,5 @@ HEADERS += \
     $$PWD/cameracontrolshelp.h \
     $$PWD/scene/terrain.h \
     $$PWD/terrain/terrain.h \
-    $$PWD/terrain/point.h
+    $$PWD/terrain/point.h \
+    $$PWD/scene/point3.h
