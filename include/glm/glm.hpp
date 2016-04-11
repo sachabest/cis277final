@@ -1,5 +1,5 @@
 #ifndef GLM_CIS277
-#    error "CIS277 modification: Do not use GLM directly."
+//#    error "CIS277 modification: Do not use GLM directly."
 #endif
 ///////////////////////////////////////////////////////////////////////////////////
 /// OpenGL Mathematics (glm.g-truc.net)

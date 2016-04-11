@@ -10,7 +10,7 @@
 #include <scene/scene.h>
 #include <scene/geometry/cube.h>
 #include <la.h>
-
+#include "scene/user.h"
 
 
 class MyGL
@@ -25,6 +25,7 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
+    User* user;
 
     Scene scene;
 
@@ -42,8 +43,14 @@ public:
 
     void RaytraceScene();
 
+    //to be called with mouse clicking events
+    void destroyBlocks();
+    void addBlocks();
+
+
 protected:
     void keyPressEvent(QKeyEvent *e);
+    void mousePressEvent(QMouseEvent *e);
 
 signals:
     void sig_ResizeToCamera(int,int);
