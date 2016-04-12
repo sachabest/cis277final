@@ -95,35 +95,35 @@ void Terrain::shift(int idx, int idy) {
     int dx = idx / frequencyDivisor;
     int dy = idy / frequencyDivisor;
 
-    // CAROLINA
-    int old_x = dx >= 0 ? bounds.xmax : bounds.xmin;
-    int old_y = dy >= 0 ? bounds.ymax : bounds.ymin;
-    // END CAROLINA
+//    // CAROLINA
+//    int old_x = dx >= 0 ? bounds.xmax : bounds.xmin;
+//    int old_y = dy >= 0 ? bounds.ymax : bounds.ymin;
+//    // END CAROLINA
 
     // move bounds and create new seeds
     shiftBounds(this->bounds, dx, dy);
 
-    // CAROLINA
-    int new_x = dx >= 0 ? bounds.xmax : bounds.xmin;
-    int new_y = dy >= 0 ? bounds.ymax : bounds.ymin;
+//    // CAROLINA
+//    int new_x = dx >= 0 ? bounds.xmax : bounds.xmin;
+//    int new_y = dy >= 0 ? bounds.ymax : bounds.ymin;
 
-    int small_x = old_x <= new_x ? old_x : new_x;
-    int big_x = old_x > new_x ? old_x : new_x;
-    int small_y = old_y <= new_y ? old_y : new_y;
-    int big_y = old_y > new_y ? old_y : new_y;
+//    int small_x = old_x <= new_x ? old_x : new_x;
+//    int big_x = old_x > new_x ? old_x : new_x;
+//    int small_y = old_y <= new_y ? old_y : new_y;
+//    int big_y = old_y > new_y ? old_y : new_y;
 
-    for (int i = small_x; i < big_x; i++) {
-        for (int j = small_y; j < big_y; j++) {
-            createSeed(i, j, true);
-        }
-    }
-    // END CAROLINA
-
-//    for (int i = bounds.xmin; i < bounds.xmax; i++) {
-//        for (int j = bounds.ymin; j < bounds.ymax; j++) {
+//    for (int i = small_x; i < big_x; i++) {
+//        for (int j = small_y; j < big_y; j++) {
 //            createSeed(i, j, true);
 //        }
 //    }
+//    // END CAROLINA
+
+    for (int i = bounds.xmin; i < bounds.xmax; i++) {
+        for (int j = bounds.ymin; j < bounds.ymax; j++) {
+            createSeed(i, j, true);
+        }
+    }
 
     // clean up the heightmap cache
     for (Point p : heightmap.keys()) {

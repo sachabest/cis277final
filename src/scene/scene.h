@@ -12,6 +12,7 @@ public:
     void CreateScene();
     void CreateChunkScene();
     void CreateNewChunks();
+    void findNearbyChunks();
     void shift(int dx, int dy, int dz);
 
     QList<Point3> points;
@@ -20,4 +21,5 @@ public:
     Terrain terrain;
 
     int num_chunks;
+    QList<Point3> chunk_points;
 };

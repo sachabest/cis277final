@@ -14,6 +14,7 @@ void Scene::shift(int dx, int dy, int dz) {
     terrain.shift(dx, dz);
     //CreateScene();
     CreateNewChunks();
+    findNearbyChunks();
 }
 
 void Scene::CreateScene() {
@@ -30,6 +31,7 @@ void Scene::CreateScene() {
 }
 
 void Scene::CreateChunkScene() {
+    qDebug() << "Creating chunks";
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
             Chunk* chunk = new Chunk();
@@ -44,6 +46,7 @@ void Scene::CreateChunkScene() {
             chunk->create();
             Point3 p = Point3((x_chunk-(num_chunks/2))*16.0f, 0, (z_chunk-(num_chunks/2))*16.0f);
             terrain.chunk_map.insert(p, chunk);
+            chunk_points.append(p);
         }
     }
 }
@@ -67,6 +70,17 @@ void Scene::CreateNewChunks()
                 chunk->create();
                 terrain.chunk_map.insert(p, chunk);
             }
+        }
+    }
+}
+
+void Scene::findNearbyChunks()
+{
+    chunk_points.clear();
+    for (int x = 0; x < num_chunks; x++) {
+        for (int z = 0; z < num_chunks; z++) {
+            Point3 p = Point3((x-(num_chunks/2))*16.0f + origin.x, 0, (z-(num_chunks/2))*16.0f + origin.z);
+            chunk_points.append(p);
         }
     }
 }

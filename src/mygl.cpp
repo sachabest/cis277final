@@ -101,11 +101,25 @@ void MyGL::GLDrawScene()
     //        prog_lambert.draw(*this, geom_cube);
     //        }
 
-    int num_chunks = scene.num_chunks;
-    for (int x = 0; x < num_chunks; x++) {
-        for (int z = 0; z < num_chunks; z++) {
-            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3((x-(num_chunks/2))*16 + scene.origin.x, 0, (z-(num_chunks/2))*16 + scene.origin.z)));
-            prog_lambert.draw(*this, *(scene.terrain.chunk_map.value(Point3((x-(num_chunks/2))*16.0f + scene.origin.x, 0, (z-(num_chunks/2))*16.0f + scene.origin.z))));
+// int num_chunks = scene.num_chunks;
+//    for (int x = 0; x < num_chunks; x++) {
+//        for (int z = 0; z < num_chunks; z++) {
+
+//            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3((x-(num_chunks/2))*16 + scene.origin.x, 0, (z-(num_chunks/2))*16 + scene.origin.z)));
+//            Point3 p = Point3((x-(num_chunks/2))*16.0f + scene.origin.x, 0, (z-(num_chunks/2))*16.0f + scene.origin.z);
+//            if (scene.terrain.chunk_map[p]) {
+//            prog_lambert.draw(*this, *(scene.terrain.chunk_map.value(p)));
+//            } else {
+//                qDebug() << "Asdf";
+//            }
+//        }
+//    }
+    for (Point3 p : scene.chunk_points) {
+        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+        if (scene.terrain.chunk_map[p]) {
+            prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
+        } else {
+            qDebug() << "Couldn't find chunk in map";
         }
     }
 
@@ -160,15 +174,16 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     // We moved to a different chunk
     if (!(old_pos == new_pos)) {
         qDebug() << "Switched chunks";
-//        if (old_pos.x < new_pos.x) {
-//            scene.shift(-16, 0, 0);
-//        } else if (old_pos.x > new_pos.x) {
-//            scene.shift(16, 0, 0);
-//        } else if (old_pos.z < new_pos.z) {
-//            scene.shift(0, 0, -16);
-//        } else if (old_pos.z > new_pos.z) {
-//            scene.shift(0, 0, 16);
-//        }
+        if (old_pos.x < new_pos.x) {
+            scene.shift(16, 0, 0);
+        } else if (old_pos.x > new_pos.x) {
+            scene.shift(-16, 0, 0);
+        }
+        if (old_pos.z < new_pos.z) {
+            scene.shift(0, 0, 16);
+        } else if (old_pos.z > new_pos.z) {
+            scene.shift(0, 0, -16);
+        }
     }
     update();  // Calls paintGL, among other things
 }
