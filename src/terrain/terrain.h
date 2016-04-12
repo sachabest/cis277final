@@ -21,8 +21,8 @@ private:
     Bounds_t bounds;
     QMap<Point, QVector<float>> gradients;
     QMap<Point, float> heightmap;
-
-    void createSeed(int i, int j);
+    int frequencyDivisor;
+    void createSeed(int i, int j, bool checkExists = false);
     void removeSeed(int i, int j);
     float getHeight(float x, float y);
 

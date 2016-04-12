@@ -8,9 +8,13 @@ class Scene {
 public:
     Scene();
 
-    void CreateTestScene();
+    void CreateScene();
+    void shift(int dx, int dy, int dz);
 
     QList<Point3> points;
     glm::ivec3 dimensions;
+    glm::vec3 origin;
     Terrain terrain;
+
+
 };

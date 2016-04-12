@@ -6,14 +6,22 @@ Scene::Scene() : dimensions(64, 64, 64), terrain(64, 64)
 {
 }
 
-void Scene::CreateTestScene() {
+void Scene::shift(int dx, int dy, int dz) {
+    origin.x += dx;
+    origin.y += dy;
+    origin.z += dz;
+    terrain.shift(dx, dz);
+    CreateScene();
+}
+
+void Scene::CreateScene() {
     points.clear();
     for(int x = 0; x < dimensions.x; x++) {
         for(int z = 0; z < dimensions.z; z++) {
             float height = terrain.getBlock(x / (float) dimensions[0], z / (float) dimensions[2]);
-            height *= MAX_TERRAIN_HEIGHT;
+//            height *= MAX_TERRAIN_HEIGHT;
             for (int y = 0; y < height; y++) {
-                points.append(Point3(x, y, z));
+                points.append(Point3(origin.x + x, origin.y + y, origin.z + z));
             }
         }
     }
