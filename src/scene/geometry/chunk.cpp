@@ -160,19 +160,19 @@ void Chunk::create()
         colors.append(glm::vec3(0.2f, 1.0f, 0.6f));
     }
 
-    GLuint std_indices[index_count];
-    glm::vec3 std_positions[vertex_count];
-    glm::vec3 std_normals[vertex_count];
-    glm::vec3 std_colors[vertex_count];
+    QVector<GLuint> std_indices;
+    QVector<glm::vec3> std_positions;
+    QVector<glm::vec3> std_normals;
+    QVector<glm::vec3> std_colors;
 
     for (int i = 0; i < positions.size(); i++) {
-        std_positions[i] = positions[i];
-        std_normals[i] = normals[i];
-        std_colors[i] = colors[i];
+        std_positions.append(positions[i]);
+        std_normals.append(normals[i]);
+        std_colors.append(colors[i]);
     }
 
     for (int i = 0; i < indices.size(); i++) {
-        std_indices[i] = indices[i];
+        std_indices.append(indices[i]);
     }
 
     count = index_count;
@@ -180,20 +180,20 @@ void Chunk::create()
     bufIdx.create();
     bufIdx.bind();
     bufIdx.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufIdx.allocate(std_indices, index_count * sizeof(GLuint));
+    bufIdx.allocate(std_indices.data(), index_count * sizeof(GLuint));
 
     bufPos.create();
     bufPos.bind();
     bufPos.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufPos.allocate(std_positions, vertex_count * sizeof(glm::vec3));
+    bufPos.allocate(std_positions.data(), vertex_count * sizeof(glm::vec3));
 
     bufNor.create();
     bufNor.bind();
     bufNor.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufNor.allocate(std_normals, vertex_count * sizeof(glm::vec3));
+    bufNor.allocate(std_normals.data(), vertex_count * sizeof(glm::vec3));
 
     bufCol.create();
     bufCol.bind();
     bufCol.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufCol.allocate(std_colors, vertex_count * sizeof(glm::vec3));
+    bufCol.allocate(std_colors.data(), vertex_count * sizeof(glm::vec3));
 }
