@@ -9,7 +9,8 @@
 #include <scene/camera.h>
 #include <scene/scene.h>
 #include <scene/geometry/cube.h>
-#include <la.h>
+#include <scene/geometry/chunk.h>
+#include "la.h"
 //#include "scene/user.h"
 #include "scene/geometry/cross.h"
 #include <QTimer>
@@ -26,10 +27,10 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
-    //User* user;
-    Cross cross;
+    Chunk test_chunk;
     Scene scene;
 
+    Cross cross;
     float gravity = 0.05;
     float terminal_v = 0.8;
     QTimer timer;

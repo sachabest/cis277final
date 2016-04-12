@@ -51,18 +51,20 @@ void MyGL::initializeGL()
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     geom_cube.create();
-    cross.create();
-
-    //user = new User(gl_camera, this);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
-    timer.start(30);
+    test_chunk.create();
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
     vao.bind();
 
     //Test scene data initialization
-    scene.CreateTestScene();
+
+
+    cross.create();
+    connect(&timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
+    timer.start(30);
+
+    scene.CreateScene();
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -106,20 +108,10 @@ void MyGL::paintGL()
 
 void MyGL::GLDrawScene()
 {
-    for(int x = 0; x < scene.dimensions.x; x++)
-        {
-            for(int y = 0; y < scene.dimensions.y; y++)
-            {
-                for(int z = 0; z < scene.dimensions.z; z++)
-                {
-                    if(scene.objects[x][y][z])
-                    {
-                        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(x, y, z)));
-                        prog_lambert.draw(*this, geom_cube);
-                    }
-                }
-            }
-        }
+    for (Point3 p : scene.points) {
+        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+        prog_lambert.draw(*this, geom_cube);
+    }
 }
 
 //right is true -> move to right
@@ -246,6 +238,9 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         gl_camera.TranslateAlongUp(-amount);
     } else if (e->key() == Qt::Key_E) {
         gl_camera.TranslateAlongUp(amount);
+    } else if (e->key() == Qt::Key_P) {
+        // temp
+        scene.shift(16, 0, 16);
     }
     gl_camera.RecomputeAttributes();
 

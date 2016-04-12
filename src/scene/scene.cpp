@@ -1,44 +1,28 @@
-#include <scene/scene.h>
+#include <scene.h>
+#include <geometry/cube.h>
+#define MAX_TERRAIN_HEIGHT 3
 
-#include <scene/geometry/cube.h>
-
-Scene::Scene() : dimensions(64, 64, 64)//, terrain(64, 64)
+Scene::Scene() : dimensions(64, 64, 64), terrain(64, 64)
 {
 }
 
-void Scene::CreateTestScene()
-{
-    for(int x = 0; x < dimensions.x; x++)
-    {
-        QList<QList<bool>> Ys;
-        for(int y = 0; y < dimensions.y; y++)
-        {
-            //COMMENT OUT
-            //float height = terrain.getBlock(x, y);
-            QList<bool> Zs;
-            //random value
-            float height = 3.0;
-            for(int z = 0; z < height; z++)
-            {
-                Zs.push_back(true);
-//                if(y == dimensions.y/2)
-//                {
-//                    Zs.push_back(true);
-//                }
-//                else
-//                {
-//                    Zs.push_back(false);
-//                }
+void Scene::shift(int dx, int dy, int dz) {
+    origin.x += dx;
+    origin.y += dy;
+    origin.z += dz;
+    terrain.shift(dx, dz);
+    CreateScene();
+}
+
+void Scene::CreateScene() {
+    points.clear();
+    for(int x = 0; x < dimensions.x; x++) {
+        for(int z = 0; z < dimensions.z; z++) {
+            float height = terrain.getBlock(x / (float) dimensions[0], z / (float) dimensions[2]);
+//            height *= MAX_TERRAIN_HEIGHT;
+            for (int y = 0; y < height; y++) {
+                points.append(Point3(origin.x + x, origin.y + y, origin.z + z));
             }
-            for (int z = (int) height; z < dimensions.z; z++) {
-                Zs.push_back(false);
-            }
-            Ys.push_back(Zs);
         }
-        objects.push_back(Ys);
     }
-    objects[0][dimensions.y/2+2][0] = true;
-    objects[dimensions.x-1][dimensions.y/2+2][0] = true;
-    objects[0][dimensions.y/2+2][dimensions.z-1] = true;
-    objects[dimensions.x-1][dimensions.y/2+2][dimensions.z-1] = true;
 }

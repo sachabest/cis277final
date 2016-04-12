@@ -1,14 +1,20 @@
 #pragma once
 #include <QList>
-#include <scene/camera.h>
-//#include "terrain/terrain.h"
+#include <camera.h>
+#include "terrain/terrain.h"
+#include "point3.h"
 
 class Scene {
 public:
-    Scene();
-    QList<QList<QList<bool>>> objects;//A 3D list of the geometry in the world. Currently, it just lists whether or not a given cell contains a block.
-    void CreateTestScene();
+  Scene();
 
-    glm::ivec3 dimensions;
-    //Terrain terrain;
+  void CreateScene();
+  void shift(int dx, int dy, int dz);
+
+  QList<Point3> points;
+  glm::ivec3 dimensions;
+  glm::vec3 origin;
+  Terrain terrain;
+
+
 };

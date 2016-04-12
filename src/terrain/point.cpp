@@ -1,18 +1,19 @@
 #include "point.h"
+#include "math.h"
 
-Point::Point(int x, int y) : QPoint(x, y) {
+bool fequal2(float f1, float f2, float epsilon = 0.0001) {
+    return fabs(f1 - f2) < epsilon;
+}
+
+Point::Point(float x, float y) : x(x), y(y) {
 
 }
 
-//<<<<<<< HEAD
-//bool Point::operator<(const Point& p1, const Point& p2) {
-//=======
 bool Point::operator<(const Point &p) const {
-//>>>>>>> upstream/master
     // x major
-    if (this->x() == p.x()) {
-        return this->y() < p.y();
+    if (fequal2(this->x, p.x)) {
+        return this->y < p.y;
     } else {
-        return this->x() < p.x();
+        return this->x < p.x;
     }
 }
