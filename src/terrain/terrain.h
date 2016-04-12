@@ -1,7 +1,7 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include "la.h"
+#include "../la.h"
 #include "point.h"
 #include <QMap>
 

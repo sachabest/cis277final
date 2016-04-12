@@ -10,9 +10,10 @@
 #include <scene/scene.h>
 #include <scene/geometry/cube.h>
 #include <scene/geometry/chunk.h>
-#include <la.h>
-
-
+#include "la.h"
+//#include "scene/user.h"
+#include "scene/geometry/cross.h"
+#include <QTimer>
 
 class MyGL
     : public GLWidget277
@@ -27,8 +28,12 @@ private:
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
     Chunk test_chunk;
-
     Scene scene;
+
+    Cross cross;
+    float gravity = 0.05;
+    float terminal_v = 0.8;
+    QTimer timer;
 
 public:
     explicit MyGL(QWidget *parent = 0);
@@ -44,9 +49,20 @@ public:
 
     void RaytraceScene();
 
+    //to be called with mouse clicking events
+    void destroyBlocks();
+    void addBlocks();
+    void collisionX(bool right);
+    void collisionY(bool up);
+    void collisionZ(bool look);
+
 protected:
     void keyPressEvent(QKeyEvent *e);
+    void mousePressEvent(QMouseEvent *e);
 
 signals:
     void sig_ResizeToCamera(int,int);
+
+private slots:
+    void timerUpdate();
 };

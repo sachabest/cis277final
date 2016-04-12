@@ -1,5 +1,5 @@
-#include <scene/scene.h>
-#include <scene/geometry/cube.h>
+#include <scene.h>
+#include <geometry/cube.h>
 #define MAX_TERRAIN_HEIGHT 3
 
 Scene::Scene() : dimensions(64, 64, 64), terrain(64, 64)

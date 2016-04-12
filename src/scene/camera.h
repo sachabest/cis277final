@@ -1,7 +1,7 @@
 #pragma once
 
 #include <la.h>
-#include <openGL/drawable.h>
+#include "ray.h"
 
 //A perspective projection camera
 //Receives its eye position and reference point from the scene XML file
@@ -22,6 +22,7 @@ public:
 
     //Computed attributes
     float aspect;
+    //const float DEG2RAD = 0.017453292;
 
     glm::vec3 eye,      //The position of the camera in world space
               ref,      //The point in world space towards which the camera is pointing
@@ -44,4 +45,8 @@ public:
     void TranslateAlongLook(float amt);
     void TranslateAlongRight(float amt);
     void TranslateAlongUp(float amt);
+
+
+    //raycast for checking intersection from center of screen
+    Ray raycast();
 };
