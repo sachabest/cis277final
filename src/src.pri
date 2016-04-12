@@ -17,7 +17,9 @@ SOURCES += \
     $$PWD/terrain/terrain.cpp \
     $$PWD/terrain/point.cpp \
     $$PWD/scene/point3.cpp \
-    $$PWD/util.cpp
+    $$PWD/util.cpp \
+    $$PWD/scene/geometry/chunk.cpp
+    $$PWD/scene/geometry/chunk.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -39,4 +41,6 @@ HEADERS += \
     $$PWD/terrain/terrain.h \
     $$PWD/terrain/point.h \
     $$PWD/scene/point3.h \
-    $$PWD/util.h
+    $$PWD/util.h \
+    $$PWD/scene/geometry/chunk.h
+    $$PWD/scene/geometry/chunk.h

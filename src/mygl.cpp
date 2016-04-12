@@ -51,6 +51,7 @@ void MyGL::initializeGL()
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     geom_cube.create();
+    test_chunk.create();
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
