@@ -13,7 +13,7 @@ void Scene::CreateTestScene() {
             float height = terrain.getBlock(x / (float) dimensions[0], z / (float) dimensions[2]);
             height *= MAX_TERRAIN_HEIGHT;
             for (int y = 0; y < height; y++) {
-                points.append(Point3(y, x, z));
+                points.append(Point3(x, y, z));
             }
         }
     }

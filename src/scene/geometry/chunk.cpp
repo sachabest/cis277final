@@ -14,7 +14,7 @@ Chunk::Chunk()
         for (int y = 0; y < 16; y++) {
             QList<bool> Ys;
             for (int z = 0; z < 16; z++) {
-                Ys.append(y < z);
+                Ys.append(y < 2 && x == 0);
             }
             Xs.append(Ys);
         }
@@ -35,42 +35,42 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z]) {
                     // Top face
-                    if (y == cells.size() - 1 || !cells[x][++y][z]) {
+                    if (y == cells.size() - 1 || !cells[x][y+1][z]) {
                         positions.append(glm::vec3(x+1, y+1, z)); // UR
                         positions.append(glm::vec3(x+1, y+1, z+1)); // LR
                         positions.append(glm::vec3(x, y+1, z+1)); // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
                     }
                     // Bottom face
-                    if (y == 0 || !cells[x][--y][z]) {
+                    if (y == 0 || !cells[x][y-1][z]) {
                         positions.append(glm::vec3(x+1, y, z+1)); // UR
                         positions.append(glm::vec3(x+1, y, z)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y, z+1)); // UL
                     }
                     // Left face
-                    if (x == 0 || !cells[--x][y][z]) {
+                    if (x == 0 || !cells[x-1][y][z]) {
                         positions.append(glm::vec3(x, y+1, z+1)); // UR
                         positions.append(glm::vec3(x, y, z+1)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
                     }
                     // Right face
-                    if (x == cells.size() - 1 || !cells[++x][y][z]) {
+                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
                         positions.append(glm::vec3(x+1, y+1, z)); // UR
                         positions.append(glm::vec3(x+1, y, z)); // LR
                         positions.append(glm::vec3(x+1, y, z+1)); // LL
                         positions.append(glm::vec3(x+1, y+1, z+1));       // UL
                     }
                     // Front face
-                    if (z == 0 || !cells[x][y][--z]) {
+                    if (z == 0 || !cells[x][y][z-1]) {
                         positions.append(glm::vec3(x+1, y+1, z+1));       // UR
                         positions.append(glm::vec3(x+1, y, z+1)); // LR
                         positions.append(glm::vec3(x, y, z+1)); // LL
                         positions.append(glm::vec3(x, y+1, z+1)); // UL
                     }
                     // Back face
-                    if (z == cells.size() - 1 || !cells[x][y][++z]) {
+                    if (z == cells.size() - 1 || !cells[x][y][z+1]) {
                         positions.append(glm::vec3(x, y+1, z)); // UR
                         positions.append(glm::vec3(x, y, z));       // LR
                         positions.append(glm::vec3(x+1, y, z)); // LL
@@ -92,37 +92,37 @@ QVector<glm::vec3> Chunk::createChunkVertexNormals()
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z]) {
                     // Top face
-                    if (z == cells.size() - 1 || !cells[x][++y][z]) {
+                    if (y == cells.size() - 1 || !cells[x][y+1][z]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(0, 1, 0));
                         }
                     }
                     // Bottom face
-                    if (z == 0 || !cells[x][--y][z]) {
+                    if (y == 0 || !cells[x][y-1][z]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(0, -1, 0));
                         }
                     }
                     // Left face
-                    if (x == 0 || !cells[--x][y][z]) {
+                    if (x == 0 || !cells[x-1][y][z]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(-1, 0, 0));
                         }
                     }
                     // Right face
-                    if (x == cells.size() - 1 || !cells[++x][y][z]) {
+                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(1, 0, 0));
                         }
                     }
                     // Front face
-                    if (y == 0 || !cells[x][y][--z]) {
+                    if (z == 0 || !cells[x][y][z-1]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(0, 0, 1));
                         }
                     }
                     // Back face
-                    if (y == cells.size() - 1 || !cells[x][y][++z]) {
+                    if (z == cells.size() - 1 || !cells[x][y][z+1]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(0, 0, -1));
                         }

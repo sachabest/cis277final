@@ -63,8 +63,12 @@ void MyGL::initializeGL()
 
 void MyGL::resizeGL(int w, int h)
 {
-    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
-                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
+    qDebug() << "Calling resize";
+//    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
+//                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
+
+    gl_camera = Camera(w, h, glm::vec3(10, 5, 10),
+                       glm::vec3(0), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
 
@@ -90,22 +94,15 @@ void MyGL::paintGL()
 
 void MyGL::GLDrawScene()
 {
-    for(int x = 0; x < scene.dimensions.x; x++)
-        {
-            for(int y = 0; y < scene.dimensions.y; y++)
-            {
-                for(int z = 0; z < scene.dimensions.z; z++)
-                {
-                    if(scene.objects[x][y][z])
-                    {
-                        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(x, y, z)));
-                        prog_lambert.draw(*this, geom_cube);
-                    }
-                }
-            }
-        }
+//    for (Point3 p : scene.points) {
+//        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+//        prog_lambert.draw(*this, geom_cube);
+//        }
 //    prog_lambert.setModelMatrix(glm::mat4());
 //    prog_lambert.draw(*this, test_chunk);
+    prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(0)));
+    prog_lambert.draw(*this, test_chunk);
+
 }
 
 void MyGL::keyPressEvent(QKeyEvent *e)
