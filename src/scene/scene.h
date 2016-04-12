@@ -1,8 +1,10 @@
 #pragma once
 #include <QList>
-#include <camera.h>
+#include "camera.h"
 #include "terrain/terrain.h"
 #include "point3.h"
+#include <iostream>
+#include "transform.h"
 
 class Scene {
 public:

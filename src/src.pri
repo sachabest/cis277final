@@ -6,6 +6,7 @@ SOURCES += \
     $$PWD/main.cpp \
     $$PWD/mainwindow.cpp \
     $$PWD/mygl.cpp \
+    $$PWD/util.cpp \
     $$PWD/scene/camera.cpp \
     $$PWD/scene/scene.cpp \
     $$PWD/scene/geometry/cube.cpp \
@@ -16,20 +17,16 @@ SOURCES += \
     $$PWD/cameracontrolshelp.cpp \
     $$PWD/terrain/terrain.cpp \
     $$PWD/terrain/point.cpp \
-<<<<<<< HEAD
-    $$PWD/scene/user.cpp \
-    $$PWD/scene/ray.cpp \
-    $$PWD/scene/geometry/cross.cpp
-=======
+    $$PWD/scene/geometry/chunk.cpp \
+    $$PWD/scene/geometry/cross.cpp \
     $$PWD/scene/point3.cpp \
-    $$PWD/util.cpp \
-    $$PWD/scene/geometry/chunk.cpp
-    $$PWD/scene/geometry/chunk.cpp
->>>>>>> upstream/master
+    $$PWD/scene/ray.cpp \
+    $$PWD/scene/user.cpp \
 
 HEADERS += \
     $$PWD/mainwindow.h \
     $$PWD/mygl.h \
+    $$PWD/util.h \
     $$PWD/scene/camera.h \
     $$PWD/la.h \
     $$PWD/drawable.h \
@@ -46,13 +43,8 @@ HEADERS += \
     $$PWD/scene/terrain.h \
     $$PWD/terrain/terrain.h \
     $$PWD/terrain/point.h \
-<<<<<<< HEAD
-    $$PWD/scene/user.h \
-    $$PWD/scene/ray.h \
-    $$PWD/scene/geometry/cross.h
-=======
+    $$PWD/scene/geometry/chunk.h \
+    $$PWD/scene/geometry/cross.h \
     $$PWD/scene/point3.h \
-    $$PWD/util.h \
-    $$PWD/scene/geometry/chunk.h
-    $$PWD/scene/geometry/chunk.h
->>>>>>> upstream/master
+    $$PWD/scene/ray.h \
+    $$PWD/scene/user.h \

@@ -1,7 +1,7 @@
 #ifndef CROSS_H
 #define CROSS_H
 
-#include <openGL/drawable.h>
+#include "OpenGL/drawable.h"
 #include <iostream>
 
 class Cross : public Drawable

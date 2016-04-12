@@ -10,9 +10,4 @@ class Cube : public Drawable
 {
 public:
     void create();
-
-    //check for floating point errors with comparisons
-    bool nearlyEqual(float a, float b);
-    //CHECK FOR IF THE RAY INTERSECTS WITH THIS CUBE
-    bool intersect(Ray r, Transform cube_to_world);
 };

@@ -51,7 +51,7 @@ void MyGL::initializeGL()
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     geom_cube.create();
-    test_chunk.create();
+    //test_chunk.create();
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
@@ -62,7 +62,7 @@ void MyGL::initializeGL()
 
     cross.create();
     connect(&timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
-    timer.start(30);
+    timer.start(100);
 
     scene.CreateScene();
 }
@@ -118,13 +118,32 @@ void MyGL::GLDrawScene()
 //false-> try to move to left
 void MyGL::collisionX(bool right) {
     glm::vec3 eye = gl_camera.eye;
-    glm::vec3 xone = glm::vec3(eye.x-1, eye.y, eye.z);
-    glm::vec3 xtwo = glm::vec3(eye.x+1, eye.y, cpos.z);
-    glm::vec3 xthree = glm::vec3(eye.x-1, eye.y-1, eye.z);
-    glm::vec3 xfour = glm::vec3(eye.x+1, eye.y-1, eye.z);
+    Point3 xone = Point3(eye.x-1, eye.y, eye.z);
+    Point3 xtwo = Point3(eye.x+1, eye.y, eye.z);
+    Point3 xthree = Point3(eye.x-1, eye.y-1, eye.z);
+    Point3 xfour = Point3(eye.x+1, eye.y-1, eye.z);
+
+    QList<Point3> points = scene.points;
+
+    if (!(points.contains(xone)) && !(points.contains(xthree))) {
+        leftx = true;
+        for (int i = 0 ; i < 3; i++) {
+            float amount = gravity * i;
+            gl_camera.TranslateAlongRight(-amount);
+        }
+        leftx = false;
+    }
+    else if (!(points.contains(xtwo)) && !(points.contains(xfour))) {
+        rightx = true;
+        for (int i = 0 ; i < 3; i++) {
+            float amount = gravity * i;
+            gl_camera.TranslateAlongRight(amount);
+        }
+        rightx = false;
+    }
 
     //if all four blocks are empty -> you can move
-    if (((!scene.objects[xone.x][xone.y][xone.z]) &&
+ /*   if (((!scene.objects[xone.x][xone.y][xone.z]) &&
             (!scene.objects[xthree.x][xthree.y][xthree.z]))
             || ((!scene.objects[xtwo.x][xtwo.y][xtwo.z])  && (!scene.objects[xfour.x][xfour.y][xfour.z]))) {
         //MOVEABLE
@@ -152,25 +171,45 @@ void MyGL::collisionX(bool right) {
         else if (scene.objects[xfour.x][xfour.y][xfour.z]) {
 
         }
-    }
+    } */
 }
 
 //if up is true we are moving up;
 //else we are trying to move down;
 void MyGL::collisionY(bool up) {
+    //std::cout << "here in collision y" << std::endl;
     glm::vec3 eye = gl_camera.eye;
-    glm::vec3 yone = glm::vec3(eye.x, eye.y+1, eye.z);
-    glm::vec3 ytwo = glm::vec3(eye.x, eye.y-2, eye.z);
+    Point3 yone = Point3(eye.x, eye.y+0.5, eye.z);
+    Point3 ytwo = Point3(eye.x, eye.y-1, eye.z);
 
+    QList<Point3> points = scene.points;
     //you can move up and you are trying to move up
-    if (up && !scene.objects[yone.x][yone.y][yone.z]) {
+ /*   if (up && !scene.objects[yone.x][yone.y][yone.z]) {
 
     }
     //you can move down; gravity and you are trying to move down
     else if (!up && !scene.objects[ytwo.x][ytwo.y][ytwo.z]) {
 
-    }
+    }*/
 
+    if (!up) {
+        if (!points.contains(ytwo)) {
+            for (int i = 0 ; i < 3; i++) {
+                float amount = gravity * i * i;
+                gl_camera.TranslateAlongUp(-amount);
+                //do_nothing = true;
+            }
+        }
+    }
+    else if (up) {
+        if (!points.contains(yone)) {
+            for (int i = 0 ; i < 3; i++) {
+                float amount = gravity * i * i;
+                gl_camera.TranslateAlongUp(amount);
+            }
+        }
+        //downy = true;
+    }
 }
 
 //if look is true we are trying to move towards us
@@ -178,15 +217,36 @@ void MyGL::collisionY(bool up) {
 void MyGL::collisionZ(bool look) {
     glm::vec3 eye = gl_camera.eye;
 
-    glm::vec3 zone = glm::vec3(eye.x, eye.y, eye.z-1);
-    glm::vec3 ztwo = glm::vec3(eye.x, eye.y, eye.z+1);
-    glm::vec3 zthree = glm::vec3(eye.x, eye.y-1, eye.z-1);
-    glm::vec3 zfour = glm::vec3(eye.x, eye.y+1, eye.z+1);
+    Point3 zone = Point3(eye.x, eye.y, eye.z-1);
+    Point3 ztwo = Point3(eye.x, eye.y, eye.z+1);
+    Point3 zthree = Point3(eye.x, eye.y-1, eye.z-1);
+    Point3 zfour = Point3(eye.x, eye.y+1, eye.z+1);
 
+
+    QList<Point3> points = scene.points;
+
+    if (!(points.contains(zone)) && !(points.contains(zthree))) {
+
+        outz = true;
+        for (int i = 0 ; i < 3; i++) {
+            float amount = i*gravity;
+            gl_camera.TranslateAlongLook(-amount);
+        }
+        outz = false;
+    }
+    else if (!(points.contains(ztwo)) && !(points.contains(zfour))) {
+        inz = true;
+
+        for (int i = 0 ; i < 3; i++) {
+            float amount = gravity * i;
+            gl_camera.TranslateAlongLook(amount);
+        }
+        inz = false;
+    }
     //if all four blocks are empty -> you can move
-    if (((!scene.objects[zone.x][zone.y][zone.z]) &&
+   /* if (((!scene.objects[zone.x][zone.y][zone.z]) &&
             (!scene.objects[zthree.x][zthree.y][zthree.z]))
-            || ((!scene.objects[ztwo.x][ztwo.y][ztwo.z])  && (!scene.objects[zfour.x][zour.y][zfour.z]))) {
+            || ((!scene.objects[ztwo.x][ztwo.y][ztwo.z])  && (!scene.objects[zfour.x][zfour.y][zfour.z]))) {
         //MOVEABLE
         //this case move to the front
         if (look) {
@@ -195,7 +255,7 @@ void MyGL::collisionZ(bool look) {
         else {
 
         }
-    }
+    }*/
 }
 
 void MyGL::keyPressEvent(QKeyEvent *e)
@@ -222,23 +282,41 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     }
     //z direction
     else if (e->key() == Qt::Key_W) {
-        gl_camera.TranslateAlongLook(amount);
+        //gl_camera.TranslateAlongLook(amount);
+        inz = true;
+        timerUpdate();
+
     } else if (e->key() == Qt::Key_S) {
-        gl_camera.TranslateAlongLook(-amount);
+        //gl_camera.TranslateAlongLook(-amount);
+        outz = true;
+        timerUpdate();
     }
     //x direction
     else if (e->key() == Qt::Key_D) {
-        gl_camera.TranslateAlongRight(amount);
+ //       gl_camera.TranslateAlongRight(amount);
+        rightx = true;
+        timerUpdate();
+
     } else if (e->key() == Qt::Key_A) {
-        gl_camera.TranslateAlongRight(-amount);
+       // gl_camera.TranslateAlongRight(-amount);
+        leftx = true;
+        timerUpdate();
     }
 
     //y direction
     else if (e->key() == Qt::Key_Q) {
-        gl_camera.TranslateAlongUp(-amount);
+        //gl_camera.TranslateAlongUp(-amount);
+        downy = true;
+        timerUpdate();
+        downy = false;
     } else if (e->key() == Qt::Key_E) {
-        gl_camera.TranslateAlongUp(amount);
-    } else if (e->key() == Qt::Key_P) {
+        //gl_camera.TranslateAlongUp(amount);
+        upy = true;
+        timerUpdate();
+        upy = false;
+    }
+
+    else if (e->key() == Qt::Key_P) {
         // temp
         scene.shift(16, 0, 16);
     }
@@ -256,23 +334,9 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 void MyGL::destroyBlocks() {
     std::cout << "destroy blocks" << std::endl;
     Ray ray_from_center = gl_camera.raycast();
-    //for all the cubes in the world
-    //if the intersect return true
-    //get rid of them
-    QList<QList<QList<bool>>> scene_objs = scene.objects;
 
-//    for (int i = 0; i < scene.dimensions.x; i++) {
-//        for (int j = 0; j < scene.dimensions.y; j++) {
-//            for (int k = 0; k < scene.dimensions.z; k++) {
-//                //if there is geoemtry here
-//                if (scene_objs[i][j][k]) {
-//                    //test for intersect
-//                    //call cube.intersect
-//                    //if true, delete
-//                }
-//            }
-//        }
-//    }
+    QList<Point3> points = scene.points;
+    std::cout << "points size " << scene.points.size() << std::endl;
 
     //RAY MARCH from 1 to 31 (< 32 taxicabs)
     for (int t = 1; t < 32; t++) {
@@ -281,11 +345,20 @@ void MyGL::destroyBlocks() {
         glm::vec3 position = ray_from_center.origin + new_dir;
         //floor the position value and check if there is an object in there;
         //if there is: remove it and break out of the loop
-        if (scene_objs[glm::floor(position.x)][glm::floor(position.y)][glm::floor(position.z)])
+        Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+        if (points.contains(point_cube))
         {
-            //DESTROY THE CUBE
-            //CAROLINA'S STORAGE
+            std::cout << "in destroying" << std::endl;
+            for (int i = 0; i < points.size(); i++) {
+                if(points[i] == point_cube) {
+                    std::cout << "remove stuff" << std::endl;
+                    scene.points.removeAt(i);
+                    std::cout << "after remove point size " << scene.points.size() << std::endl;
+                    break;
+                }
+            }
         }
+        update();
     }
 }
 
@@ -293,20 +366,90 @@ void MyGL::addBlocks() {
     std::cout << "add block" << std::endl;
     //RAYMARCH THIS
     Ray ray_from_center = gl_camera.raycast();
-    QList<QList<QList<bool>>> scene_objs = scene.objects;
+    //QList<QList<QList<bool>>> scene_objs = scene.objects;
+    //QList<Point3>& points = scene.points;
+
+    QList<Point3> points = scene.points;
+    std::cout << "points size " << scene.points.size() << std::endl;
 
     //RAY MARCH from 1 to 31 (< 32 taxicabs)
     for (int t = 1; t < 32; t++) {
         glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
                                        t*ray_from_center.direction.z);
         glm::vec3 position = ray_from_center.origin + new_dir;
-        //floor the position value and check if there is an object in there;
-        //if there is: remove it and break out of the loop
-        if (scene_objs[glm::floor(position.x)][glm::floor(position.y)][glm::floor(position.z)])
+        Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+        Ray newRay = Ray(position, ray_from_center.direction);
+        if (points.contains(point_cube))
         {
-            //we found a cube; find its face normals; dot it with ray_from_center.direction
-            //whichever one returns a value < 0 -> add a cube next to it (NOT really sure how??)
+            std::cout << "in adding" << std::endl;
+            glm::vec3 T = position;
+            glm::vec3 R = glm::vec3(0,0,0);
+            glm::vec3 S = glm::vec3(1,1,1);
+
+            for (int i = 0; i < points.size(); i++) {
+                if(points[i] == point_cube) {
+                    std::cout << "add stuff" << std::endl;
+
+                    glm::vec3 normal = points[i].intersect(newRay, Transform(T, R, S));
+                    std::cout << "normal x " << normal.x << std::endl;
+                    std::cout << "normal y " << normal.y << std::endl;
+                    std::cout << "normal z " << normal.z << std::endl;
+
+                    if (normal == glm::vec3(-1,0,0)) {
+                        //negative x; put one on right
+                        Point3 potential = Point3(point_cube.x-1, point_cube.y, point_cube.z);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else if (normal == glm::vec3(1,0,0)) {
+                        Point3 potential = Point3(point_cube.x+1, point_cube.y, point_cube.z);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else if (normal == glm::vec3(0,-1,0)) {
+                        Point3 potential = Point3(point_cube.x, point_cube.y-1, point_cube.z);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else if (normal == glm::vec3(0,1,0)) {
+                        Point3 potential = Point3(point_cube.x, point_cube.y+1, point_cube.z);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else if (normal == glm::vec3(0,0,-1)) {
+                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z-1);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else if (normal == glm::vec3(0,0,1)) {
+                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z+1);
+                        if (!points.contains(potential)) {
+                            scene.points.append(potential);
+                            break;
+                        }
+                    }
+                    else{
+                        //dont do anything
+                    }
+
+                    //scene.points.removeAt(i);
+                    std::cout << "after add point size " << scene.points.size() << std::endl;
+                    break;
+                }
+            }
+
         }
+        update();
     }
 }
 
@@ -329,6 +472,34 @@ void MyGL::timerUpdate()
     // Use it to update your scene and then tell it to redraw.
     // (Don't update your scene in paintGL, because it
     // sometimes gets called automatically by Qt.)
+
+    //trying to move left
+    if (leftx) {
+        collisionX(false);
+    }
+    else if (rightx) {
+        collisionX(true);
+    }
+    else if (upy) {
+        collisionY(true);
+    }
+    else if (downy) {
+        collisionY(false);
+    }
+    else if (outz) {
+        //moving away
+        collisionZ(false);
+    }
+    else if (inz) {
+        collisionZ(true);
+    }
+    //we are just starting
+    else if (do_nothing) {
+
+    }
+    else {
+        collisionY(false);
+    }
 
     update();
 }
