@@ -1,7 +1,7 @@
 #pragma once
 #include <QList>
 #include <scene/camera.h>
-#include "terrain/terrain.h"
+//#include "terrain/terrain.h"
 
 class Scene {
 public:
@@ -10,5 +10,5 @@ public:
     void CreateTestScene();
 
     glm::ivec3 dimensions;
-    Terrain terrain;
+    //Terrain terrain;
 };

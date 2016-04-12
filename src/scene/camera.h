@@ -1,12 +1,11 @@
 #pragma once
 
 #include <la.h>
-#include <openGL/drawable.h>
 #include "ray.h"
 
 //A perspective projection camera
 //Receives its eye position and reference point from the scene XML file
-class Camera : public Drawable
+class Camera
 {
 public:
     Camera();
@@ -47,9 +46,6 @@ public:
     void TranslateAlongRight(float amt);
     void TranslateAlongUp(float amt);
 
-    //DRAWING the center of the screen as a plus
-    virtual GLenum drawMode();
-    void create();
 
     //raycast for checking intersection from center of screen
     Ray raycast();

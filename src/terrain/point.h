@@ -6,7 +6,7 @@
 
 class Point : public QPoint {
 //<<<<<<< HEAD
-    Q_OBJECT
+   // Q_OBJECT
 
 //public:
 //    Point(int x, int y);

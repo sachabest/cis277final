@@ -2,7 +2,7 @@
 
 #include <scene/geometry/cube.h>
 
-Scene::Scene() : dimensions(64, 64, 64), terrain(64, 64)
+Scene::Scene() : dimensions(64, 64, 64)//, terrain(64, 64)
 {
 }
 
@@ -13,8 +13,11 @@ void Scene::CreateTestScene()
         QList<QList<bool>> Ys;
         for(int y = 0; y < dimensions.y; y++)
         {
-            float height = terrain.getBlock(x, y);
+            //COMMENT OUT
+            //float height = terrain.getBlock(x, y);
             QList<bool> Zs;
+            //random value
+            float height = 3.0;
             for(int z = 0; z < height; z++)
             {
                 Zs.push_back(true);

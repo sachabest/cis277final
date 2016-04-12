@@ -2,6 +2,7 @@
 #define CROSS_H
 
 #include <openGL/drawable.h>
+#include <iostream>
 
 class Cross : public Drawable
 {

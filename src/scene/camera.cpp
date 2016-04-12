@@ -131,53 +131,6 @@ void Camera::TranslateAlongUp(float amt)
     ref += translation;
 }
 
-//DRAWING the plus in the center of the screen
-GLenum Camera::drawMode() {
-   return GL_LINES;
-}
-
-void Camera::create() {
-    std::vector<GLuint> idx;
-    std::vector<glm::vec4> pos;
-    std::vector<glm::vec4> col;
-
-    //four indices 0-1; 2-3
-    idx.push_back(0);
-    idx.push_back(1);
-    idx.push_back(2);
-    idx.push_back(3);
-
-    //vertical line 0-1; colored white
-    pos.push_back(glm::vec4(0,-0.5,0,1));
-    pos.push_back(glm::vec4(0,0.5,0,1));
-    col.push_back(glm::vec4(1,1,1,1));
-    col.push_back(glm::vec4(1,1,1,1));
-
-    //horizontal line 2-3
-    pos.push_back(glm::vec4(-0.5,0,0,1));
-    pos.push_back(glm::vec4(0.5,0,0,1));
-    col.push_back(glm::vec4(1,1,1,1));
-    col.push_back(glm::vec4(1,1,1,1));
-
-    count = idx.size();
-
-    bufIdx.create();
-    bufIdx.bind();
-    bufIdx.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufIdx.allocate(idx.data(), idx.size() * sizeof(GLuint));
-
-
-    bufPos.create();
-    bufPos.bind();
-    bufPos.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufPos.allocate(pos.data(), pos.size() * sizeof(glm::vec4));
-
-    bufCol.create();
-    bufCol.bind();
-    bufCol.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufCol.allocate(col.data(), col.size() * sizeof(glm::vec4));
-}
-
 //raycast for checking intersection
 Ray Camera::raycast() {
     //assume center of screen is at (0,0,0); so x and y should both be 0
@@ -198,7 +151,7 @@ Ray Camera::raycast() {
 
     //casting from the center of the screen.......?
     glm::vec3 ray_origin = eye;
-    glm::vec3 ray_direct = ref-eye;
+    glm::vec3 ray_direct = glm::normalize(ref-eye);
     Ray ray = Ray(ray_origin, ray_direct);
     return ray;
 

@@ -12,7 +12,7 @@ GLenum Cross::drawMode() {
 
 void Cross::create() {
     std::vector<GLuint> idx;
-    std::vector<glm::vec4> pos;
+    std::vector<glm::vec3> pos;
     std::vector<glm::vec4> col;
 
     //four indices 0-1; 2-3
@@ -22,14 +22,14 @@ void Cross::create() {
     idx.push_back(3);
 
     //vertical line 0-1; colored white
-    pos.push_back(glm::vec4(0,-0.5,0,1));
-    pos.push_back(glm::vec4(0,0.5,0,1));
+    pos.push_back(glm::vec3(0,-0.5,0));
+    pos.push_back(glm::vec3(0,0.5,0));
     col.push_back(glm::vec4(1,1,1,1));
     col.push_back(glm::vec4(1,1,1,1));
 
     //horizontal line 2-3
-    pos.push_back(glm::vec4(-0.5,0,0,1));
-    pos.push_back(glm::vec4(0.5,0,0,1));
+    pos.push_back(glm::vec3(-0.5,0,0));
+    pos.push_back(glm::vec3(0.5,0,0));
     col.push_back(glm::vec4(1,1,1,1));
     col.push_back(glm::vec4(1,1,1,1));
 
