@@ -1,5 +1,10 @@
-# cis277final
+## CIS 277 Final Project
 
-CIS 277 Final Project
+### Milestone 1
 
-by Sacha Best, Carolina Zheng, and Carrie Wang
+#### Responsibilities
+
+* Sacha: Terrain generation. continuous smoothed functions, efficient storage
+    * Classes: Terrain, Point, Point3, parts of Scene
+* Carrie:
+* Carolina
