@@ -28,14 +28,28 @@ Bounds_t makeBounds(int xmin, int ymin, int xmax, int ymax) {
  * @param dy - the delta y
  */
 void shiftBounds(Bounds_t &bounds, int dx, int dy) {
-    bounds.xmax += dx;
+    bounds.xmin += dx;
     bounds.xmax += dx;
     bounds.ymax += dy;
     bounds.ymin += dy;
 }
 
-void Terrain::createSeed(int i, int j) {
+Terrain::Terrain(int maxX, int maxY, int fequencyDivisor) {
+    this->frequencyDivisor = fequencyDivisor;
+    srand(time(NULL));
+    for (int i = 0; i < maxX / fequencyDivisor; i++) {
+        for (int j = 0; j < maxY / fequencyDivisor; j++) {
+            createSeed(i, j);
+        }
+    }
+    this->bounds = makeBounds(0, 0, maxX / frequencyDivisor, maxY / frequencyDivisor);
+}
+
+void Terrain::createSeed(int i, int j, bool checkExists) {
     Point p(i, j);
+    if (checkExists && gradients.contains(p)) {
+        return;
+    }
     QVector<float> v;
     float random = ((float) rand()) / (float) RAND_MAX;
     v.push_back(random);
@@ -49,16 +63,19 @@ void Terrain::removeSeed(int i, int j) {
     gradients.remove(p);
 }
 
-Terrain::Terrain(int maxX, int maxY, int fequencyDivisor) {
-    srand(time(NULL));
-    for (int i = 0; i < maxX / fequencyDivisor; i++) {
-        for (int j = 0; j < maxY / fequencyDivisor; j++) {
-            createSeed(i, j);
-        }
+float Terrain::getBlock(float x, float y) {
+    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + abs(bounds.xmin);
+    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + abs(bounds.ymin);
+    Point p(unfloored_x, unfloored_y);
+    float height;
+    if (!heightmap.contains(p)) {
+        height = getHeight(x, y);
+        heightmap[p] = height;
+    } else {
+        height = heightmap[p];
     }
-    this->bounds = makeBounds(0, 0, maxX / fequencyDivisor, maxY / fequencyDivisor);
+    return height;
 }
-
 
 /*
  * Use this funciton to create new terrain and destroy old terrain that is outside of the max range.
@@ -74,70 +91,25 @@ Terrain::Terrain(int maxX, int maxY, int fequencyDivisor) {
  * (-x, -y)     (+x, -y)
  *
  */
-void Terrain::shift(int dx, int dy) {
-    int xmin, xmax, ymin, ymax;
-    int xmin_remove, xmax_remove, ymin_remove, ymax_remove;
-    // find direction of growth
-    if (dx < 0) {
-        // negative x axis
-        if (dy < 0) {
-            // negative y axis
-            xmin = bounds.xmin + dx;
-            xmax = bounds.xmin;
-            ymin = bounds.xmin + dy;
-            ymax = bounds.ymin;
-            xmin_remove = bounds.xmax + dx;
-            xmax_remove = bounds.xmax;
-            ymin_remove = bounds.ymax + dy;
-            ymin_remove = bounds.ymax;
-        } else {
-            // positive y axis
-            xmin = bounds.xmin + dx;
-            xmax = bounds.xmin;
-            ymin = bounds.ymax;
-            ymax = bounds.ymax + dy;
-            xmin_remove = bounds.xmax + dx;
-            xmax_remove = bounds.xmax;
-            ymin_remove = bounds.ymax;
-            ymin_remove = bounds.ymin + dy;
-        }
-    } else {
-        // positive x axis
-        if (dy < 0) {
-            // negative y axis
-            xmin = bounds.xmax;
-            xmax = bounds.xmax + dx;
-            ymin = bounds.xmin + dy;
-            ymax = bounds.ymin;
-            xmin_remove = bounds.xmin;
-            xmax_remove = bounds.xmin + dx;
-            ymin_remove = bounds.ymax + dy;
-            ymin_remove = bounds.ymax;
-        } else {
-            // positive y axis
-            xmin = bounds.xmax;
-            xmax = bounds.xmax + dx;
-            ymin = bounds.ymax;
-            ymax = bounds.ymax + dy;
-            xmin_remove = bounds.xmin;
-            xmax_remove = bounds.xmin + dx;
-            ymin_remove = bounds.ymax;
-            ymin_remove = bounds.ymin + dy;
-        }
-    }
+void Terrain::shift(int idx, int idy) {
+    int dx = idx / frequencyDivisor;
+    int dy = idy / frequencyDivisor;
 
-    for (int i = xmin; i < xmax; i++) {
-        for (int j = ymin; j < ymax; j++) {
-            createSeed(i, j);
-        }
-    }
-    for (int i = xmin_remove; i < xmax_remove; i++) {
-        for (int j = ymin_remove; j < ymax_remove; j++) {
-            removeSeed(i, j);
-        }
-    }
-
+    // move bounds and create new seeds
     shiftBounds(this->bounds, dx, dy);
+
+    for (int i = bounds.xmin; i < bounds.xmax; i++) {
+        for (int j = bounds.ymin; j < bounds.ymax; j++) {
+            createSeed(i, j, true);
+        }
+    }
+
+    // clean up the heightmap cache
+    for (Point p : heightmap.keys()) {
+        if (p.x >= bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
+            heightmap.remove(p);
+        }
+    }
 }
 
 /**
@@ -166,34 +138,21 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
     return rx * gradients[p][0] + ry * gradients[p][1];
 }
 
-float Terrain::getBlock(float x, float y) {
-    Point p(x, y);
-    float height;
-    if (!heightmap.contains(p)) {
-        height = getHeight(x, y);
-        heightmap[p] = height;
-    } else {
-        height = heightmap[p];
-    }
-    return height;
-}
-
 // https://en.wikipedia.org/wiki/Perlin_noise
 // here the input floats are fractions we must find the closest sample for
 float Terrain::getHeight(float x, float y) {
     // Determine grid cell coordinates
     // send to full grid
-    float unfloored_x = (x * bounds.xmax) + abs(bounds.xmin);
-    float unfloored_y = (y * bounds.ymax) + abs(bounds.ymin);
+    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + abs(bounds.xmin);
+    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + abs(bounds.ymin);
 
-    int x0 = floor(x * bounds.xmax) + abs(bounds.xmin);
-    int y0 = floor(y * bounds.ymax) + abs(bounds.ymin);
+    int x0 = fmin(floor(unfloored_x), bounds.xmax - 1);
+    int y0 = fmin(floor(unfloored_y), bounds.ymax - 1);
     int x1 = fmin(x0 + 1, bounds.xmax - 1);
     int y1 = fmin(y0 + 1, bounds.ymax - 1);
     x1 = fmax(x1, 0);
     y1 = fmax(y1, 0);
 
-    // assign random weights?
     float sx = unfloored_x - (float) x0;
     float sy = unfloored_y - (float) y0;
 

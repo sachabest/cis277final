@@ -57,7 +57,7 @@ void MyGL::initializeGL()
     vao.bind();
 
     //Test scene data initialization
-    scene.CreateTestScene();
+    scene.CreateScene();
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -90,7 +90,7 @@ void MyGL::paintGL()
 void MyGL::GLDrawScene()
 {
     for (Point3 p : scene.points) {
-        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.y, p.x, p.z)));
+        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
         prog_lambert.draw(*this, geom_cube);
     }
 }
@@ -128,6 +128,9 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         gl_camera.TranslateAlongUp(-amount);
     } else if (e->key() == Qt::Key_E) {
         gl_camera.TranslateAlongUp(amount);
+    } else if (e->key() == Qt::Key_P) {
+        // temp
+        scene.shift(16, 0, 16);
     }
     gl_camera.RecomputeAttributes();
     update();  // Calls paintGL, among other things
