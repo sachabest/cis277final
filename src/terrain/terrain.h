@@ -4,6 +4,8 @@
 #include "la.h"
 #include "point.h"
 #include <QMap>
+#include <scene/geometry/chunk.h>
+#include <scene/point3.h>
 
 struct Bounds_t {
     int xmin;
@@ -17,6 +19,7 @@ public:
     Terrain(int maxX, int maxY, int frequenceDivisor = 8);
     void shift(int dx, int dy);
     float getBlock(float x, float y);
+    QMap<Point3, Chunk*> chunk_map;
 private:
     Bounds_t bounds;
     QMap<Point, QVector<float>> gradients;

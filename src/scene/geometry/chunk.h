@@ -10,9 +10,9 @@ public:
     Chunk();
     ~Chunk();
     void create();
+    QList<QList<QList<bool>>> cells;
 
 private:
-    QList<QList<QList<bool>>> cells;
     int index_count;
     int vertex_count;
     QVector<glm::vec3> createChunkVertexPositions();

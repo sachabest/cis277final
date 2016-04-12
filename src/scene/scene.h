@@ -3,12 +3,15 @@
 #include <scene/camera.h>
 #include "terrain/terrain.h"
 #include "point3.h"
+#include <scene/geometry/chunk.h>
 
 class Scene {
 public:
     Scene();
 
     void CreateScene();
+    void CreateChunkScene();
+    void CreateNewChunks();
     void shift(int dx, int dy, int dz);
 
     QList<Point3> points;
@@ -16,5 +19,5 @@ public:
     glm::vec3 origin;
     Terrain terrain;
 
-
+    int num_chunks;
 };

@@ -18,8 +18,10 @@ MyGL::MyGL(QWidget *parent)
 MyGL::~MyGL()
 {
     makeCurrent();
-
     vao.destroy();
+    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
+        delete chunk;
+    }
 }
 
 void MyGL::initializeGL()
@@ -51,7 +53,7 @@ void MyGL::initializeGL()
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     geom_cube.create();
-    test_chunk.create();
+    //test_chunk.create();
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
@@ -59,16 +61,16 @@ void MyGL::initializeGL()
 
     //Test scene data initialization
     scene.CreateScene();
+    scene.CreateChunkScene();
 }
 
 void MyGL::resizeGL(int w, int h)
 {
-    qDebug() << "Calling resize";
-//    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
-//                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
+    //    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
+    //                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
 
-    gl_camera = Camera(w, h, glm::vec3(10, 5, 10),
-                       glm::vec3(0), glm::vec3(0,1,0));
+    gl_camera = Camera(w, h, glm::vec3(0, 10, 0),
+                       glm::vec3(10, 2, 10), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
 
@@ -94,14 +96,25 @@ void MyGL::paintGL()
 
 void MyGL::GLDrawScene()
 {
-//    for (Point3 p : scene.points) {
-//        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-//        prog_lambert.draw(*this, geom_cube);
-//        }
-//    prog_lambert.setModelMatrix(glm::mat4());
-//    prog_lambert.draw(*this, test_chunk);
-    prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(0)));
-    prog_lambert.draw(*this, test_chunk);
+    //    for (Point3 p : scene.points) {
+    //        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+    //        prog_lambert.draw(*this, geom_cube);
+    //        }
+
+    int num_chunks = scene.num_chunks;
+    for (int x = 0; x < num_chunks; x++) {
+        for (int z = 0; z < num_chunks; z++) {
+            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3((x-(num_chunks/2))*16 + scene.origin.x, 0, (z-(num_chunks/2))*16 + scene.origin.z)));
+            prog_lambert.draw(*this, *(scene.terrain.chunk_map.value(Point3((x-(num_chunks/2))*16.0f + scene.origin.x, 0, (z-(num_chunks/2))*16.0f + scene.origin.z))));
+        }
+    }
+
+}
+
+// Given the current camera position, which chunk am I located on?
+Point3 MyGL::getChunkPosition()
+{
+    return Point3(glm::floor(gl_camera.eye.x/16.0f), 0, glm::floor(gl_camera.eye.y/16.0f));
 }
 
 void MyGL::keyPressEvent(QKeyEvent *e)
@@ -110,6 +123,7 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     if(e->modifiers() & Qt::ShiftModifier){
         amount = 10.0f;
     }
+    Point3 old_pos = getChunkPosition();
     // http://doc.qt.io/qt-5/qt.html#Key-enum
     if (e->key() == Qt::Key_Escape) {
         QApplication::quit();
@@ -142,5 +156,19 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         scene.shift(16, 0, 16);
     }
     gl_camera.RecomputeAttributes();
+    Point3 new_pos = getChunkPosition();
+    // We moved to a different chunk
+    if (!(old_pos == new_pos)) {
+        qDebug() << "Switched chunks";
+//        if (old_pos.x < new_pos.x) {
+//            scene.shift(-16, 0, 0);
+//        } else if (old_pos.x > new_pos.x) {
+//            scene.shift(16, 0, 0);
+//        } else if (old_pos.z < new_pos.z) {
+//            scene.shift(0, 0, -16);
+//        } else if (old_pos.z > new_pos.z) {
+//            scene.shift(0, 0, 16);
+//        }
+    }
     update();  // Calls paintGL, among other things
 }

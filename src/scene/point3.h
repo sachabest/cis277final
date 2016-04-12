@@ -8,6 +8,7 @@ public:
     float y;
     float z;
     bool operator<(const Point3 &p) const;
+    bool operator==(const Point3 &p) const;
 };
 
 #endif // POINT3_H

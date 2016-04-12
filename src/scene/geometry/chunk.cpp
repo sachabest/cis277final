@@ -14,7 +14,7 @@ Chunk::Chunk()
         for (int y = 0; y < 16; y++) {
             QList<bool> Ys;
             for (int z = 0; z < 16; z++) {
-                Ys.append(y < 2 && x == 0);
+                Ys.append(false);
             }
             Xs.append(Ys);
         }

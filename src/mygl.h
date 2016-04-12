@@ -30,6 +30,8 @@ private:
 
     Scene scene;
 
+    Point3 getChunkPosition();
+
 public:
     explicit MyGL(QWidget *parent = 0);
     ~MyGL();
