@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QTime>
 
-
+#define SHIFT_DISTANCE 8
 MyGL::MyGL(QWidget *parent)
     : GLWidget277(parent)
 {
@@ -166,14 +166,14 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         qDebug() << "New pos:";
         qDebug() << QString::fromStdString(glm::to_string(new_pos.toVec3()));
         if (new_pos.x > old_pos.x) {
-            scene.shift(16, 0, 0);
+            scene.shift(SHIFT_DISTANCE, 0, 0);
         } else if (new_pos.x < old_pos.x) {
-            scene.shift(-16, 0, 0);
+            scene.shift(-SHIFT_DISTANCE, 0, 0);
         }
         if (new_pos.z > old_pos.z) {
-            scene.shift(0, 0, 16);
+            scene.shift(0, 0, SHIFT_DISTANCE);
         } else if (new_pos.z < old_pos.z) {
-            scene.shift(0, 0, -16);
+            scene.shift(0, 0, -SHIFT_DISTANCE);
         }
     }
     //qDebug() << QString::fromStdString(glm::to_string(gl_camera.eye));

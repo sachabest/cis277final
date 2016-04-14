@@ -3,6 +3,7 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <math.h>
+#include <iostream>
 
 /**
  * @brief makeBounds - utility function to make bounding boxes
@@ -42,7 +43,7 @@ Terrain::Terrain(int maxX, int maxY, int fequencyDivisor) {
             createSeed(i, j);
         }
     }
-    this->bounds = makeBounds(0, 0, maxX / frequencyDivisor, maxY / frequencyDivisor);
+    this->bounds = makeBounds(0, 0, maxY / frequencyDivisor, maxY / frequencyDivisor);
 }
 
 void Terrain::createSeed(int i, int j, bool checkExists) {
@@ -64,8 +65,8 @@ void Terrain::removeSeed(int i, int j) {
 }
 
 float Terrain::getBlock(float x, float y) {
-    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + abs(bounds.xmin);
-    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + abs(bounds.ymin);
+    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + (bounds.xmin);
+    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + (bounds.ymin);
     Point p(unfloored_x, unfloored_y);
     float height;
 //    if (!heightmap.contains(p)) {
@@ -98,15 +99,15 @@ void Terrain::shift(int idx, int idy) {
     // move bounds and create new seeds
     shiftBounds(this->bounds, dx, dy);
 
-    for (int i = bounds.xmin; i < bounds.xmax; i++) {
-        for (int j = bounds.ymin; j < bounds.ymax; j++) {
+    for (int i = bounds.xmin; i <= bounds.xmax; i++) {
+        for (int j = bounds.ymin; j <= bounds.ymax; j++) {
             createSeed(i, j, true);
         }
     }
 
     // clean up the heightmap cache
     for (Point p : heightmap.keys()) {
-        if (p.x >= bounds.xmax || p.x < bounds.xmin || p.y >= bounds.ymax || p.y < bounds.ymin) {
+        if (p.x > bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
             heightmap.remove(p);
         }
     }
@@ -143,8 +144,8 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
 float Terrain::getHeight(float x, float y) {
     // Determine grid cell coordinates
     // send to full grid
-    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + abs(bounds.xmin);
-    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + abs(bounds.ymin);
+    float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + (bounds.xmin);
+    float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + (bounds.ymin);
 
     int x0 = fmin(floor(unfloored_x), bounds.xmax - 1);
     int y0 = fmin(floor(unfloored_y), bounds.ymax - 1);
