@@ -18,7 +18,10 @@ SOURCES += \
     $$PWD/terrain/point.cpp \
     $$PWD/scene/point3.cpp \
     $$PWD/util.cpp \
-    $$PWD/scene/geometry/chunk.cpp
+    $$PWD/scene/geometry/chunk.cpp \
+    $$PWD/scene/geometry/segment.cpp \
+    $$PWD/scene/geometry/cylinder.cpp \
+    $$PWD/generators/lparser.cpp
     $$PWD/scene/geometry/chunk.cpp
 
 HEADERS += \
@@ -42,5 +45,8 @@ HEADERS += \
     $$PWD/terrain/point.h \
     $$PWD/scene/point3.h \
     $$PWD/util.h \
-    $$PWD/scene/geometry/chunk.h
+    $$PWD/scene/geometry/chunk.h \
+    $$PWD/scene/geometry/segment.h \
+    $$PWD/scene/geometry/cylinder.h \
+    $$PWD/generators/lparser.h
     $$PWD/scene/geometry/chunk.h
