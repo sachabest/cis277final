@@ -3,11 +3,11 @@
 #include <scene/geometry/chunk.h>
 #define MAX_TERRAIN_HEIGHT 3
 
-static const int SCENE_DIM = 160;
-static const int TERRAIN_DIM = 160;
+static const int SCENE_DIM = 64;
+static const int TERRAIN_DIM = 64;
 
 // Dimensions must be a multiple of 16
-Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(0))
+Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(SCENE_DIM/2, 0, SCENE_DIM/2))
 {
 }
 
@@ -26,7 +26,7 @@ QList<Point3> Scene::voxelize(const QVector<LPair_t> &pairs) {
     for (LPair_t pair : pairs) {
         worldTransform *= pair.t;
         if (pair.draw) {
-            glm::vec3 point = glm::vec4(worldTransform[3]);
+            //glm::vec3 point = glm::vec4(worldTransform[3]);
             // carolina do something with this point plz
         }
     }
@@ -75,15 +75,20 @@ void Scene::CreateNewChunks()
 {
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            Point3 p = Point3(x_chunk*16.0f + origin.x, 0, z_chunk*16.0f + origin.z);
+            Point3 p = Point3((x_chunk-num_chunks/2)*16.0f + origin.x, 0, (z_chunk-num_chunks/2)*16.0f + origin.z);
             // Must generate a new chunk VBO
             if (!terrain.chunk_map.contains(p)) {
                 for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
-                    //qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+//                    qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+//                    qDebug() << "======";
                     Chunk* chunk = new Chunk();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
-                            float height = terrain.getBlock((x + 16*x_chunk + origin.x) / (float) dimensions[0], (z + 16*z_chunk + origin.z) / (float) dimensions[2]);
+                            float height = terrain.getBlock((x + (x_chunk-num_chunks/2)*16.0f + origin.x) / (float) dimensions[0], (z + (z_chunk-num_chunks/2)*16.0f + origin.z) / (float) dimensions[2]);
+                            if (height < 1) {
+                                height = 1.0f;
+                            }
+//                            qDebug() << height;
                             for (int y = y_chunk*16; y < height; y++) {
                                 if (height >= (y_chunk+1)*16) {
                                     break;
@@ -106,7 +111,7 @@ void Scene::findNearbyChunks()
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
             for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
-                Point3 p = Point3(x_chunk*16.0f + origin.x, y_chunk*16.0f + origin.y, z_chunk*16.0f + origin.z);
+                Point3 p = Point3((x_chunk-num_chunks/2)*16.0f + origin.x, y_chunk*16.0f + origin.y, (z_chunk-num_chunks/2)*16.0f + origin.z);
                 chunk_points.append(p);
             }
         }
