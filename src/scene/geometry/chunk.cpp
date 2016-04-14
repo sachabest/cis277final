@@ -7,6 +7,7 @@ Chunk::Chunk(QList<QList<QList<bool>>> cells) : cells(cells)
 
 }
 
+// Empty constructor sets all cells as not being occupied
 Chunk::Chunk()
 {
     for (int x = 0; x < 16; x++) {
@@ -23,9 +24,7 @@ Chunk::Chunk()
 }
 
 Chunk::~Chunk()
-{
-
-}
+{}
 
 QVector<glm::vec3> Chunk::createChunkVertexPositions()
 {
@@ -34,6 +33,34 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
         for (int y = 0; y < cells.size(); y++) {
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z]) {
+                    // Front face
+                    if (z == cells.size()-1 || !cells[x][y][z+1]) {
+                        positions.append(glm::vec3(x+1, y+1, z+1));       // UR
+                        positions.append(glm::vec3(x+1, y, z+1)); // LR
+                        positions.append(glm::vec3(x, y, z+1)); // LL
+                        positions.append(glm::vec3(x, y+1, z+1)); // UL
+                    }
+                    // Right face
+                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
+                        positions.append(glm::vec3(x+1, y+1, z)); // UR
+                        positions.append(glm::vec3(x+1, y, z)); // LR
+                        positions.append(glm::vec3(x+1, y, z+1)); // LL
+                        positions.append(glm::vec3(x+1, y+1, z+1));       // UL
+                    }
+                    // Left face
+                    if (x == 0 || !cells[x-1][y][z]) {
+                        positions.append(glm::vec3(x, y+1, z+1)); // UR
+                        positions.append(glm::vec3(x, y, z+1)); // LR
+                        positions.append(glm::vec3(x, y, z));       // LL
+                        positions.append(glm::vec3(x, y+1, z)); // UL
+                    }
+                    // Back face
+                    if (z == 0 || !cells[x][y][z-1]) {
+                        positions.append(glm::vec3(x, y+1, z)); // UR
+                        positions.append(glm::vec3(x, y, z));       // LR
+                        positions.append(glm::vec3(x+1, y, z)); // LL
+                        positions.append(glm::vec3(x+1, y+1, z)); // UL
+                    }
                     // Top face
                     if (y == cells.size() - 1 || !cells[x][y+1][z]) {
                         positions.append(glm::vec3(x+1, y+1, z)); // UR
@@ -47,34 +74,6 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
                         positions.append(glm::vec3(x+1, y, z)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y, z+1)); // UL
-                    }
-                    // Left face
-                    if (x == 0 || !cells[x-1][y][z]) {
-                        positions.append(glm::vec3(x, y+1, z+1)); // UR
-                        positions.append(glm::vec3(x, y, z+1)); // LR
-                        positions.append(glm::vec3(x, y, z));       // LL
-                        positions.append(glm::vec3(x, y+1, z)); // UL
-                    }
-                    // Right face
-                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
-                        positions.append(glm::vec3(x+1, y+1, z)); // UR
-                        positions.append(glm::vec3(x+1, y, z)); // LR
-                        positions.append(glm::vec3(x+1, y, z+1)); // LL
-                        positions.append(glm::vec3(x+1, y+1, z+1));       // UL
-                    }
-                    // Front face
-                    if (z == 0 || !cells[x][y][z-1]) {
-                        positions.append(glm::vec3(x+1, y+1, z+1));       // UR
-                        positions.append(glm::vec3(x+1, y, z+1)); // LR
-                        positions.append(glm::vec3(x, y, z+1)); // LL
-                        positions.append(glm::vec3(x, y+1, z+1)); // UL
-                    }
-                    // Back face
-                    if (z == cells.size() - 1 || !cells[x][y][z+1]) {
-                        positions.append(glm::vec3(x, y+1, z)); // UR
-                        positions.append(glm::vec3(x, y, z));       // LR
-                        positions.append(glm::vec3(x+1, y, z)); // LL
-                        positions.append(glm::vec3(x+1, y+1, z)); // UL
                     }
                 }
             }
@@ -91,6 +90,30 @@ QVector<glm::vec3> Chunk::createChunkVertexNormals()
         for (int y = 0; y < cells.size(); y++) {
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z]) {
+                    // Front face
+                    if (z == cells.size() - 1 || !cells[x][y][z+1]) {
+                        for (int i = 0; i < 4; i++) {
+                            normals.append(glm::vec3(0, 0, 1));
+                        }
+                    }
+                    // Right face
+                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
+                        for (int i = 0; i < 4; i++) {
+                            normals.append(glm::vec3(1, 0, 0));
+                        }
+                    }
+                    // Left face
+                    if (x == 0 || !cells[x-1][y][z]) {
+                        for (int i = 0; i < 4; i++) {
+                            normals.append(glm::vec3(-1, 0, 0));
+                        }
+                    }
+                    // Back face
+                    if (z == 0 || !cells[x][y][z-1]) {
+                        for (int i = 0; i < 4; i++) {
+                            normals.append(glm::vec3(0, 0, -1));
+                        }
+                    }
                     // Top face
                     if (y == cells.size() - 1 || !cells[x][y+1][z]) {
                         for (int i = 0; i < 4; i++) {
@@ -101,30 +124,6 @@ QVector<glm::vec3> Chunk::createChunkVertexNormals()
                     if (y == 0 || !cells[x][y-1][z]) {
                         for (int i = 0; i < 4; i++) {
                             normals.append(glm::vec3(0, -1, 0));
-                        }
-                    }
-                    // Left face
-                    if (x == 0 || !cells[x-1][y][z]) {
-                        for (int i = 0; i < 4; i++) {
-                            normals.append(glm::vec3(-1, 0, 0));
-                        }
-                    }
-                    // Right face
-                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
-                        for (int i = 0; i < 4; i++) {
-                            normals.append(glm::vec3(1, 0, 0));
-                        }
-                    }
-                    // Front face
-                    if (z == 0 || !cells[x][y][z-1]) {
-                        for (int i = 0; i < 4; i++) {
-                            normals.append(glm::vec3(0, 0, 1));
-                        }
-                    }
-                    // Back face
-                    if (z == cells.size() - 1 || !cells[x][y][z+1]) {
-                        for (int i = 0; i < 4; i++) {
-                            normals.append(glm::vec3(0, 0, -1));
                         }
                     }
                 }
@@ -156,23 +155,10 @@ void Chunk::create()
     QVector<GLuint> indices = createChunkIndices();
     QVector<glm::vec3> colors;
 
+    const glm::vec3 color = glm::vec3(((float) rand()) / (float) RAND_MAX, ((float) rand()) / (float) RAND_MAX, ((float) rand()) / (float) RAND_MAX);
+
     for(int i = 0; i < vertex_count; i++){
-        colors.append(glm::vec3(0.2f, 1.0f, 0.6f));
-    }
-
-    QVector<GLuint> std_indices;
-    QVector<glm::vec3> std_positions;
-    QVector<glm::vec3> std_normals;
-    QVector<glm::vec3> std_colors;
-
-    for (int i = 0; i < positions.size(); i++) {
-        std_positions.append(positions[i]);
-        std_normals.append(normals[i]);
-        std_colors.append(colors[i]);
-    }
-
-    for (int i = 0; i < indices.size(); i++) {
-        std_indices.append(indices[i]);
+        colors.append(color);
     }
 
     count = index_count;
@@ -180,20 +166,20 @@ void Chunk::create()
     bufIdx.create();
     bufIdx.bind();
     bufIdx.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufIdx.allocate(std_indices.data(), index_count * sizeof(GLuint));
+    bufIdx.allocate(indices.data(), index_count * sizeof(GLuint));
 
     bufPos.create();
     bufPos.bind();
     bufPos.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufPos.allocate(std_positions.data(), vertex_count * sizeof(glm::vec3));
+    bufPos.allocate(positions.data(), vertex_count * sizeof(glm::vec3));
 
     bufNor.create();
     bufNor.bind();
     bufNor.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufNor.allocate(std_normals.data(), vertex_count * sizeof(glm::vec3));
+    bufNor.allocate(normals.data(), vertex_count * sizeof(glm::vec3));
 
     bufCol.create();
     bufCol.bind();
     bufCol.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    bufCol.allocate(std_colors.data(), vertex_count * sizeof(glm::vec3));
+    bufCol.allocate(colors.data(), vertex_count * sizeof(glm::vec3));
 }

@@ -3,7 +3,11 @@
 #include <scene/geometry/chunk.h>
 #define MAX_TERRAIN_HEIGHT 3
 
-Scene::Scene() : dimensions(96, 96, 96), terrain(96, 96), num_chunks(6), origin(glm::vec3(0))
+static const int SCENE_DIM = 160;
+static const int TERRAIN_DIM = 160;
+
+// Dimensions must be a multiple of 16
+Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(0))
 {
 }
 
@@ -12,7 +16,7 @@ void Scene::shift(int dx, int dy, int dz) {
     origin.y += dy;
     origin.z += dz;
     terrain.shift(dx, dz);
-    //CreateScene();
+    CreateScene();
     CreateNewChunks();
     findNearbyChunks();
 }
@@ -34,19 +38,24 @@ void Scene::CreateChunkScene() {
     qDebug() << "Creating chunks";
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            Chunk* chunk = new Chunk();
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    float height = terrain.getBlock((x + 16*x_chunk) / (float) dimensions[0], (z + 16*z_chunk) / (float) dimensions[2]);
-                    for (int y = 0; y < height; y++) {
-                        chunk->cells[x][y][z] = true;
+            for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
+                Chunk* chunk = new Chunk();
+                for (int x = 0; x < 16; x++) {
+                    for (int z = 0; z < 16; z++) {
+                        float height = terrain.getBlock((x + x_chunk*16) / (float) dimensions[0], (z + z_chunk*16) / (float) dimensions[2]);
+                        for (int y = y_chunk*16; y <= height; y++) {
+                            if (height >= (y_chunk+1)*16) {
+                                break;
+                            }
+                            chunk->cells[x][y-y_chunk*16][z] = true;
+                        }
                     }
                 }
+                chunk->create();
+                Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
+                terrain.chunk_map.insert(p, chunk);
+                chunk_points.append(p);
             }
-            chunk->create();
-            Point3 p = Point3((x_chunk-(num_chunks/2))*16.0f, 0, (z_chunk-(num_chunks/2))*16.0f);
-            terrain.chunk_map.insert(p, chunk);
-            chunk_points.append(p);
         }
     }
 }
@@ -55,20 +64,26 @@ void Scene::CreateNewChunks()
 {
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            Point3 p = Point3((x_chunk-(num_chunks/2))*16.0f + origin.x, 0, (z_chunk-(num_chunks/2))*16.0f + origin.z);
+            Point3 p = Point3(x_chunk*16.0f + origin.x, 0, z_chunk*16.0f + origin.z);
             // Must generate a new chunk VBO
             if (!terrain.chunk_map.contains(p)) {
-                Chunk* chunk = new Chunk();
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        float height = terrain.getBlock((x + 16*x_chunk + origin.x) / (float) dimensions[0], (z + 16*z_chunk + origin.z) / (float) dimensions[2]);
-                        for (int y = 0; y < height; y++) {
-                            chunk->cells[x][y][z] = true;
+                for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
+                    //qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+                    Chunk* chunk = new Chunk();
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            float height = terrain.getBlock((x + 16*x_chunk + origin.x) / (float) dimensions[0], (z + 16*z_chunk + origin.z) / (float) dimensions[2]);
+                            for (int y = y_chunk*16; y < height; y++) {
+                                if (height >= (y_chunk+1)*16) {
+                                    break;
+                                }
+                                chunk->cells[x][y-y_chunk*16][z] = true;
+                            }
                         }
                     }
+                    chunk->create();
+                    terrain.chunk_map.insert(Point3(p.x, y_chunk*16.0f, p.z), chunk);
                 }
-                chunk->create();
-                terrain.chunk_map.insert(p, chunk);
             }
         }
     }
@@ -77,10 +92,12 @@ void Scene::CreateNewChunks()
 void Scene::findNearbyChunks()
 {
     chunk_points.clear();
-    for (int x = 0; x < num_chunks; x++) {
-        for (int z = 0; z < num_chunks; z++) {
-            Point3 p = Point3((x-(num_chunks/2))*16.0f + origin.x, 0, (z-(num_chunks/2))*16.0f + origin.z);
-            chunk_points.append(p);
+    for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
+        for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
+            for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
+                Point3 p = Point3(x_chunk*16.0f + origin.x, y_chunk*16.0f + origin.y, z_chunk*16.0f + origin.z);
+                chunk_points.append(p);
+            }
         }
     }
 }

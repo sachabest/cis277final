@@ -19,9 +19,9 @@ MyGL::~MyGL()
 {
     makeCurrent();
     vao.destroy();
-    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
-        delete chunk;
-    }
+//    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
+//        delete chunk;
+//    }
 }
 
 void MyGL::initializeGL()
@@ -69,7 +69,7 @@ void MyGL::resizeGL(int w, int h)
     //    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
     //                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
 
-    gl_camera = Camera(w, h, glm::vec3(0, 10, 0),
+    gl_camera = Camera(w, h, glm::vec3(32, 10, 32),
                        glm::vec3(10, 2, 10), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
@@ -96,24 +96,11 @@ void MyGL::paintGL()
 
 void MyGL::GLDrawScene()
 {
-    //    for (Point3 p : scene.points) {
-    //        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-    //        prog_lambert.draw(*this, geom_cube);
-    //        }
-
-// int num_chunks = scene.num_chunks;
-//    for (int x = 0; x < num_chunks; x++) {
-//        for (int z = 0; z < num_chunks; z++) {
-
-//            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3((x-(num_chunks/2))*16 + scene.origin.x, 0, (z-(num_chunks/2))*16 + scene.origin.z)));
-//            Point3 p = Point3((x-(num_chunks/2))*16.0f + scene.origin.x, 0, (z-(num_chunks/2))*16.0f + scene.origin.z);
-//            if (scene.terrain.chunk_map[p]) {
-//            prog_lambert.draw(*this, *(scene.terrain.chunk_map.value(p)));
-//            } else {
-//                qDebug() << "Asdf";
+//        for (Point3 p : scene.points) {
+//            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+//            prog_lambert.draw(*this, geom_cube);
 //            }
-//        }
-//    }
+
     for (Point3 p : scene.chunk_points) {
         prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
         if (scene.terrain.chunk_map[p]) {
@@ -128,7 +115,7 @@ void MyGL::GLDrawScene()
 // Given the current camera position, which chunk am I located on?
 Point3 MyGL::getChunkPosition()
 {
-    return Point3(glm::floor(gl_camera.eye.x/16.0f), 0, glm::floor(gl_camera.eye.y/16.0f));
+    return Point3(glm::floor(gl_camera.eye.x/16.0f), glm::floor(gl_camera.eye.y/160.f), glm::floor(gl_camera.eye.z/16.0f));
 }
 
 void MyGL::keyPressEvent(QKeyEvent *e)
@@ -174,16 +161,21 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     // We moved to a different chunk
     if (!(old_pos == new_pos)) {
         qDebug() << "Switched chunks";
-        if (old_pos.x < new_pos.x) {
+        qDebug() << "Old pos:";
+        qDebug() << QString::fromStdString(glm::to_string(old_pos.toVec3()));
+        qDebug() << "New pos:";
+        qDebug() << QString::fromStdString(glm::to_string(new_pos.toVec3()));
+        if (new_pos.x > old_pos.x) {
             scene.shift(16, 0, 0);
-        } else if (old_pos.x > new_pos.x) {
+        } else if (new_pos.x < old_pos.x) {
             scene.shift(-16, 0, 0);
         }
-        if (old_pos.z < new_pos.z) {
+        if (new_pos.z > old_pos.z) {
             scene.shift(0, 0, 16);
-        } else if (old_pos.z > new_pos.z) {
+        } else if (new_pos.z < old_pos.z) {
             scene.shift(0, 0, -16);
         }
     }
+    //qDebug() << QString::fromStdString(glm::to_string(gl_camera.eye));
     update();  // Calls paintGL, among other things
 }
