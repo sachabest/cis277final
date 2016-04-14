@@ -17,6 +17,17 @@ void Scene::shift(int dx, int dy, int dz) {
     findNearbyChunks();
 }
 
+QList<Point3> Scene::voxelize(const QVector<LPair_t> &pairs) {
+    glm::mat4 worldTransform;
+    for (LPair_t pair : pairs) {
+        worldTransform *= pair.t;
+        if (pair.draw) {
+            glm::vec3 point = glm::vec4(worldTransform[3]);
+            // carolina do something with this point plz
+        }
+    }
+}
+
 void Scene::CreateScene() {
     points.clear();
     for(int x = 0; x < dimensions.x; x++) {
