@@ -75,7 +75,7 @@ float Terrain::getBlock(float x, float y) {
 //    } else {
 //        height = heightmap[p];
 //    }
-    return getHeight(x, y);;
+    return getHeight(x, y);
 }
 
 /*
@@ -136,6 +136,7 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
     float rx = fabs(dx - x);
     float ry = fabs( dy - y);
     Point p = Point(x, y);
+
     return rx * gradients[p][0] + ry * gradients[p][1];
 }
 

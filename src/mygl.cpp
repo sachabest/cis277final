@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QTime>
 
-#define SHIFT_DISTANCE 8
+#define SHIFT_DISTANCE 16
 MyGL::MyGL(QWidget *parent)
     : GLWidget277(parent)
 {
@@ -19,9 +19,9 @@ MyGL::~MyGL()
 {
     makeCurrent();
     vao.destroy();
-//    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
-//        delete chunk;
-//    }
+    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
+        delete chunk;
+    }
 }
 
 void MyGL::initializeGL()
@@ -69,7 +69,7 @@ void MyGL::resizeGL(int w, int h)
     //    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
     //                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
 
-    gl_camera = Camera(w, h, glm::vec3(32, 10, 32),
+    gl_camera = Camera(w, h, glm::vec3(scene.dimensions[0]/2, 20, scene.dimensions[2]/2),
                        glm::vec3(10, 2, 10), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
@@ -107,6 +107,7 @@ void MyGL::GLDrawScene()
             prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
         } else {
             qDebug() << "Couldn't find chunk in map";
+            qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
         }
     }
 
