@@ -5,12 +5,13 @@
 
 #define MAX_TERRAIN_HEIGHT 3
 
-static const int SCENE_DIM = 160;
-static const int TERRAIN_DIM = 160;
+static const int SCENE_DIM = 128;
+static const int TERRAIN_DIM = 128;
 
 // Dimensions must be a multiple of 16
 Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(0, 0, 0))
 {
+    this->octree = new OctNode(Point3(0, 0, 0), tree_length);
 }
 
 void Scene::shift(int dx, int dy, int dz) {
@@ -44,13 +45,24 @@ Chunk* Scene::getContainingChunk(Point3 p)
     }
 }
 
+OctNode* Scene::getContainingNode(Point3 p)
+{
+    Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
+    return octree->getContainingNode(p2);
+}
+
+Point3 Scene::worldToChunk(Point3 p)
+{
+    return Point3(glm::floor(p.x - (16*glm::floor(p.x/16))), glm::floor(p.y - 16*glm::floor(p.y/16)), glm::floor(p.z - 16*glm::floor(p.z/16)));
+}
+
 bool Scene::isFilled(Point3 p)
 {
     Chunk* chunk = getContainingChunk(p);
     if (!chunk) {   // Chunk doesn't exist
         return false;
     }
-    Point3 p_chunk = Point3(glm::floor(p.x - (16*glm::floor(p.x/16))), glm::floor(p.y - 16*glm::floor(p.y/16)), glm::floor(p.z - 16*glm::floor(p.z/16)));
+    Point3 p_chunk = worldToChunk(p);
     return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
 }
 
@@ -90,6 +102,10 @@ void Scene::CreateChunkScene() {
                 Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
                 terrain.chunk_map.insert(p, chunk);
                 chunk_points.append(p);
+                OctNode* leaf = getContainingNode(p);
+                leaf->chunk = chunk;
+                qDebug() << "Set chunk at: ";
+                qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
             }
         }
     }

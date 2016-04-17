@@ -39,6 +39,7 @@ public:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+    void drawChunks(OctNode* node);
 
     void SceneLoadDialog();
     void GLDrawScene();

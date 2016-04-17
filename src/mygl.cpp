@@ -94,6 +94,18 @@ void MyGL::paintGL()
     GLDrawScene();
 }
 
+void MyGL::drawChunks(OctNode* node)
+{
+    if (node->is_leaf) {
+        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(node->base.x*16, node->base.y*16, node->base.z*16)));
+        prog_lambert.draw(*this, *(node->chunk));
+    } else {    // Draw its children
+        for (OctNode* child : node->children) {
+            drawChunks(child);
+        }
+    }
+}
+
 void MyGL::GLDrawScene()
 {
 //        for (Point3 p : scene.points) {
@@ -101,16 +113,17 @@ void MyGL::GLDrawScene()
 //            prog_lambert.draw(*this, geom_cube);
 //            }
 
-    for (Point3 p : scene.chunk_points) {
-        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-        if (scene.terrain.chunk_map[p]) {
-            prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
-        } else {
-            qDebug() << "Couldn't find chunk in map";
-            qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
-        }
-    }
+//    for (Point3 p : scene.chunk_points) {
+//        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
+//        if (scene.terrain.chunk_map[p]) {
+//            prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
+//        } else {
+//            qDebug() << "Couldn't find chunk in map";
+//            qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+//        }
+//    }
 
+    drawChunks(scene.octree);
 }
 
 // Given the current camera position, which chunk am I located on?
