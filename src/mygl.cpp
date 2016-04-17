@@ -118,28 +118,36 @@ void MyGL::GLDrawScene()
 //false-> try to move to left
 void MyGL::collisionX(bool right) {
     glm::vec3 eye = gl_camera.eye;
-    Point3 xone = Point3(eye.x-1, eye.y, eye.z);
-    Point3 xtwo = Point3(eye.x+1, eye.y, eye.z);
-    Point3 xthree = Point3(eye.x-1, eye.y-1, eye.z);
-    Point3 xfour = Point3(eye.x+1, eye.y-1, eye.z);
+    Point3 xone = Point3(glm::floor(eye.x-1), glm::floor(eye.y), glm::floor(eye.z));
+    Point3 xtwo = Point3(glm::floor(eye.x+1), glm::floor(eye.y), glm::floor(eye.z));
+    Point3 xthree = Point3(glm::floor(eye.x-1), glm::floor(eye.y-1), glm::floor(eye.z));
+    Point3 xfour = Point3(glm::floor(eye.x+1), glm::floor(eye.y-1), glm::floor(eye.z));
 
     QList<Point3> points = scene.points;
 
-    if (!(points.contains(xone)) && !(points.contains(xthree))) {
-        leftx = true;
-        for (int i = 0 ; i < 3; i++) {
-            float amount = gravity * i;
-            gl_camera.TranslateAlongRight(-amount);
+    if (!right) {
+        if (!(points.contains(xone)) && !(points.contains(xthree))) {
+            std::cout << "in trying to move left" << std::endl;
+            leftx = true;
+            for (int i = 0 ; i < 3; i++) {
+                //float amount = gravity * i;
+                float amount = 1.0f;
+                gl_camera.TranslateAlongRight(-amount);
+            }
+            //leftx = false;
         }
-        leftx = false;
     }
-    else if (!(points.contains(xtwo)) && !(points.contains(xfour))) {
-        rightx = true;
-        for (int i = 0 ; i < 3; i++) {
-            float amount = gravity * i;
-            gl_camera.TranslateAlongRight(amount);
+    else if (right) {
+        if (!(points.contains(xtwo)) && !(points.contains(xfour))) {
+            std::cout << "in tryin to move right" << std::endl;
+            rightx = true;
+            for (int i = 0 ; i < 3; i++) {
+                //float amount = gravity * i;
+                float amount = 1.0f;
+                gl_camera.TranslateAlongRight(amount);
+            }
+            //rightx = false;
         }
-        rightx = false;
     }
 
     //if all four blocks are empty -> you can move
@@ -179,8 +187,8 @@ void MyGL::collisionX(bool right) {
 void MyGL::collisionY(bool up) {
     //std::cout << "here in collision y" << std::endl;
     glm::vec3 eye = gl_camera.eye;
-    Point3 yone = Point3(eye.x, eye.y+0.5, eye.z);
-    Point3 ytwo = Point3(eye.x, eye.y-1, eye.z);
+    Point3 yone = Point3(glm::floor(eye.x), glm::floor(eye.y+0.5), glm::floor(eye.z));
+    Point3 ytwo = Point3(glm::floor(eye.x), glm::floor(eye.y-3), glm::floor(eye.z));
 
     QList<Point3> points = scene.points;
     //you can move up and you are trying to move up
@@ -204,6 +212,7 @@ void MyGL::collisionY(bool up) {
     else if (up) {
         if (!points.contains(yone)) {
             for (int i = 0 ; i < 3; i++) {
+                //terminal v is 4;
                 float amount = gravity * i * i;
                 gl_camera.TranslateAlongUp(amount);
             }
@@ -217,31 +226,39 @@ void MyGL::collisionY(bool up) {
 void MyGL::collisionZ(bool look) {
     glm::vec3 eye = gl_camera.eye;
 
-    Point3 zone = Point3(eye.x, eye.y, eye.z-1);
-    Point3 ztwo = Point3(eye.x, eye.y, eye.z+1);
-    Point3 zthree = Point3(eye.x, eye.y-1, eye.z-1);
-    Point3 zfour = Point3(eye.x, eye.y+1, eye.z+1);
+    Point3 zone = Point3(glm::floor(eye.x), glm::floor(eye.y), glm::floor(eye.z-1));
+    Point3 ztwo = Point3(glm::floor(eye.x), glm::floor(eye.y), glm::floor(eye.z+1));
+    Point3 zthree = Point3(glm::floor(eye.x), glm::floor(eye.y-1), glm::floor(eye.z-1));
+    Point3 zfour = Point3(glm::floor(eye.x), glm::floor(eye.y+1), glm::floor(eye.z+1));
 
 
     QList<Point3> points = scene.points;
 
-    if (!(points.contains(zone)) && !(points.contains(zthree))) {
-
-        outz = true;
-        for (int i = 0 ; i < 3; i++) {
-            float amount = i*gravity;
-            gl_camera.TranslateAlongLook(-amount);
+    if (!look) {
+        if (!(points.contains(zone)) && !(points.contains(zthree))) {
+            std::cout << "moving out" << std::endl;
+            outz = true;
+            for (int i = 0 ; i < 3; i++) {
+                //float amount = i*gravity;
+                float amount = 1.0f;
+                gl_camera.TranslateAlongLook(-amount);
+            }
+            //outz = false;
         }
-        outz = false;
     }
-    else if (!(points.contains(ztwo)) && !(points.contains(zfour))) {
-        inz = true;
 
-        for (int i = 0 ; i < 3; i++) {
-            float amount = gravity * i;
-            gl_camera.TranslateAlongLook(amount);
+    else if(look) {
+        if (!(points.contains(ztwo)) && !(points.contains(zfour))) {
+            std::cout << "moving in" << std::endl;
+            inz = true;
+
+            for (int i = 0 ; i < 3; i++) {
+                //float amount = gravity * i;
+                float amount = 1.0f;
+                gl_camera.TranslateAlongLook(amount);
+            }
+            //inz = false;
         }
-        inz = false;
     }
     //if all four blocks are empty -> you can move
    /* if (((!scene.objects[zone.x][zone.y][zone.z]) &&
@@ -285,22 +302,26 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         //gl_camera.TranslateAlongLook(amount);
         inz = true;
         timerUpdate();
+        inz = false;
 
     } else if (e->key() == Qt::Key_S) {
         //gl_camera.TranslateAlongLook(-amount);
         outz = true;
         timerUpdate();
+        outz = false;
     }
     //x direction
     else if (e->key() == Qt::Key_D) {
  //       gl_camera.TranslateAlongRight(amount);
         rightx = true;
         timerUpdate();
+        rightx = false;
 
     } else if (e->key() == Qt::Key_A) {
        // gl_camera.TranslateAlongRight(-amount);
         leftx = true;
         timerUpdate();
+        leftx = false;
     }
 
     //y direction
