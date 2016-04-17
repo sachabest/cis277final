@@ -169,6 +169,16 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     } else if (e->key() == Qt::Key_P) {
         // temp
         scene.shift(16, 0, 16);
+    } else if (e->key() == Qt::Key_8) {
+        // make plant
+        QVector<LPair_t> tree = LParser::makeTree();
+        scene.voxelize(tree);
+    } else if (e->key() == Qt::Key_9) {
+        // make plant
+        QVector<LPair_t> tree = LParser::makeBrush();
+        scene.voxelize(tree);
+    } else if (e->key() == Qt::Key_0) {
+        // make plant
     }
     gl_camera.RecomputeAttributes();
     Point3 new_pos = getChunkPosition();

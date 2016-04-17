@@ -24,19 +24,92 @@ void Scene::shift(int dx, int dy, int dz) {
     findNearbyChunks();
 }
 
-QList<Point3> Scene::voxelize(const QVector<LPair_t> &pairs) {
+void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
+    Point3 p(p1.x, p1.y, p1.z);
+    Chunk *chunk = nullptr;
+    int dx = p2.x - p1.x;
+    int dy = p2.y - p1.y;
+    int dz = p2.z - p1.z;
+    int xDir = (dx < 0) ? -1 : 1;
+    int l = abs(dx);
+    int yDir = (dy < 0) ? -1 : 1;
+    int m = abs(dy);
+    int zDir = (dz < 0) ? -1 : 1;
+    int n = abs(dz);
+    int error_1, error_2;
+    int dx_err = l << 1;
+    int dy_err = m << 1;
+    int dz_err = n << 1;
+    if ((l >= m) && (l >= n)) {
+        error_1 = dy_err - l;
+        error_2 = dz_err - l;
+        for (int i = 0; i < l; i++) {
+            chunk = getContainingChunk(p);
+            // assign to point here
+            if (error_1 > 0) {
+                p.y += yDir;
+                error_1 -= dx_err;
+            }
+            if (error_2 > 0) {
+                p.z += zDir;
+                error_2 -= dx_err;
+            }
+            error_1 += dy_err;
+            error_2 += dz_err;
+            p.x += xDir;
+        }
+    } else if ((m >= l) && (m >= n)) {
+        error_1 = dy_err - m;
+        error_2 = dz_err - m;
+        for (int i = 0; i < m; i++) {
+            chunk = getContainingChunk(p);
+            // assign to point here
+            if (error_1 > 0) {
+                p.x += xDir;
+                error_1 -= dy_err;
+            }
+            if (error_2 > 0) {
+                p.z += zDir;
+                error_2 -= dy_err;
+            }
+            error_1 += dy_err;
+            error_2 += dz_err;
+            p.y += yDir;
+        }
+    } else {
+        error_1 = dy_err - n;
+        error_2 = dz_err - n;
+        for (int i = 0; i < n; i++) {
+            chunk = getContainingChunk(p);
+            // assign to point here
+            if (error_1 > 0) {
+                p.y += yDir;
+                error_1 -= dz_err;
+            }
+            if (error_2 > 0) {
+                p.x += xDir;
+                error_2 -= dz_err;
+            }
+            error_1 += dy_err;
+            error_2 += dx_err;
+            p.z += zDir;
+        }
+    }
+    // assign to point here
+}
+
+void Scene::voxelize(const QVector<LPair_t> &pairs) {
     glm::mat4 worldTransform;
     for (LPair_t pair : pairs) {
-        worldTransform *= pair.t;
+        glm::mat4 newTransform = worldTransform * pair.t;
         if (pair.draw) {
-            //glm::vec3 point = glm::vec4(worldTransform[3]);
-            // carolina do something with this point plz
+            bresenham(worldTransform[3], newTransform[3]);
         }
+        worldTransform = newTransform;
     }
 }
 
-Chunk* Scene::getContainingChunk(Point3 p)
-{
+Chunk* Scene::getContainingChunk(Point3 p) const {
     Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
     if (terrain.chunk_map.contains(p2)) {
         return terrain.chunk_map[p2];
