@@ -17,6 +17,7 @@ public:
     void shift(int dx, int dy, int dz);
 
     Chunk* getContainingChunk(Point3 p);
+    bool isFilled(Point3 p);
     QList<Point3> voxelize(const QVector<LPair_t> &pairs);
     QList<Point3> points;
     glm::ivec3 dimensions;
