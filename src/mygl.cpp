@@ -19,9 +19,7 @@ MyGL::~MyGL()
 {
     makeCurrent();
     vao.destroy();
-    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
-        delete chunk;
-    }
+    delete scene.octree;
 }
 
 void MyGL::initializeGL()
@@ -60,17 +58,16 @@ void MyGL::initializeGL()
     vao.bind();
 
     //Test scene data initialization
-    scene.CreateScene();
     scene.CreateChunkScene();
 }
 
 void MyGL::resizeGL(int w, int h)
 {
-    //    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
-    //                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
-
     gl_camera = Camera(w, h, glm::vec3(scene.dimensions[0]/2, 20, scene.dimensions[2]/2),
                        glm::vec3(10, 2, 10), glm::vec3(0,1,0));
+
+    //gl_camera = Camera(w, h, glm::vec3(0, 20, 0),
+    //                   glm::vec3(0, 2, 1), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
 
@@ -96,7 +93,7 @@ void MyGL::paintGL()
 
 void MyGL::drawChunks(OctNode* node)
 {
-    if (node->is_leaf) {
+    if (node->is_leaf && node->chunk) {
         prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(node->base.x*16, node->base.y*16, node->base.z*16)));
         prog_lambert.draw(*this, *(node->chunk));
     } else {    // Draw its children
@@ -108,21 +105,6 @@ void MyGL::drawChunks(OctNode* node)
 
 void MyGL::GLDrawScene()
 {
-//        for (Point3 p : scene.points) {
-//            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-//            prog_lambert.draw(*this, geom_cube);
-//            }
-
-//    for (Point3 p : scene.chunk_points) {
-//        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-//        if (scene.terrain.chunk_map[p]) {
-//            prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
-//        } else {
-//            qDebug() << "Couldn't find chunk in map";
-//            qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
-//        }
-//    }
-
     drawChunks(scene.octree);
 }
 
