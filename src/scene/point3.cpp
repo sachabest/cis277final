@@ -26,6 +26,10 @@ bool Point3::operator==(const Point3 &p) const {
     return fequal(this->x, p.x) && fequal(this->y, p.y) && fequal(this->z, p.z);
 }
 
+Point3 Point3::operator-(const Point3 &p) const {
+    return Point3(this->x - p.x, this->y - p.y, this->z - p.z);
+}
+
 glm::vec3 Point3::toVec3() {
     return glm::vec3(this->x, this->y, this->z);
 }

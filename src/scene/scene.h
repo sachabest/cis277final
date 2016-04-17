@@ -19,6 +19,7 @@ public:
     Chunk* getContainingChunk(Point3 p) const;
     void voxelize(const QVector<LPair_t> &pairs);
     void bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const;
+    bool isFilled(Point3 p);
     QList<Point3> points;
     glm::ivec3 dimensions;
     glm::vec3 origin;

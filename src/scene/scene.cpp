@@ -117,6 +117,15 @@ Chunk* Scene::getContainingChunk(Point3 p) const {
     }
 }
 
+bool Scene::isFilled(Point3 p) {
+    Chunk* chunk = getContainingChunk(p);
+    if (!chunk) {   // Chunk doesn't exist
+        return false;
+    }
+    Point3 p_chunk = Point3(glm::floor(p.x - (16*glm::floor(p.x/16))), glm::floor(p.y - 16*glm::floor(p.y/16)), glm::floor(p.z - 16*glm::floor(p.z/16)));
+    return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
+}
+
 void Scene::CreateScene() {
     points.clear();
     for(int x = 0; x < dimensions.x; x++) {
@@ -203,8 +212,8 @@ void Scene::findNearbyChunks()
                 float y_coord = y_chunk*16.0f + origin.y;
                 float z_coord = z_chunk*16.0f + origin.z;
                 //if (glm::distance(eye, glm::vec3(x_coord, y_coord, z_coord)) <= 32*16) {
-                    Point3 p = Point3(x_coord, y_coord, z_coord);
-                    chunk_points.append(p);
+                Point3 p = Point3(x_coord, y_coord, z_coord);
+                chunk_points.append(p);
                 //}
             }
         }

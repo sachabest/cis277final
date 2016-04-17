@@ -11,6 +11,7 @@ public:
     float z;
     bool operator<(const Point3 &p) const;
     bool operator==(const Point3 &p) const;
+    Point3 operator-(const Point3 &p) const;
     glm::vec3 toVec3();
 };
 
