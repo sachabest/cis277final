@@ -17,6 +17,9 @@
 #include <iostream>
 #include <QString>
 
+#include "scene/geometry/cross.h"
+#include <QTimer>
+
 
 class MyGL
     : public GLWidget277
@@ -39,6 +42,19 @@ private:
     Point3 getChunkPosition();
     float distanceToEye(Point3 p);
 
+    //week 1 stuff
+    Cross cross;
+    float gravity = 0.5;
+    float terminal_v = 3.0;
+    QTimer timer;
+    bool leftx = false;
+    bool rightx = false;
+    bool upy = false;
+    bool downy = false;
+    bool inz = false;
+    bool outz = false;
+    bool do_nothing = false;
+
 public:
     explicit MyGL(QWidget *parent = 0);
     ~MyGL();
@@ -54,9 +70,22 @@ public:
 
     void RaytraceScene();
 
+    //to be called with mouse clicking events
+    void destroyBlocks();
+    void addBlocks();
+    void collisionX(bool right);
+    void collisionY(bool up);
+    //if look is true we are trying to move towards us
+    //is look is false we are trying to move away
+    void collisionZ(bool look);
+
 protected:
     void keyPressEvent(QKeyEvent *e);
+    void mousePressEvent(QMouseEvent *e);
 
 signals:
     void sig_ResizeToCamera(int,int);
+
+private slots:
+    void timerUpdate();
 };

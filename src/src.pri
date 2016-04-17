@@ -22,7 +22,9 @@ SOURCES += \
     $$PWD/scene/geometry/segment.cpp \
     $$PWD/scene/geometry/cylinder.cpp \
     $$PWD/generators/lparser.cpp \
-    $$PWD/scene/octnode.cpp
+    $$PWD/scene/octnode.cpp \
+    $$PWD/scene/geometry/cross.cpp \
+    $$PWD/scene/ray.cpp \
     $$PWD/scene/geometry/chunk.cpp
 
 HEADERS += \
@@ -51,5 +53,6 @@ HEADERS += \
     $$PWD/scene/geometry/cylinder.h \
     $$PWD/generators/lparser.h \
     $$PWD/scene/octnode.h \
-    $$PWD/scene/texture.h
+    $$PWD/scene/geometry/cross.h \
+    $$PWD/scene/ray.h \
     $$PWD/scene/geometry/chunk.h
