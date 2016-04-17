@@ -69,12 +69,6 @@ float Terrain::getBlock(float x, float y) {
     float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + (bounds.ymin);
     Point p(unfloored_x, unfloored_y);
     float height;
-//    if (!heightmap.contains(p)) {
-//        height = getHeight(x, y);
-//        heightmap[p] = height;
-//    } else {
-//        height = heightmap[p];
-//    }
     return getHeight(x, y);
 }
 
@@ -140,6 +134,10 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
     return rx * gradients[p][0] + ry * gradients[p][1];
 }
 
+float clamp(float n, float lower, float upper) {
+  return fmax(lower, fmin(n, upper));
+}
+
 // https://en.wikipedia.org/wiki/Perlin_noise
 // here the input floats are fractions we must find the closest sample for
 float Terrain::getHeight(float x, float y) {
@@ -148,12 +146,11 @@ float Terrain::getHeight(float x, float y) {
     float unfloored_x = (x * (bounds.xmax - bounds.xmin)) + (bounds.xmin);
     float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + (bounds.ymin);
 
-    int x0 = fmin(floor(unfloored_x), bounds.xmax - 1);
-    int y0 = fmin(floor(unfloored_y), bounds.ymax - 1);
-    int x1 = fmin(x0 + 1, bounds.xmax - 1);
-    int y1 = fmin(y0 + 1, bounds.ymax - 1);
-    x1 = fmax(x1, 0);
-    y1 = fmax(y1, 0);
+    int x0 = clamp(floor(unfloored_x), bounds.xmin, bounds.xmax - 1);
+    int y0 = clamp(floor(unfloored_y), bounds.ymin, bounds.ymax - 1);
+
+    int x1 = clamp(floor(x0 + 1), bounds.xmin, bounds.xmax - 1);
+    int y1 = clamp(floor(y0 + 1), bounds.ymin, bounds.ymax - 1);
 
     float sx = unfloored_x - (float) x0;
     float sy = unfloored_y - (float) y0;
