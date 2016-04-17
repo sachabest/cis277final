@@ -24,9 +24,16 @@ void Scene::shift(int dx, int dy, int dz) {
     findNearbyChunks();
 }
 
-void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
+void Scene::addVoxel(QSet<OctNode *> &set, Point3 &p) {
+    OctNode *chunk = getContainingNode(p);
+    Point3 localPoint = worldToChunk(p);
+    set.insert(chunk);
+    chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = true;
+}
+
+void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) {
+    QSet<OctNode *> modifiedNodes;
     Point3 p(p1.x, p1.y, p1.z);
-    Chunk *chunk = nullptr;
     int dx = p2.x - p1.x;
     int dy = p2.y - p1.y;
     int dz = p2.z - p1.z;
@@ -44,7 +51,7 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
         error_1 = dy_err - l;
         error_2 = dz_err - l;
         for (int i = 0; i < l; i++) {
-            chunk = getContainingChunk(p);
+            addVoxel(modifiedNodes, p);
             // assign to point here
             if (error_1 > 0) {
                 p.y += yDir;
@@ -62,8 +69,7 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
         error_1 = dy_err - m;
         error_2 = dz_err - m;
         for (int i = 0; i < m; i++) {
-            chunk = getContainingChunk(p);
-            // assign to point here
+            addVoxel(modifiedNodes, p);
             if (error_1 > 0) {
                 p.x += xDir;
                 error_1 -= dy_err;
@@ -80,8 +86,7 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
         error_1 = dy_err - n;
         error_2 = dz_err - n;
         for (int i = 0; i < n; i++) {
-            chunk = getContainingChunk(p);
-            // assign to point here
+            addVoxel(modifiedNodes, p);
             if (error_1 > 0) {
                 p.y += yDir;
                 error_1 -= dz_err;
@@ -96,6 +101,10 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
         }
     }
     // assign to point here
+    addVoxel(modifiedNodes, p);
+    for (OctNode *node : modifiedNodes) {
+        node->chunk->create();
+    }
 }
 
 void Scene::voxelize(const QVector<LPair_t> &pairs) {
