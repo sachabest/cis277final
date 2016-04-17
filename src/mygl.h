@@ -12,6 +12,10 @@
 #include <scene/geometry/chunk.h>
 #include <la.h>
 #include <generators/lparser.h>
+#include <QImage>
+#include <QOpenGLTexture>
+#include <iostream>
+#include <QString>
 
 
 class MyGL
@@ -26,6 +30,9 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
+
+    QOpenGLTexture* gltexture;
+
 
     Scene scene;
 

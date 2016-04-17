@@ -17,11 +17,13 @@ public:
     int attrPos;
     int attrNor;
     int attrCol;
+    int attrUV;
 
     int unifModel;
     int unifModelInvTr;
     int unifViewProj;
     int unifColor;
+    int unifUV;
 
 public:
     void create(const char *vertfile, const char *fragfile);

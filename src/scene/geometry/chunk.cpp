@@ -9,6 +9,23 @@ Chunk::Chunk(QList<QList<QList<Texture>>> cells) : cells(cells), height(0)
 // Empty constructor sets all cells as being EMPTY
 Chunk::Chunk(int height) : height(height)
 {
+    texture = nullptr;
+    for (int x = 0; x < 16; x++) {
+        QList<QList<bool>> Xs;
+        for (int y = 0; y < 16; y++) {
+            QList<bool> Ys;
+            for (int z = 0; z < 16; z++) {
+                Ys.append(false);
+            }
+            Xs.append(Ys);
+        }
+        cells.append(Xs);
+    }
+}
+
+Chunk::Chunk(QOpenGLTexture* t)
+{
+    texture = t;
     for (int x = 0; x < 16; x++) {
         QList<QList<Texture>> Xs;
         for (int y = 0; y < 16; y++) {
@@ -27,6 +44,7 @@ Chunk::~Chunk()
 
 QVector<glm::vec3> Chunk::createChunkVertexPositions()
 {
+    //DO UV STUFF HERE
     QVector<glm::vec3> positions;
     for (int x = 0; x < cells.size(); x++) {
         for (int y = 0; y < cells.size(); y++) {
@@ -146,6 +164,7 @@ QVector<GLuint> Chunk::createChunkIndices()
     index_count = indices.size();
     return indices;
 }
+
 
 void Chunk::create()
 {

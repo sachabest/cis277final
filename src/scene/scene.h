@@ -5,6 +5,8 @@
 #include "point3.h"
 #include <scene/geometry/chunk.h>
 #include "generators/lparser.h"
+#include <QOpenGLTexture>
+
 
 class Scene {
 
@@ -13,6 +15,7 @@ class Scene {
 public:
     Scene();
 
+    QOpenGLTexture* texture;
     void CreateScene();
     void CreateChunkScene();
     void CreateNewChunks();

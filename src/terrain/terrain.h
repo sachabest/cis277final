@@ -7,6 +7,8 @@
 #include <scene/geometry/chunk.h>
 #include <scene/point3.h>
 #include <scene/octnode.h>
+#include <QImage>
+#include <QOpenGLTexture>
 
 struct Bounds_t {
     int xmin;

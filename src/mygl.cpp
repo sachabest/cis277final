@@ -45,6 +45,11 @@ void MyGL::initializeGL()
     // Create a Vertex Attribute Object
     vao.create();
 
+
+    QString filepath = "C://User/carrie/Documents/Sophomore\ Spring\ 2016/CIS\ 277/weektwo_final/cis277final/minecraft_textures_all.png";
+    gltexture = new QOpenGLTexture(QImage(filepath));
+
+
     // Create and set up the diffuse shader
     prog_lambert.create(":/glsl/lambert.vert.glsl", ":/glsl/lambert.frag.glsl");
     // Create and set up the flat-color shader
@@ -58,6 +63,7 @@ void MyGL::initializeGL()
     vao.bind();
 
     //Test scene data initialization
+
     scene.CreateChunkScene();
 }
 

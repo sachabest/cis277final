@@ -11,9 +11,11 @@ void ShaderProgram::create(const char *vertfile, const char *fragfile)
     attrPos = prog.attributeLocation("vs_Pos");
     attrNor = prog.attributeLocation("vs_Nor");
     attrCol = prog.attributeLocation("vs_Col");
+    attrUV = prog.attributeLocation("vs_uv");
     unifModel      = prog.uniformLocation("u_Model");
     unifModelInvTr = prog.uniformLocation("u_ModelInvTr");
     unifViewProj   = prog.uniformLocation("u_ViewProj");
+    unifUV = prog.uniformLocation("myTexture");
 }
 
 void ShaderProgram::setModelMatrix(const glm::mat4 &model)
@@ -40,6 +42,8 @@ void ShaderProgram::setViewProjMatrix(const glm::mat4& vp)
     }
 }
 
+//set unifUV thing
+
 // This function, as its name implies, uses the passed in GL widget
 void ShaderProgram::draw(GLWidget277 &f, Drawable &d)
 {
@@ -65,6 +69,12 @@ void ShaderProgram::draw(GLWidget277 &f, Drawable &d)
         f.glVertexAttribPointer(attrCol, 3, GL_FLOAT, false, 0, NULL);
     }
 
+    //ADDED UV STUFF
+    if (attrUV != -1 && d.bindUV()) {
+        prog.enableAttributeArray(attrUV);
+        f.glVertexAttribPointer(attrUV, 2, GL_FLOAT, false, 0, NULL);
+    }
+
     // Bind the index buffer and then draw shapes from it.
     // This invokes the shader program, which accesses the vertex buffers.
     d.bindIdx();
@@ -73,6 +83,7 @@ void ShaderProgram::draw(GLWidget277 &f, Drawable &d)
     if (attrPos != -1) prog.disableAttributeArray(attrPos);
     if (attrNor != -1) prog.disableAttributeArray(attrNor);
     if (attrCol!= -1) prog.disableAttributeArray(attrCol);
+    if (attrUV != -1) prog.disableAttributeArray(attrUV);
 
     f.printGLErrorLog();
 }
