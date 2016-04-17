@@ -21,9 +21,7 @@ void Scene::shift(int dx, int dy, int dz) {
     origin.y += dy;
     origin.z += dz;
     terrain.shift(dx, dz);
-    //    CreateScene();
     CreateNewChunks();
-    findNearbyChunks();
 }
 
 void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const {
@@ -113,17 +111,12 @@ void Scene::voxelize(const QVector<LPair_t> &pairs) {
 
 // To be phased out
 Chunk* Scene::getContainingChunk(Point3 p) const {
-    Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
-    if (terrain.chunk_map.contains(p2)) {
-        return terrain.chunk_map[p2];
-    } else  {
-        return nullptr;
-    }
+    return getContainingNode(p)->chunk;
 }
 
 // Returns the leaf node containing the point
 // Encapsulates recursively building out the octree as well
-OctNode* Scene::getContainingNode(Point3 p)
+OctNode* Scene::getContainingNode(Point3 p) const
 {
     Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
     OctNode* node = octree->getContainingNode(p2);
@@ -149,22 +142,8 @@ bool Scene::isFilled(Point3 p)
     return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
 }
 
-void Scene::CreateScene() {
-    points.clear();
-    for(int x = 0; x < dimensions.x; x++) {
-        for(int z = 0; z < dimensions.z; z++) {
-            float height = terrain.getBlock(x / (float) dimensions[0], z / (float) dimensions[2]);
-            //            height *= MAX_TERRAIN_HEIGHT;
-            for (int y = 0; y < height; y++) {
-                points.append(Point3(origin.x + x, origin.y + y, origin.z + z));
-            }
-        }
-    }
-}
-
 // Called when the scene is first rendered
 void Scene::CreateChunkScene() {
-    qDebug() << "Creating chunks";
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
             for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
@@ -183,12 +162,10 @@ void Scene::CreateChunkScene() {
                 }
                 chunk->create();
                 Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
-                terrain.chunk_map.insert(p, chunk);
-                chunk_points.append(p);
                 OctNode* leaf = getContainingNode(p);
                 leaf->chunk = chunk;
-                qDebug() << "Set chunk at: ";
-                qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+//                qDebug() << "Set chunk at: ";
+//                qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
             }
         }
     }
@@ -200,8 +177,8 @@ void Scene::CreateNewChunks()
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
             Point3 p = Point3(x_chunk*16.0f + origin.x, 0, z_chunk*16.0f + origin.z);
-            // Must generate a new chunk VBO
-            if (!terrain.chunk_map.contains(p)) {
+            // Must generate a new chunk VBO because octree is empty at that point
+            if (!getContainingNode(p)->chunk) {
                 for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
                     Chunk* chunk = new Chunk();
                     for (int x = 0; x < 16; x++) {
@@ -221,32 +198,11 @@ void Scene::CreateNewChunks()
                     }
                     chunk->create();
                     Point3 p_y = Point3(p.x, y_chunk*16.0f, p.z);
-                    terrain.chunk_map.insert(p_y, chunk);
                     OctNode* leaf = getContainingNode(p_y);
                     leaf->chunk = chunk;
-                    qDebug() << "Set chunk at: ";
-                    qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+//                    qDebug() << "Set chunk at: ";
+//                    qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
                 }
-            }
-        }
-    }
-}
-
-// Called to populate myGL's set of chunks with the ones to be rendered
-void Scene::findNearbyChunks()
-{
-    chunk_points.clear();
-    //glm::vec3 eye = glm::vec3((origin.x + SCENE_DIM)/2, (origin.y + SCENE_DIM)/2, (origin.z + SCENE_DIM)/2);
-    for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
-        for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
-                float x_coord = x_chunk*16.0f + origin.x;
-                float y_coord = y_chunk*16.0f + origin.y;
-                float z_coord = z_chunk*16.0f + origin.z;
-                //if (glm::distance(eye, glm::vec3(x_coord, y_coord, z_coord)) <= 32*16) {
-                Point3 p = Point3(x_coord, y_coord, z_coord);
-                chunk_points.append(p);
-                //}
             }
         }
     }

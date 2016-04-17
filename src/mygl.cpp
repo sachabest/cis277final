@@ -19,9 +19,7 @@ MyGL::~MyGL()
 {
     makeCurrent();
     vao.destroy();
-    for (Chunk* chunk : scene.terrain.chunk_map.values()) {
-        delete chunk;
-    }
+    delete scene.octree;
 }
 
 void MyGL::initializeGL()
@@ -60,7 +58,6 @@ void MyGL::initializeGL()
     vao.bind();
 
     //Test scene data initialization
-    scene.CreateScene();
     scene.CreateChunkScene();
 }
 
@@ -108,21 +105,6 @@ void MyGL::drawChunks(OctNode* node)
 
 void MyGL::GLDrawScene()
 {
-//        for (Point3 p : scene.points) {
-//            prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-//            prog_lambert.draw(*this, geom_cube);
-//            }
-
-//    for (Point3 p : scene.chunk_points) {
-//        prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(p.x, p.y, p.z)));
-//        if (scene.terrain.chunk_map[p]) {
-//            prog_lambert.draw(*this, *(scene.terrain.chunk_map[p]));
-//        } else {
-//            qDebug() << "Couldn't find chunk in map";
-//            qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
-//        }
-//    }
-
     drawChunks(scene.octree);
 }
 

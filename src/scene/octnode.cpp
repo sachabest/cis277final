@@ -16,8 +16,8 @@ Octree subdivides in this order:
 // base point = "bottom left" of octnode
 OctNode::OctNode(Point3 base, int length) : base(base), length(length), is_leaf(true), chunk(nullptr)
 {
-//    qDebug() << "Creating new node at: ";
-//    qDebug() << QString::fromStdString(glm::to_string(base.toVec3()));
+    //    qDebug() << "Creating new node at: ";
+    //    qDebug() << QString::fromStdString(glm::to_string(base.toVec3()));
 
     //    if (!is_leaf) {
     //        children.append(new OctNode(Point3(base.x, base.y, base.z), length/2));
@@ -36,7 +36,6 @@ OctNode::~OctNode()
     for (OctNode* child : children) {
         delete child;
     }
-    delete this;
 }
 
 // Returns the quadrant (0-7) containing the point
@@ -75,15 +74,15 @@ OctNode* OctNode::buildTree(Point3 p)
 {
     if (length > 1) {
         if (is_leaf) {  // Recursively build the tree
-        is_leaf = false;
-        children.append(new OctNode(Point3(base.x, base.y, base.z), length/2));
-        children.append(new OctNode(Point3(base.x, base.y, base.z + (length/2)), length/2));
-        children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z), length/2));
-        children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z + (length/2)), length/2));
-        children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z), length/2));
-        children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z + (length/2)), length/2));
-        children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z), length/2));
-        children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z + (length/2)), length/2));
+            is_leaf = false;
+            children.append(new OctNode(Point3(base.x, base.y, base.z), length/2));
+            children.append(new OctNode(Point3(base.x, base.y, base.z + (length/2)), length/2));
+            children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z), length/2));
+            children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z + (length/2)), length/2));
+            children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z), length/2));
+            children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z + (length/2)), length/2));
+            children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z), length/2));
+            children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z + (length/2)), length/2));
         }
         // Even if this isn't a leaf, we still want to find the child to recurse on
         return children[this->getQuadrant(p)]->buildTree(p);
