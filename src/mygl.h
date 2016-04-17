@@ -11,7 +11,7 @@
 #include <scene/geometry/cube.h>
 #include <scene/geometry/chunk.h>
 #include <la.h>
-
+#include <generators/lparser.h>
 
 
 class MyGL

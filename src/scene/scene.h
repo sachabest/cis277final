@@ -16,8 +16,9 @@ public:
     void findNearbyChunks();
     void shift(int dx, int dy, int dz);
 
-    Chunk* getContainingChunk(Point3 p);
-    QList<Point3> voxelize(const QVector<LPair_t> &pairs);
+    Chunk* getContainingChunk(Point3 p) const;
+    void voxelize(const QVector<LPair_t> &pairs);
+    void bresenham(const glm::vec4 &p1, const glm::vec4 &p2) const;
     QList<Point3> points;
     glm::ivec3 dimensions;
     glm::vec3 origin;
