@@ -66,11 +66,11 @@ void MyGL::initializeGL()
 
 void MyGL::resizeGL(int w, int h)
 {
-    //    gl_camera = Camera(w, h, glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2 + 2, scene.dimensions.z/2),
-    //                       glm::vec3(scene.dimensions.x/2, scene.dimensions.y/2+2, scene.dimensions.z/2+1), glm::vec3(0,1,0));
-
     gl_camera = Camera(w, h, glm::vec3(scene.dimensions[0]/2, 20, scene.dimensions[2]/2),
                        glm::vec3(10, 2, 10), glm::vec3(0,1,0));
+
+    //gl_camera = Camera(w, h, glm::vec3(0, 20, 0),
+    //                   glm::vec3(0, 2, 1), glm::vec3(0,1,0));
 
     glm::mat4 viewproj = gl_camera.getViewProj();
 
@@ -96,7 +96,7 @@ void MyGL::paintGL()
 
 void MyGL::drawChunks(OctNode* node)
 {
-    if (node->is_leaf) {
+    if (node->is_leaf && node->chunk) {
         prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(node->base.x*16, node->base.y*16, node->base.z*16)));
         prog_lambert.draw(*this, *(node->chunk));
     } else {    // Draw its children

@@ -8,7 +8,7 @@
 
 class Scene {
 
-    static const int tree_length = 8;
+    static const int tree_length = 64;
 
 public:
     Scene();

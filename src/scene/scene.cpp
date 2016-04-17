@@ -11,7 +11,9 @@ static const int TERRAIN_DIM = 128;
 // Dimensions must be a multiple of 16
 Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(0, 0, 0))
 {
-    this->octree = new OctNode(Point3(0, 0, 0), tree_length);
+    /* The base coordinate centers the origin (0,0) on the x-z plane in the octree
+       You can generate a maximum of 32 chunks in either direction, and 64 chunks upward */
+    this->octree = new OctNode(Point3(-tree_length/2, 0, -tree_length/2), tree_length);
 }
 
 void Scene::shift(int dx, int dy, int dz) {
@@ -109,6 +111,7 @@ void Scene::voxelize(const QVector<LPair_t> &pairs) {
     }
 }
 
+// To be phased out
 Chunk* Scene::getContainingChunk(Point3 p) const {
     Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
     if (terrain.chunk_map.contains(p2)) {
@@ -118,12 +121,19 @@ Chunk* Scene::getContainingChunk(Point3 p) const {
     }
 }
 
+// Returns the leaf node containing the point
+// Encapsulates recursively building out the octree as well
 OctNode* Scene::getContainingNode(Point3 p)
 {
     Point3 p2(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16));
-    return octree->getContainingNode(p2);
+    OctNode* node = octree->getContainingNode(p2);
+    if (node->length > 1) {
+        node = node->buildTree(p2);
+    }
+    return node;
 }
 
+// Converts a point from world space to its position in local chunk space
 Point3 Scene::worldToChunk(Point3 p)
 {
     return Point3(glm::floor(p.x - (16*glm::floor(p.x/16))), glm::floor(p.y - 16*glm::floor(p.y/16)), glm::floor(p.z - 16*glm::floor(p.z/16)));
@@ -210,7 +220,12 @@ void Scene::CreateNewChunks()
                         }
                     }
                     chunk->create();
-                    terrain.chunk_map.insert(Point3(p.x, y_chunk*16.0f, p.z), chunk);
+                    Point3 p_y = Point3(p.x, y_chunk*16.0f, p.z);
+                    terrain.chunk_map.insert(p_y, chunk);
+                    OctNode* leaf = getContainingNode(p_y);
+                    leaf->chunk = chunk;
+                    qDebug() << "Set chunk at: ";
+                    qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
                 }
             }
         }
