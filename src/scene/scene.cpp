@@ -34,6 +34,11 @@ QList<Point3> Scene::voxelize(const QVector<LPair_t> &pairs) {
     }
 }
 
+Chunk* Scene::getContainingChunk(Point3 p)
+{
+    return terrain.chunk_map[Point3(glm::floor(p.x/16), glm::floor(p.y/16), glm::floor(p.z/16))];
+}
+
 void Scene::CreateScene() {
     points.clear();
     for(int x = 0; x < dimensions.x; x++) {
@@ -47,6 +52,7 @@ void Scene::CreateScene() {
     }
 }
 
+// Called when the scene is first rendered
 void Scene::CreateChunkScene() {
     qDebug() << "Creating chunks";
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
@@ -74,6 +80,7 @@ void Scene::CreateChunkScene() {
     }
 }
 
+// Called whenever the camera moves to a different chunk
 void Scene::CreateNewChunks()
 {
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
@@ -106,6 +113,7 @@ void Scene::CreateNewChunks()
     }
 }
 
+// Called to populate myGL's set of chunks with the ones to be rendered
 void Scene::findNearbyChunks()
 {
     chunk_points.clear();
