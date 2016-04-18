@@ -11,11 +11,11 @@ Chunk::Chunk(int height) : height(height)
 {
     texture = nullptr;
     for (int x = 0; x < 16; x++) {
-        QList<QList<bool>> Xs;
+        QList<QList<Texture>> Xs;
         for (int y = 0; y < 16; y++) {
-            QList<bool> Ys;
+            QList<Texture> Ys;
             for (int z = 0; z < 16; z++) {
-                Ys.append(false);
+                Ys.append(EMPTY);
             }
             Xs.append(Ys);
         }

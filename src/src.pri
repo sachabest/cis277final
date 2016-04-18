@@ -24,8 +24,7 @@ SOURCES += \
     $$PWD/generators/lparser.cpp \
     $$PWD/scene/octnode.cpp \
     $$PWD/scene/geometry/cross.cpp \
-    $$PWD/scene/ray.cpp \
-    $$PWD/scene/geometry/chunk.cpp
+    $$PWD/scene/ray.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -44,7 +43,6 @@ HEADERS += \
     $$PWD/raytracing/integrator.h \
     $$PWD/cameracontrolshelp.h \
     $$PWD/scene/terrain.h \
-    $$PWD/terrain/terrain.h \
     $$PWD/terrain/point.h \
     $$PWD/scene/point3.h \
     $$PWD/util.h \
@@ -54,5 +52,5 @@ HEADERS += \
     $$PWD/generators/lparser.h \
     $$PWD/scene/octnode.h \
     $$PWD/scene/geometry/cross.h \
-    $$PWD/scene/ray.h \
-    $$PWD/scene/geometry/chunk.h
+    $$PWD/scene/texture.h \
+    $$PWD/scene/ray.h
