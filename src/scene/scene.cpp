@@ -3,7 +3,7 @@
 #include <scene/geometry/chunk.h>
 #include <iostream>
 
-#define MAX_TERRAIN_HEIGHT 3
+#define MAX_TERRAIN_HEIGHT 6
 
 static const int SCENE_DIM = 128;
 static const int TERRAIN_DIM = 128;
@@ -155,8 +155,9 @@ bool Scene::isFilled(Point3 p)
 void Scene::CreateChunkScene() {
     for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
         for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
-                Chunk* chunk = new Chunk();
+            for (int y_chunk = 0; y_chunk < MAX_TERRAIN_HEIGHT; y_chunk++) {
+                Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
+                Chunk* chunk = new Chunk(p.y);
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
                         float height = terrain.getBlock((x + x_chunk*16) / (float) dimensions[0],
@@ -170,7 +171,6 @@ void Scene::CreateChunkScene() {
                     }
                 }
                 chunk->create();
-                Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
                 OctNode* leaf = getContainingNode(p);
                 leaf->chunk = chunk;
 //                qDebug() << "Set chunk at: ";
@@ -189,7 +189,8 @@ void Scene::CreateNewChunks()
             // Must generate a new chunk VBO because octree is empty at that point
             if (!getContainingNode(p)->chunk) {
                 for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
-                    Chunk* chunk = new Chunk();
+                    Point3 p_y = Point3(p.x, y_chunk*16.0f, p.z);
+                    Chunk* chunk = new Chunk(p_y.y);
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
                             float height = terrain.getBlock((x + x_chunk*16.0f) / (float) dimensions[0],
@@ -206,7 +207,6 @@ void Scene::CreateNewChunks()
                         }
                     }
                     chunk->create();
-                    Point3 p_y = Point3(p.x, y_chunk*16.0f, p.z);
                     OctNode* leaf = getContainingNode(p_y);
                     leaf->chunk = chunk;
 //                    qDebug() << "Set chunk at: ";

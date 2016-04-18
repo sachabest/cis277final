@@ -91,9 +91,16 @@ void MyGL::paintGL()
     GLDrawScene();
 }
 
+// Used to determine whether a chunk is too far away to be rendered
+// This can definitely be more efficient, it still checks every node right now
+float MyGL::distanceToEye(Point3 p)
+{
+    return glm::distance(p.toVec3(), gl_camera.eye);
+}
+
 void MyGL::drawChunks(OctNode* node)
 {
-    if (node->is_leaf && node->chunk) {
+    if (node->is_leaf && node->chunk && distanceToEye(node->base) <= 512) {
         prog_lambert.setModelMatrix(glm::translate(glm::mat4(), glm::vec3(node->base.x*16, node->base.y*16, node->base.z*16)));
         prog_lambert.draw(*this, *(node->chunk));
     } else {    // Draw its children
@@ -166,11 +173,11 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     Point3 new_pos = getChunkPosition();
     // We moved to a different chunk
     if (!(old_pos == new_pos)) {
-        qDebug() << "Switched chunks";
-        qDebug() << "Old pos:";
-        qDebug() << QString::fromStdString(glm::to_string(old_pos.toVec3()));
-        qDebug() << "New pos:";
-        qDebug() << QString::fromStdString(glm::to_string(new_pos.toVec3()));
+//        qDebug() << "Switched chunks";
+//        qDebug() << "Old pos:";
+//        qDebug() << QString::fromStdString(glm::to_string(old_pos.toVec3()));
+//        qDebug() << "New pos:";
+//        qDebug() << QString::fromStdString(glm::to_string(new_pos.toVec3()));
         if (new_pos.x > old_pos.x) {
             scene.shift(SHIFT_DISTANCE, 0, 0);
         } else if (new_pos.x < old_pos.x) {

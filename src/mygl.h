@@ -26,11 +26,11 @@ private:
 
     Camera gl_camera;//This is a camera we can move around the scene to view it from any angle.
     Cube geom_cube;
-    Chunk test_chunk;
 
     Scene scene;
 
     Point3 getChunkPosition();
+    float distanceToEye(Point3 p);
 
 public:
     explicit MyGL(QWidget *parent = 0);

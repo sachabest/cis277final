@@ -2,13 +2,14 @@
 #include <la.h>
 
 // Takes in a 16x16x16 list of bools indicating whether the cell is occupied
-Chunk::Chunk(QList<QList<QList<bool>>> cells) : cells(cells)
+// Currently not updated to work with the height variable
+Chunk::Chunk(QList<QList<QList<bool>>> cells) : cells(cells), height(0)
 {
 
 }
 
 // Empty constructor sets all cells as not being occupied
-Chunk::Chunk()
+Chunk::Chunk(int height) : height(height)
 {
     for (int x = 0; x < 16; x++) {
         QList<QList<bool>> Xs;

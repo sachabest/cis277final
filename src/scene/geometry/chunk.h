@@ -7,10 +7,11 @@ class Chunk : public Drawable
 {
 public:
     Chunk(QList<QList<QList<bool>>> cells);
-    Chunk();
+    Chunk(int height);
     ~Chunk();
     void create();
     QList<QList<QList<bool>>> cells;
+    int height;
 
 private:
     int index_count;
