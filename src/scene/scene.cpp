@@ -28,7 +28,7 @@ void Scene::addVoxel(QSet<OctNode *> &set, Point3 &p) {
     OctNode *chunk = getContainingNode(p);
     Point3 localPoint = worldToChunk(p);
     set.insert(chunk);
-    chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = true;
+    chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = WOOD;
 }
 
 void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) {
@@ -166,7 +166,7 @@ void Scene::CreateChunkScene() {
                             if (y >= (y_chunk+1)*16) {
                                 break;
                             }
-                            chunk->cells[x][y-y_chunk*16][z] = true;
+                            chunk->cells[x][y-y_chunk*16][z] = GRASS;
                         }
                     }
                 }
@@ -202,7 +202,7 @@ void Scene::CreateNewChunks()
                                 if (y >= (y_chunk+1)*16) {
                                     break;
                                 }
-                                chunk->cells[x][y-y_chunk*16][z] = true;
+                                chunk->cells[x][y-y_chunk*16][z] = GRASS;
                             }
                         }
                     }

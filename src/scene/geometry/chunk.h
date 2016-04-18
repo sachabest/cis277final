@@ -2,15 +2,16 @@
 #define CHUNK_H
 
 #include <openGL/drawable.h>
+#include <scene/texture.h>
 
 class Chunk : public Drawable
 {
 public:
-    Chunk(QList<QList<QList<bool>>> cells);
+    Chunk(QList<QList<QList<Texture>>> cells);
     Chunk(int height);
     ~Chunk();
     void create();
-    QList<QList<QList<bool>>> cells;
+    QList<QList<QList<Texture>>> cells;
     int height;
 
 private:

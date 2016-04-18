@@ -50,5 +50,6 @@ HEADERS += \
     $$PWD/scene/geometry/segment.h \
     $$PWD/scene/geometry/cylinder.h \
     $$PWD/generators/lparser.h \
-    $$PWD/scene/octnode.h
+    $$PWD/scene/octnode.h \
+    $$PWD/scene/texture.h
     $$PWD/scene/geometry/chunk.h
