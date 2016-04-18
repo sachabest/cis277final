@@ -46,14 +46,24 @@ void MyGL::initializeGL()
     vao.create();
 
 
-    QString filepath = "C://User/carrie/Documents/Sophomore\ Spring\ 2016/CIS\ 277/weektwo_final/cis277final/minecraft_textures_all.png";
+    QString filepath = "/Users/carrie/Documents/Sophomore Spring 2016/CIS 277/weektwo_final/cis277final/minecraft_textures_all.png";
+    QImage img;
+    bool result = img.load(filepath);
     gltexture = new QOpenGLTexture(QImage(filepath));
+
+
+
+//    this->glActiveTexture(GL_TEXTURE0 + 0);
+//    this->glBindTexture(GL_TEXTURE_2D, gltexture->textureId());
+    //this->glBindSampler(0, linearFiltering);
 
 
     // Create and set up the diffuse shader
     prog_lambert.create(":/glsl/lambert.vert.glsl", ":/glsl/lambert.frag.glsl");
     // Create and set up the flat-color shader
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
+
+    prog_lambert.setUVImage(gltexture);
 
     geom_cube.create();
     //test_chunk.create();
@@ -148,10 +158,11 @@ void MyGL::collisionX(bool right) {
     Point3 xthree = Point3(glm::floor(eye.x-1), glm::floor(eye.y-1), glm::floor(eye.z));
     Point3 xfour = Point3(glm::floor(eye.x+1), glm::floor(eye.y-1), glm::floor(eye.z));
 
-    QList<Point3> points = scene.points;
+    //QList<Point3> points = scene.points;
 
     if (!right) {
-        if (!(points.contains(xone)) && !(points.contains(xthree))) {
+        //if (!(points.contains(xone)) && !(points.contains(xthree))) {
+        if (!(scene.isFilled(xone)) && !(scene.isFilled(xthree))) {
             std::cout << "in trying to move left" << std::endl;
             leftx = true;
             for (int i = 0 ; i < 3; i++) {
@@ -163,7 +174,8 @@ void MyGL::collisionX(bool right) {
         }
     }
     else if (right) {
-        if (!(points.contains(xtwo)) && !(points.contains(xfour))) {
+        //if (!(points.contains(xtwo)) && !(points.contains(xfour))) {
+        if (!(scene.isFilled(xtwo)) && !(scene.isFilled(xfour))) {
             std::cout << "in tryin to move right" << std::endl;
             rightx = true;
             for (int i = 0 ; i < 3; i++) {
@@ -215,7 +227,7 @@ void MyGL::collisionY(bool up) {
     Point3 yone = Point3(glm::floor(eye.x), glm::floor(eye.y+0.5), glm::floor(eye.z));
     Point3 ytwo = Point3(glm::floor(eye.x), glm::floor(eye.y-3), glm::floor(eye.z));
 
-    QList<Point3> points = scene.points;
+    //QList<Point3> points = scene.points;
     //you can move up and you are trying to move up
  /*   if (up && !scene.objects[yone.x][yone.y][yone.z]) {
 
@@ -226,7 +238,8 @@ void MyGL::collisionY(bool up) {
     }*/
 
     if (!up) {
-        if (!points.contains(ytwo)) {
+        //if (!points.contains(ytwo)) {
+        if (!(scene.isFilled(ytwo))) {
             for (int i = 0 ; i < 3; i++) {
                 float amount = gravity * i * i;
                 gl_camera.TranslateAlongUp(-amount);
@@ -235,7 +248,8 @@ void MyGL::collisionY(bool up) {
         }
     }
     else if (up) {
-        if (!points.contains(yone)) {
+        //if (!points.contains(yone)) {
+        if (!(scene.isFilled(yone))) {
             for (int i = 0 ; i < 3; i++) {
                 //terminal v is 4;
                 float amount = gravity * i * i;
@@ -257,10 +271,11 @@ void MyGL::collisionZ(bool look) {
     Point3 zfour = Point3(glm::floor(eye.x), glm::floor(eye.y+1), glm::floor(eye.z+1));
 
 
-    QList<Point3> points = scene.points;
+    //QList<Point3> points = scene.points;
 
     if (!look) {
-        if (!(points.contains(zone)) && !(points.contains(zthree))) {
+        //if (!(points.contains(zone)) && !(points.contains(zthree))) {
+        if (!(scene.isFilled(zone)) && !(scene.isFilled(zthree))) {
             std::cout << "moving out" << std::endl;
             outz = true;
             for (int i = 0 ; i < 3; i++) {
@@ -273,7 +288,8 @@ void MyGL::collisionZ(bool look) {
     }
 
     else if(look) {
-        if (!(points.contains(ztwo)) && !(points.contains(zfour))) {
+        //if (!(points.contains(ztwo)) && !(points.contains(zfour))) {
+         if (!(scene.isFilled(ztwo)) && !(scene.isFilled(zfour))) {
             std::cout << "moving in" << std::endl;
             inz = true;
 
@@ -403,12 +419,13 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 }
 
 //screen center (0,0,0)
+//FIX DESTRUCTION LATER
 void MyGL::destroyBlocks() {
     std::cout << "destroy blocks" << std::endl;
     Ray ray_from_center = gl_camera.raycast();
 
-    QList<Point3> points = scene.points;
-    std::cout << "points size " << scene.points.size() << std::endl;
+    //QList<Point3> points = scene.points;
+    //std::cout << "points size " << scene.points.size() << std::endl;
 
     //RAY MARCH from 1 to 31 (< 32 taxicabs)
     for (int t = 1; t < 32; t++) {
@@ -418,21 +435,26 @@ void MyGL::destroyBlocks() {
         //floor the position value and check if there is an object in there;
         //if there is: remove it and break out of the loop
         Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
-        if (points.contains(point_cube))
-        {
-            std::cout << "in destroying" << std::endl;
-            for (int i = 0; i < points.size(); i++) {
-                if(points[i] == point_cube) {
-                    std::cout << "remove stuff" << std::endl;
-                    scene.points.removeAt(i);
-                    std::cout << "after remove point size " << scene.points.size() << std::endl;
-                    break;
-                }
-            }
-        }
+        //if (points.contains(point_cube))
+
+        //NEW CHUNK STUFF FOR TESTING FILL
+//        if (scene.isFilled(point_cube))
+//        {
+//            std::cout << "in destroying" << std::endl;
+//            for (int i = 0; i < points.size(); i++) {
+//                if(points[i] == point_cube) {
+//                    std::cout << "remove stuff" << std::endl;
+//                    scene.points.removeAt(i);
+//                    //std::cout << "after remove point size " << scene.points.size() << std::endl;
+//                    break;
+//                }
+//            }
+//        }
         update();
     }
 }
+
+//FIX ADDING LATER
 
 void MyGL::addBlocks() {
     std::cout << "add block" << std::endl;
@@ -441,8 +463,8 @@ void MyGL::addBlocks() {
     //QList<QList<QList<bool>>> scene_objs = scene.objects;
     //QList<Point3>& points = scene.points;
 
-    QList<Point3> points = scene.points;
-    std::cout << "points size " << scene.points.size() << std::endl;
+    //QList<Point3> points = scene.points;
+    //std::cout << "points size " << scene.points.size() << std::endl;
 
     //RAY MARCH from 1 to 31 (< 32 taxicabs)
     for (int t = 1; t < 32; t++) {
@@ -451,76 +473,77 @@ void MyGL::addBlocks() {
         glm::vec3 position = ray_from_center.origin + new_dir;
         Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
         Ray newRay = Ray(position, ray_from_center.direction);
-        if (points.contains(point_cube))
-        {
-            std::cout << "in adding" << std::endl;
-            glm::vec3 T = position;
-            glm::vec3 R = glm::vec3(0,0,0);
-            glm::vec3 S = glm::vec3(1,1,1);
+        //if (points.contains(point_cube))
+//        if (scene.isFilled(point_cube))
+//        {
+//            std::cout << "in adding" << std::endl;
+//            glm::vec3 T = position;
+//            glm::vec3 R = glm::vec3(0,0,0);
+//            glm::vec3 S = glm::vec3(1,1,1);
 
-            for (int i = 0; i < points.size(); i++) {
-                if(points[i] == point_cube) {
-                    std::cout << "add stuff" << std::endl;
+//            for (int i = 0; i < points.size(); i++) {
+//                if(points[i] == point_cube) {
+//                    std::cout << "add stuff" << std::endl;
 
-                    glm::vec3 normal = points[i].intersect(newRay, Transform(T, R, S));
-                    std::cout << "normal x " << normal.x << std::endl;
-                    std::cout << "normal y " << normal.y << std::endl;
-                    std::cout << "normal z " << normal.z << std::endl;
+//                    glm::vec3 normal = points[i].intersect(newRay, Transform(T, R, S));
+//                    std::cout << "normal x " << normal.x << std::endl;
+//                    std::cout << "normal y " << normal.y << std::endl;
+//                    std::cout << "normal z " << normal.z << std::endl;
 
-                    if (normal == glm::vec3(-1,0,0)) {
-                        //negative x; put one on right
-                        Point3 potential = Point3(point_cube.x-1, point_cube.y, point_cube.z);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else if (normal == glm::vec3(1,0,0)) {
-                        Point3 potential = Point3(point_cube.x+1, point_cube.y, point_cube.z);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else if (normal == glm::vec3(0,-1,0)) {
-                        Point3 potential = Point3(point_cube.x, point_cube.y-1, point_cube.z);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else if (normal == glm::vec3(0,1,0)) {
-                        Point3 potential = Point3(point_cube.x, point_cube.y+1, point_cube.z);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else if (normal == glm::vec3(0,0,-1)) {
-                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z-1);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else if (normal == glm::vec3(0,0,1)) {
-                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z+1);
-                        if (!points.contains(potential)) {
-                            scene.points.append(potential);
-                            break;
-                        }
-                    }
-                    else{
-                        //dont do anything
-                    }
+//                    if (normal == glm::vec3(-1,0,0)) {
+//                        //negative x; put one on right
+//                        Point3 potential = Point3(point_cube.x-1, point_cube.y, point_cube.z);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else if (normal == glm::vec3(1,0,0)) {
+//                        Point3 potential = Point3(point_cube.x+1, point_cube.y, point_cube.z);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else if (normal == glm::vec3(0,-1,0)) {
+//                        Point3 potential = Point3(point_cube.x, point_cube.y-1, point_cube.z);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else if (normal == glm::vec3(0,1,0)) {
+//                        Point3 potential = Point3(point_cube.x, point_cube.y+1, point_cube.z);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else if (normal == glm::vec3(0,0,-1)) {
+//                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z-1);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else if (normal == glm::vec3(0,0,1)) {
+//                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z+1);
+//                        if (!points.contains(potential)) {
+//                            scene.points.append(potential);
+//                            break;
+//                        }
+//                    }
+//                    else{
+//                        //dont do anything
+//                    }
 
-                    //scene.points.removeAt(i);
-                    std::cout << "after add point size " << scene.points.size() << std::endl;
-                    break;
-                }
-            }
+//                    //scene.points.removeAt(i);
+//                    std::cout << "after add point size " << scene.points.size() << std::endl;
+//                    break;
+//                }
+//            }
 
-        }
+//        }
         update();
     }
 }
@@ -546,32 +569,32 @@ void MyGL::timerUpdate()
     // sometimes gets called automatically by Qt.)
 
     //trying to move left
-    if (leftx) {
-        collisionX(false);
-    }
-    else if (rightx) {
-        collisionX(true);
-    }
-    else if (upy) {
-        collisionY(true);
-    }
-    else if (downy) {
-        collisionY(false);
-    }
-    else if (outz) {
-        //moving away
-        collisionZ(false);
-    }
-    else if (inz) {
-        collisionZ(true);
-    }
-    //we are just starting
-    else if (do_nothing) {
+//    if (leftx) {
+//        collisionX(false);
+//    }
+//    else if (rightx) {
+//        collisionX(true);
+//    }
+//    else if (upy) {
+//        collisionY(true);
+//    }
+//    else if (downy) {
+//        collisionY(false);
+//    }
+//    else if (outz) {
+//        //moving away
+//        collisionZ(false);
+//    }
+//    else if (inz) {
+//        collisionZ(true);
+//    }
+//    //we are just starting
+//    else if (do_nothing) {
 
-    }
-    else {
-        collisionY(false);
-    }
+//    }
+//    else {
+//        collisionY(false);
+//    }
 
-    update();
+//    update();
 }

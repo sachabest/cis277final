@@ -51,18 +51,30 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z] != EMPTY) {
                     // Front face
-                    if (z == cells.size() - 1 || cells[x][y][z+1] == EMPTY) {
-                        positions.append(glm::vec3(x+1, y+1, z+1));       // UR
-                        positions.append(glm::vec3(x+1, y, z+1)); // LR
-                        positions.append(glm::vec3(x, y, z+1)); // LL
-                        positions.append(glm::vec3(x, y+1, z+1)); // UL
+                    if (z == cells.size()-1 || !cells[x][y][z+1]) {
+                        positions.append(glm::vec3(x+1, y+1, z+1));         // UR
+                        positions.append(glm::vec3(x+1, y, z+1));           // LR
+                        positions.append(glm::vec3(x, y, z+1));             // LL
+                        positions.append(glm::vec3(x, y+1, z+1));           // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                     // Right face
-                    if (x == cells.size() - 1 || cells[x+1][y][z] == EMPTY) {
-                        positions.append(glm::vec3(x+1, y+1, z)); // UR
-                        positions.append(glm::vec3(x+1, y, z)); // LR
-                        positions.append(glm::vec3(x+1, y, z+1)); // LL
-                        positions.append(glm::vec3(x+1, y+1, z+1));       // UL
+                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
+                        positions.append(glm::vec3(x+1, y+1, z));       // UR
+                        positions.append(glm::vec3(x+1, y, z));         // LR
+                        positions.append(glm::vec3(x+1, y, z+1));       // LL
+                        positions.append(glm::vec3(x+1, y+1, z+1));     // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                     // Left face
                     if (x == 0 || cells[x-1][y][z] == EMPTY) {
@@ -70,6 +82,12 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
                         positions.append(glm::vec3(x, y, z+1)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                     // Back face
                     if (z == 0 || cells[x][y][z-1] == EMPTY) {
@@ -77,6 +95,12 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
                         positions.append(glm::vec3(x, y, z));       // LR
                         positions.append(glm::vec3(x+1, y, z)); // LL
                         positions.append(glm::vec3(x+1, y+1, z)); // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                     // Top face
                     if (y == cells.size() - 1 || cells[x][y+1][z] == EMPTY) {
@@ -84,6 +108,12 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
                         positions.append(glm::vec3(x+1, y+1, z+1)); // LR
                         positions.append(glm::vec3(x, y+1, z+1)); // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                     // Bottom face
                     if (y == 0 || cells[x][y-1][z] == EMPTY) {
@@ -91,6 +121,12 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
                         positions.append(glm::vec3(x+1, y, z)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y, z+1)); // UL
+
+                        //EACH FACE GETS FOUR COORDINATES
+                        uvs.push_back(glm::vec2(0,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
+                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
+                        uvs.push_back(glm::vec2(0,3/16.f));
                     }
                 }
             }
@@ -200,4 +236,9 @@ void Chunk::create()
     bufCol.bind();
     bufCol.setUsagePattern(QOpenGLBuffer::StaticDraw);
     bufCol.allocate(colors.data(), vertex_count * sizeof(glm::vec3));
+
+    bufUV.create();
+    bufUV.bind();
+    bufUV.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    bufUV.allocate(uvs.data(), vertex_count * sizeof(glm::vec2));
 }
