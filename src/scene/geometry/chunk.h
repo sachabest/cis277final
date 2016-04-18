@@ -7,7 +7,6 @@
 class Chunk : public Drawable
 {
 public:
-    Chunk(QList<QList<QList<Texture>>> cells);
     Chunk(int height);
     ~Chunk();
     void create();

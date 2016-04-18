@@ -12,7 +12,6 @@ bool Point3::operator<(const Point3 &p) const {
     // x major
     if (fequal(this->x, p.x)) {
         if (fequal(this->y, p.y)) {
-            // return (fequal(this->z, p.z));
             return this->z < p.z;
         } else {
             return this->y < p.y;
