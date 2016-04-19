@@ -79,7 +79,7 @@ public:
     //is look is false we are trying to move away
     void collisionZ(bool look);
 
-    Point3* raymarch();
+    Point3 raymarch();
 
 protected:
     void keyPressEvent(QKeyEvent *e);

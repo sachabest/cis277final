@@ -108,8 +108,8 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) {
     }
 }
 
-void Scene::voxelize(const QVector<LPair_t> &pairs) {
-    glm::mat4 worldTransform = glm::translate(glm::mat4(), glm::vec3(64, 40, 64));
+void Scene::voxelize(const QVector<LPair_t> &pairs, const Point3 &pt) {
+    glm::mat4 worldTransform = glm::translate(glm::mat4(), glm::vec3(pt.x, pt.y, pt.z));
     for (LPair_t pair : pairs) {
         glm::mat4 newTransform = worldTransform * pair.t;
         if (pair.draw) {
