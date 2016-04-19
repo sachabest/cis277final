@@ -22,7 +22,7 @@ public:
     Chunk* getContainingChunk(Point3 p) const;
     OctNode* getContainingNode(Point3 p) const;
     Point3 worldToChunk(Point3 p);
-    void voxelize(const QVector<LPair_t> &pairs);
+    void voxelize(const QVector<LPair_t> &pairs, const Point3 &pt);
     void bresenham(const glm::vec4 &p1, const glm::vec4 &p2);
     bool isFilled(Point3 p);
 

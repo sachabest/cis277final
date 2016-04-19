@@ -25,6 +25,8 @@ void Scene::shift(int dx, int dy, int dz) {
 
 void Scene::addVoxel(QSet<OctNode *> &set, Point3 &p) {
     OctNode *chunk = getContainingNode(p);
+    if (!chunk || !chunk->chunk)
+        return;
     Point3 localPoint = worldToChunk(p);
     set.insert(chunk);
     chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = WOOD;
@@ -106,8 +108,8 @@ void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) {
     }
 }
 
-void Scene::voxelize(const QVector<LPair_t> &pairs) {
-    glm::mat4 worldTransform;
+void Scene::voxelize(const QVector<LPair_t> &pairs, const Point3 &pt) {
+    glm::mat4 worldTransform = glm::translate(glm::mat4(), glm::vec3(pt.x, pt.y, pt.z));
     for (LPair_t pair : pairs) {
         glm::mat4 newTransform = worldTransform * pair.t;
         if (pair.draw) {

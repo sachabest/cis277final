@@ -387,13 +387,24 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     } else if (e->key() == Qt::Key_8) {
         // make plant
         QVector<LPair_t> tree = LParser::makeTree();
-        scene.voxelize(tree);
+        Point3 collision = raymarch();
+        if (collision.x != -INFINITY) {
+            scene.voxelize(tree, collision);
+        }
     } else if (e->key() == Qt::Key_9) {
         // make plant
         QVector<LPair_t> tree = LParser::makeBrush();
-        scene.voxelize(tree);
+        Point3 collision = raymarch();
+        if (collision.x != -INFINITY) {
+            scene.voxelize(tree, collision);
+        }
     } else if (e->key() == Qt::Key_0) {
         // make plant
+        QVector<LPair_t> tree = LParser::makeCarrieTree();
+        Point3 collision = raymarch();
+        if (collision.x != -INFINITY) {
+            scene.voxelize(tree, collision);
+        }
     }
     gl_camera.RecomputeAttributes();
     Point3 new_pos = getChunkPosition();
@@ -419,7 +430,7 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     update();  // Calls paintGL, among other things
 }
 
-Point3* MyGL::raymarch() {
+Point3 MyGL::raymarch() {
     Ray ray_from_center = gl_camera.raycast();
     for (float t = 0; t < 32; t+=0.1) {
         glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
@@ -431,12 +442,10 @@ Point3* MyGL::raymarch() {
 
         //NEW CHUNK STUFF FOR TESTING FILL
         if (scene.isFilled(point_cube)) {
-            return &point_cube;
-        }
-        else {
-            return nullptr;
+            return point_cube;
         }
     }
+    return Point3(-INFINITY, -INFINITY, -INFINITY);
 }
 
 //screen center (0,0,0)
@@ -474,8 +483,8 @@ void MyGL::destroyBlocks() {
 //        update();
 //    }
 
-    Point3* cube = raymarch();
-    if (cube != nullptr) {
+    Point3 cube = raymarch();
+    if (cube.x != -INFINITY) {
         update();
     }
 }

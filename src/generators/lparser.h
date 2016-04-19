@@ -23,6 +23,8 @@ public:
     static QVector<LPair_t> makeBrush();
     static QString expand(const QMap<QChar, QVector<QString> > &productions, const int &iterations, QString &axiom);
     static QVector<LPair_t> createDrawables(const QString &pattern);
+    static QVector<LPair_t> makeCarrieTree();
+
 };
 
 #endif // LPARSER_H
