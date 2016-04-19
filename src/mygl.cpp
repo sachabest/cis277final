@@ -46,10 +46,11 @@ void MyGL::initializeGL()
     vao.create();
 
 
-    QString filepath = "/Users/carrie/Documents/Sophomore Spring 2016/CIS 277/weektwo_final/cis277final/minecraft_textures_all.png";
-    QImage img;
-    bool result = img.load(filepath);
-    gltexture = new QOpenGLTexture(QImage(filepath));
+    //QString filepath = "/Users/carrie/Documents/Sophomore Spring 2016/CIS 277/weektwo_final/cis277final/minecraft_textures_all.png";
+    //QString filepath = "../minecraft_textures_all.png";
+    //QImage img;
+    //bool result = img.load(":/minecraft_textures_all.png");
+    gltexture = new QOpenGLTexture(QImage(":/minecraft_textures_all.png"));
 
 
 
