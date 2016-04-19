@@ -1,12 +1,10 @@
 #include "chunk.h"
 #include <la.h>
 
-// Takes in a 16x16x16 list of Textures indicating what the cell is occupied by
-// Currently not updated to work with the height variable
-Chunk::Chunk(QList<QList<QList<Texture>>> cells) : cells(cells), height(0)
-{}
-
-// Empty constructor sets all cells as being EMPTY
+/**
+ * @brief Chunk::Chunk Initializes all blocks to be EMPTY
+ * @param height The height (y-value) of the chunk in worldspace
+ */
 Chunk::Chunk(int height) : height(height)
 {
     texture = nullptr;
