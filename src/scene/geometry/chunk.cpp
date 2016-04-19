@@ -1,10 +1,16 @@
 #include "chunk.h"
 #include <la.h>
 
-/**
- * @brief Chunk::Chunk Initializes all blocks to be EMPTY
- * @param height The height (y-value) of the chunk in worldspace
- */
+//default constructor
+Chunk::Chunk() {}
+
+
+// Takes in a 16x16x16 list of Textures indicating what the cell is occupied by
+// Currently not updated to work with the height variable
+Chunk::Chunk(QList<QList<QList<Texture>>> cells) : cells(cells), height(0)
+{}
+
+// Empty constructor sets all cells as being EMPTY
 Chunk::Chunk(int height) : height(height)
 {
     texture = nullptr;
@@ -49,112 +55,364 @@ QVector<glm::vec3> Chunk::createChunkVertexPositions()
             for (int z = 0; z < cells.size(); z++) {
                 if (cells[x][y][z] != EMPTY) {
                     // Front face
-                    if (z == cells.size()-1 || !cells[x][y][z+1]) {
+                    //if (z == cells.size()-1 || !cells[x][y][z+1]) {
+                    if (z == cells.size() - 1 || cells[x][y][z+1] == EMPTY) {
                         positions.append(glm::vec3(x+1, y+1, z+1));         // UR
                         positions.append(glm::vec3(x+1, y, z+1));           // LR
                         positions.append(glm::vec3(x, y, z+1));             // LL
                         positions.append(glm::vec3(x, y+1, z+1));           // UL
 
-                        //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
+                        //EACH FACE GETS FOUR COORDINATE
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+                        //SECOND SWITCH THE ENUM TYPE
+
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD SIDE
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        }
+
+//                        //GRASS SIDE
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(4/16.f,0));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,0));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(4/16.f,0));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,0));
+                            break;
+                        }
                     }
                     // Right face
-                    if (x == cells.size() - 1 || !cells[x+1][y][z]) {
+                    //if (x == cells.size() - 1 || !cells[x+1][y][z]) {
+                    if (x == cells.size() - 1 || cells[x+1][y][z] == EMPTY) {
                         positions.append(glm::vec3(x+1, y+1, z));       // UR
                         positions.append(glm::vec3(x+1, y, z));         // LR
                         positions.append(glm::vec3(x+1, y, z+1));       // LL
                         positions.append(glm::vec3(x+1, y+1, z+1));     // UL
 
                         //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
+
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD SIDE
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        }
+
+//                        //GRASS SIDE
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(4/16.f,0));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,0));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(4/16.f,0));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,0));
+                            break;
+                        }
                     }
                     // Left face
                     if (x == 0 || cells[x-1][y][z] == EMPTY) {
+                    //if (x == 0 || cells[x-1][y][z]) {
                         positions.append(glm::vec3(x, y+1, z+1)); // UR
                         positions.append(glm::vec3(x, y, z+1)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
 
                         //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
+
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD SIDE
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        }
+
+//                        //GRASS SIDE
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(4/16.f,0));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,0));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(4/16.f,0));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,0));
+                            break;
+                        }
                     }
                     // Back face
                     if (z == 0 || cells[x][y][z-1] == EMPTY) {
+                      //if (z == 0 || cells[x][y][z-1]) {
                         positions.append(glm::vec3(x, y+1, z)); // UR
                         positions.append(glm::vec3(x, y, z));       // LR
                         positions.append(glm::vec3(x+1, y, z)); // LL
                         positions.append(glm::vec3(x+1, y+1, z)); // UL
 
                         //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
+
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD SIDE
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        }
+
+//                        //GRASS SIDE
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(4/16.f,0));
+//                            uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(3/16.f,0));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(4/16.f,0));
+                                uvs.push_back(glm::vec2(4/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(3/16.f,0));
+                            break;
+                        }
                     }
                     // Top face
                     if (y == cells.size() - 1 || cells[x][y+1][z] == EMPTY) {
+                      //if (y == cells.size() - 1 || cells[x][y+1][z]) {
                         positions.append(glm::vec3(x+1, y+1, z)); // UR
                         positions.append(glm::vec3(x+1, y+1, z+1)); // LR
                         positions.append(glm::vec3(x, y+1, z+1)); // LL
                         positions.append(glm::vec3(x, y+1, z)); // UL
 
                         //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
+
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD TOP
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(6/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(6/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                        }
+
+//                        //GRASS TOP
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(9/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(9/16.f,3/16.f));
+//                            uvs.push_back(glm::vec2(8/16.f,3/16.f));
+//                            uvs.push_back(glm::vec2(8/16.f,2/16.f));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(6/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(6/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(9/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(9/16.f,3/16.f));
+                                uvs.push_back(glm::vec2(8/16.f,3/16.f));
+                                uvs.push_back(glm::vec2(8/16.f,2/16.f));
+                            break;
+                        }
                     }
                     // Bottom face
                     if (y == 0 || cells[x][y-1][z] == EMPTY) {
+                      //if (y == 0 || cells[x][y-1][z]) {
                         positions.append(glm::vec3(x+1, y, z+1)); // UR
                         positions.append(glm::vec3(x+1, y, z)); // LR
                         positions.append(glm::vec3(x, y, z));       // LL
                         positions.append(glm::vec3(x, y, z+1)); // UL
 
                         //EACH FACE GETS FOUR COORDINATES
-//                        uvs.push_back(glm::vec2(0,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,4/16.f));
-//                        uvs.push_back(glm::vec2(1/16.f,3/16.f));
-//                        uvs.push_back(glm::vec2(0,3/16.f));
 
-                        uvs.push_back(glm::vec2(4/16.f,0));
-                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
-                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,0));
+//                        uvs.push_back(glm::vec2(4/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                        uvs.push_back(glm::vec2(3/16.f,0));
+//                        //STONE
+//                        if (this->height + y < 5) {
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(1/16.f,0));
+//                        }
+//                        //WOOD BOT
+//                        else if (this->height +y >= 5 && this->height+y < 8) {
+//                            uvs.push_back(glm::vec2(6/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(6/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,2/16.f));
+//                            uvs.push_back(glm::vec2(5/16.f,1/16.f));
+//                        }
+
+//                        //GRASS BOT
+//                        else if (this->height+y >= 8) {
+//                            uvs.push_back(glm::vec2(3/16.f,0));
+//                            uvs.push_back(glm::vec2(3/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(2/16.f,1/16.f));
+//                            uvs.push_back(glm::vec2(2/16.f,0));
+//                        }
+                        switch (cells[x][y][z]) {
+                            case STONE:
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(1/16.f,0));
+                                break;
+
+                            case WOOD:
+                                uvs.push_back(glm::vec2(6/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(6/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,2/16.f));
+                                uvs.push_back(glm::vec2(5/16.f,1/16.f));
+                                break;
+
+                            case GRASS:
+                                uvs.push_back(glm::vec2(3/16.f,0));
+                                uvs.push_back(glm::vec2(3/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(2/16.f,1/16.f));
+                                uvs.push_back(glm::vec2(2/16.f,0));
+                            break;
+                        }
                     }
                 }
             }

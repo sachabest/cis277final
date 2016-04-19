@@ -15,7 +15,7 @@ class Scene {
 public:
     Scene();
     QOpenGLTexture* texture;
-    void CreateChunkScene();
+    //void CreateChunkScene();
     void CreateNewChunks();
     void shift(int dx, int dy, int dz);
 

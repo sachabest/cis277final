@@ -67,6 +67,7 @@ void MyGL::initializeGL()
     prog_lambert.setUVImage(gltexture);
 
     geom_cube.create();
+    //test_chunk.create();
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
@@ -77,6 +78,7 @@ void MyGL::initializeGL()
     timer.start(100);
 
     //Test scene data initialization
+
     scene.CreateNewChunks();
 }
 
@@ -341,42 +343,42 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 
     //z direction
     else if (e->key() == Qt::Key_W) {
-        //gl_camera.TranslateAlongLook(amount);
-        inz = true;
-        timerUpdate();
-        inz = false;
+        gl_camera.TranslateAlongLook(amount);
+//        inz = true;
+//        timerUpdate();
+//        inz = false;
 
     } else if (e->key() == Qt::Key_S) {
-        //gl_camera.TranslateAlongLook(-amount);
-        outz = true;
-        timerUpdate();
-        outz = false;
+        gl_camera.TranslateAlongLook(-amount);
+//        outz = true;
+//        timerUpdate();
+//        outz = false;
     }
     //x direction
     else if (e->key() == Qt::Key_D) {
- //       gl_camera.TranslateAlongRight(amount);
-        rightx = true;
-        timerUpdate();
-        rightx = false;
+        gl_camera.TranslateAlongRight(amount);
+//        rightx = true;
+//        timerUpdate();
+//        rightx = false;
 
     } else if (e->key() == Qt::Key_A) {
-       // gl_camera.TranslateAlongRight(-amount);
-        leftx = true;
-        timerUpdate();
-        leftx = false;
+        gl_camera.TranslateAlongRight(-amount);
+//        leftx = true;
+//        timerUpdate();
+//        leftx = false;
     }
 
     //y direction
     else if (e->key() == Qt::Key_Q) {
-        //gl_camera.TranslateAlongUp(-amount);
-        downy = true;
-        timerUpdate();
-        downy = false;
+        gl_camera.TranslateAlongUp(-amount);
+//        downy = true;
+//        timerUpdate();
+//        downy = false;
     } else if (e->key() == Qt::Key_E) {
-        //gl_camera.TranslateAlongUp(amount);
-        upy = true;
-        timerUpdate();
-        upy = false;
+        gl_camera.TranslateAlongUp(amount);
+//        upy = true;
+//        timerUpdate();
+//        upy = false;
     }
 
     else if (e->key() == Qt::Key_P) {
@@ -417,38 +419,63 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     update();  // Calls paintGL, among other things
 }
 
-//screen center (0,0,0)
-//FIX DESTRUCTION LATER
-void MyGL::destroyBlocks() {
-    std::cout << "destroy blocks" << std::endl;
+Point3* MyGL::raymarch() {
     Ray ray_from_center = gl_camera.raycast();
-
-    //QList<Point3> points = scene.points;
-    //std::cout << "points size " << scene.points.size() << std::endl;
-
-    //RAY MARCH from 1 to 31 (< 32 taxicabs)
-    for (int t = 1; t < 32; t++) {
+    for (float t = 0; t < 32; t+=0.1) {
         glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
                                        t*ray_from_center.direction.z);
         glm::vec3 position = ray_from_center.origin + new_dir;
         //floor the position value and check if there is an object in there;
         //if there is: remove it and break out of the loop
         Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
-        //if (points.contains(point_cube))
 
         //NEW CHUNK STUFF FOR TESTING FILL
-//        if (scene.isFilled(point_cube))
-//        {
-//            std::cout << "in destroying" << std::endl;
-//            for (int i = 0; i < points.size(); i++) {
-//                if(points[i] == point_cube) {
-//                    std::cout << "remove stuff" << std::endl;
-//                    scene.points.removeAt(i);
-//                    //std::cout << "after remove point size " << scene.points.size() << std::endl;
-//                    break;
-//                }
-//            }
-//        }
+        if (scene.isFilled(point_cube)) {
+            return &point_cube;
+        }
+        else {
+            return nullptr;
+        }
+    }
+}
+
+//screen center (0,0,0)
+//FIX DESTRUCTION LATER
+void MyGL::destroyBlocks() {
+//    std::cout << "destroy blocks" << std::endl;
+//    Ray ray_from_center = gl_camera.raycast();
+
+//    //QList<Point3> points = scene.points;
+//    //std::cout << "points size " << scene.points.size() << std::endl;
+
+//    //RAY MARCH from 1 to 31 (< 32 taxicabs)
+//    for (int t = 1; t < 32; t++) {
+//        glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
+//                                       t*ray_from_center.direction.z);
+//        glm::vec3 position = ray_from_center.origin + new_dir;
+//        //floor the position value and check if there is an object in there;
+//        //if there is: remove it and break out of the loop
+//        Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+//        //if (points.contains(point_cube))
+
+//        //NEW CHUNK STUFF FOR TESTING FILL
+////        if (scene.isFilled(point_cube))
+////        {
+////            std::cout << "in destroying" << std::endl;
+////            for (int i = 0; i < points.size(); i++) {
+////                if(points[i] == point_cube) {
+////                    std::cout << "remove stuff" << std::endl;
+////                    scene.points.removeAt(i);
+////                    //std::cout << "after remove point size " << scene.points.size() << std::endl;
+////                    break;
+////                }
+////            }
+////        }
+//        update();
+//    }
+
+    Point3* cube = raymarch();
+    if (cube != nullptr) {
         update();
     }
 }
