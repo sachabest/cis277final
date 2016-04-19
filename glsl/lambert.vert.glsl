@@ -26,9 +26,15 @@ in vec3 vs_Nor;  // ---------->The array of vertex normals passed to the shader
 
 in vec3 vs_Col;  // ---------->The array of vertex colors passed to the shader.
 
+in vec2 vs_uv;
+
 out vec3 fs_Nor;  // --------->The array of normals that has been transformed by u_ModelInvTr. This is implicitly passed to the fragment shader.
 out vec3 fs_LightVec;  // ---->The direction in which our virtual light lies, relative to each vertex. This is implicitly passed to the fragment shader.
 out vec3 fs_Col;  // --------->The color of each vertex. This is implicitly passed to the fragment shader.
+out vec2 fs_uv;
+//just out = in here; give it to frag shader
+
+
 
 const vec4 lightDir = vec4(1,1,1,0);  // The position of our virtual light, which is used to compute the shading of
                                         // the geometry in the fragment shader.
@@ -37,6 +43,7 @@ void main()
 {
     fs_Col = vs_Col;  //                          Pass the vertex color positions to the fragment shader
     fs_Nor = vec3(u_ModelInvTr * vec4(vs_Nor, 0));  //           Transform the geometry's normals
+    fs_uv = vs_uv; // out uv = in uv
 
     vec4 modelposition = u_Model * vec4(vs_Pos, 1);  //    Temporarily store the transformed vertex positions for use below
 

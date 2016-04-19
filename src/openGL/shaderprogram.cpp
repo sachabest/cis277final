@@ -11,9 +11,13 @@ void ShaderProgram::create(const char *vertfile, const char *fragfile)
     attrPos = prog.attributeLocation("vs_Pos");
     attrNor = prog.attributeLocation("vs_Nor");
     attrCol = prog.attributeLocation("vs_Col");
+    attrUV = prog.attributeLocation("vs_uv");
     unifModel      = prog.uniformLocation("u_Model");
     unifModelInvTr = prog.uniformLocation("u_ModelInvTr");
     unifViewProj   = prog.uniformLocation("u_ViewProj");
+    //equivalent to GLint unifUV = glGetUniformLocation(program, "myTexture");
+    unifUV = prog.uniformLocation("myTexture");
+
 }
 
 void ShaderProgram::setModelMatrix(const glm::mat4 &model)
@@ -37,6 +41,29 @@ void ShaderProgram::setViewProjMatrix(const glm::mat4& vp)
 
     if(unifViewProj != -1){
         prog.setUniformValue(unifViewProj, la::to_qmat(vp));
+    }
+}
+
+//set unifUV thing
+void ShaderProgram::setUVImage(QOpenGLTexture* texture) {
+    //equivalent to calling glUseProgram
+    prog.bind();
+
+    textSampler = texture;
+    if (unifUV != -1) {
+        glActiveTexture(GL_TEXTURE0);
+
+        //equivalent to this: glUniform1i(unifUV, 0);
+        textSampler->create();
+        textSampler->setWrapMode(QOpenGLTexture::Repeat);
+        textSampler->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+        textSampler->setMagnificationFilter(QOpenGLTexture::Linear);
+        textSampler->bind(0);
+        GLuint ID = textSampler->textureId();
+
+        prog.setUniformValue(unifUV, 0);
+
+        glBindSampler(textSampler->textureId(), unifUV);
     }
 }
 
@@ -65,14 +92,25 @@ void ShaderProgram::draw(GLWidget277 &f, Drawable &d)
         f.glVertexAttribPointer(attrCol, 3, GL_FLOAT, false, 0, NULL);
     }
 
+    //ADDED UV STUFF
+    if (attrUV != -1 && d.bindUV()) {
+        prog.enableAttributeArray(attrUV);
+        f.glVertexAttribPointer(attrUV, 2, GL_FLOAT, false, 0, NULL);
+    }
+
     // Bind the index buffer and then draw shapes from it.
     // This invokes the shader program, which accesses the vertex buffers.
     d.bindIdx();
+    if(textSampler != nullptr)
+    {
+        textSampler->bind();
+    }
     f.glDrawElements(d.drawMode(), d.elemCount(), GL_UNSIGNED_INT, 0);
 
     if (attrPos != -1) prog.disableAttributeArray(attrPos);
     if (attrNor != -1) prog.disableAttributeArray(attrNor);
     if (attrCol!= -1) prog.disableAttributeArray(attrCol);
+    if (attrUV != -1) prog.disableAttributeArray(attrUV);
 
     f.printGLErrorLog();
 }

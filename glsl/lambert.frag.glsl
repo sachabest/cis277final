@@ -13,13 +13,18 @@
 in vec3 fs_Nor;
 in vec3 fs_LightVec;
 in vec3 fs_Col;
+in vec2 fs_uv;
+uniform sampler2D myTexture;
+//rememmber to set sampler2d
 
 out vec3 out_Col;  // This is the final output color that you will see on your screen for the pixel that is currently being processed.
 
 void main()
 {
     // Material base color (before shading)
-    vec3 diffuseColor = fs_Col;
+    //vec3 diffuseColor = fs_Col;
+    vec3 diffuseColor = texture(myTexture, fs_uv).rgb;
+    //CHANGE THIS DIFFUSE COLOR TO BE TEXTURE STUFF
 
     // Calculate the diffuse term for Lambert shading
     float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
@@ -33,6 +38,6 @@ void main()
                                                         // lit by our point light are not completely black.
 
     // Compute final shaded color
-    out_Col = diffuseColor.rgb * lightIntensity;
+    out_Col = diffuseColor;// * lightIntensity;
     // out_Col = normalize(abs(fs_Nor));
 }

@@ -3,8 +3,7 @@
 #include <scene/geometry/chunk.h>
 #include <iostream>
 
-#define MAX_TERRAIN_HEIGHT 6
-
+#define MAX_TERRAIN_HEIGHT 6    // Fix dis; make # of y_chunks generated dependent on Perlin noise height
 static const int SCENE_DIM = 128;
 static const int TERRAIN_DIM = 128;
 
@@ -13,7 +12,7 @@ Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DI
 {
     /* The base coordinate centers the origin (0,0) on the x-z plane in the octree
        You can generate a maximum of 32 chunks in either direction, and 64 chunks upward */
-    this->octree = new OctNode(Point3(-tree_length/2, 0, -tree_length/2), tree_length);
+    this->octree = new OctNode(Point3(-WORLD_DIM/2, 0, -WORLD_DIM/2), WORLD_DIM);
 }
 
 void Scene::shift(int dx, int dy, int dz) {
@@ -30,7 +29,7 @@ void Scene::addVoxel(QSet<OctNode *> &set, Point3 &p) {
         return;
     Point3 localPoint = worldToChunk(p);
     set.insert(chunk);
-    chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = true;
+    chunk->chunk->cells[localPoint.x][localPoint.y][localPoint.z] = WOOD;
 }
 
 void Scene::bresenham(const glm::vec4 &p1, const glm::vec4 &p2) {
@@ -153,35 +152,6 @@ bool Scene::isFilled(Point3 p)
     return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
 }
 
-// Called when the scene is first rendered
-void Scene::CreateChunkScene() {
-    for (int x_chunk = 0; x_chunk < num_chunks; x_chunk++) {
-        for (int z_chunk = 0; z_chunk < num_chunks; z_chunk++) {
-            for (int y_chunk = 0; y_chunk < MAX_TERRAIN_HEIGHT; y_chunk++) {
-                Point3 p = Point3(x_chunk*16.0f, y_chunk*16.0f, z_chunk*16.0f);
-                Chunk* chunk = new Chunk(p.y);
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        float height = terrain.getBlock((x + x_chunk*16) / (float) dimensions[0],
-                                (z + z_chunk*16) / (float) dimensions[2]);
-                        for (int y = y_chunk*16; y <= height; y++) {
-                            if (y >= (y_chunk+1)*16) {
-                                break;
-                            }
-                            chunk->cells[x][y-y_chunk*16][z] = true;
-                        }
-                    }
-                }
-                chunk->create();
-                OctNode* leaf = getContainingNode(p);
-                leaf->chunk = chunk;
-//                qDebug() << "Set chunk at: ";
-//                qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
-            }
-        }
-    }
-}
-
 // Called whenever the camera moves to a different chunk
 void Scene::CreateNewChunks()
 {
@@ -190,7 +160,7 @@ void Scene::CreateNewChunks()
             Point3 p = Point3(x_chunk*16.0f + origin.x, 0, z_chunk*16.0f + origin.z);
             // Must generate a new chunk VBO because octree is empty at that point
             if (!getContainingNode(p)->chunk) {
-                for (int y_chunk = 0; y_chunk < num_chunks; y_chunk++) {
+                for (int y_chunk = 0; y_chunk < MAX_TERRAIN_HEIGHT; y_chunk++) {
                     Point3 p_y = Point3(p.x, y_chunk*16.0f, p.z);
                     Chunk* chunk = new Chunk(p_y.y);
                     for (int x = 0; x < 16; x++) {
@@ -204,7 +174,23 @@ void Scene::CreateNewChunks()
                                 if (y >= (y_chunk+1)*16) {
                                     break;
                                 }
-                                chunk->cells[x][y-y_chunk*16][z] = true;
+                                //qDebug() << "chunk point height " << y;
+                                //chunk->cells[x][y-y_chunk*16][z] = GRASS;
+
+                                //STONE
+                                if (y < 5) {
+                                    chunk->cells[x][y-y_chunk*16][z] = STONE;
+                                }
+
+                                //WOOD
+                                else if (y >= 5 && y < 8) {
+                                    chunk->cells[x][y-y_chunk*16][z] = WOOD;
+                                }
+
+                                //GRASS
+                                else if (y > 8) {
+                                    chunk->cells[x][y-y_chunk*16][z] = GRASS;
+                                }
                             }
                         }
                     }

@@ -27,6 +27,7 @@ public:
     bool bindPos();
     bool bindNor();
     bool bindCol();
+    bool bindUV();
 
 protected:
     int count;
@@ -36,4 +37,5 @@ protected:
     QOpenGLBuffer bufPos;
     QOpenGLBuffer bufNor;
     QOpenGLBuffer bufCol;
+    QOpenGLBuffer bufUV;
 };

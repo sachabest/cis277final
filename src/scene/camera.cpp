@@ -130,3 +130,11 @@ void Camera::TranslateAlongUp(float amt)
     eye += translation;
     ref += translation;
 }
+
+//raycast for checking intersection
+Ray Camera::raycast() {
+    glm::vec3 ray_origin = eye;
+    glm::vec3 ray_direct = glm::normalize(ref-eye);
+    Ray ray = Ray(ray_origin, ray_direct);
+    return ray;
+}

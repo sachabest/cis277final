@@ -2,6 +2,7 @@
 
 #include <la.h>
 #include <openGL/drawable.h>
+#include "ray.h"
 
 //A perspective projection camera
 //Receives its eye position and reference point from the scene XML file
@@ -44,4 +45,7 @@ public:
     void TranslateAlongLook(float amt);
     void TranslateAlongRight(float amt);
     void TranslateAlongUp(float amt);
+
+    //raycast for checking intersection from center of screen
+    Ray raycast();
 };

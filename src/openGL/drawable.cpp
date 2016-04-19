@@ -4,7 +4,8 @@ Drawable::Drawable()
     : bufIdx(QOpenGLBuffer::IndexBuffer),
       bufPos(QOpenGLBuffer::VertexBuffer),
       bufNor(QOpenGLBuffer::VertexBuffer),
-      bufCol(QOpenGLBuffer::VertexBuffer)
+      bufCol(QOpenGLBuffer::VertexBuffer),
+      bufUV(QOpenGLBuffer::VertexBuffer)
 {}
 
 Drawable::~Drawable()
@@ -24,6 +25,7 @@ void Drawable::destroy()
     bufPos.destroy();
     bufNor.destroy();
     bufCol.destroy();
+    bufUV.destroy();
 }
 
 GLenum Drawable::drawMode(){return GL_TRIANGLES;}
@@ -32,3 +34,4 @@ bool Drawable::bindIdx(){return bufIdx.bind();}
 bool Drawable::bindPos(){return bufPos.bind();}
 bool Drawable::bindNor(){return bufNor.bind();}
 bool Drawable::bindCol(){return bufCol.bind();}
+bool Drawable::bindUV(){return bufUV.bind();}

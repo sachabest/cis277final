@@ -4,5 +4,6 @@
         <file>glsl/lambert.vert.glsl</file>
         <file>glsl/flat.frag.glsl</file>
         <file>glsl/flat.vert.glsl</file>
+        <file>minecraft_textures_all.png</file>
     </qresource>
 </RCC>
