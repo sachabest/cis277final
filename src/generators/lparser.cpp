@@ -6,12 +6,12 @@
 
 LParser::LParser() {}
 
-static float drawSize = 1.0f;
+static float drawSize = 10.0f;
 static const float delta = 22.5f;
-static float cylinderRadius = 1.0f;
-static const float shrinkFactor = 0.5f;
-static float storedRadius = 1.0f;
-static float leafRadius = 1.0f;
+static float cylinderRadius = 10.0f;
+static const float shrinkFactor = 1.5f;
+static float storedRadius = 5.0f;
+static float leafRadius = .50f;
 
 /**
  * @brief LParser::makeTree a convenience method for drawing trees using the static methods expand() and
@@ -43,11 +43,28 @@ QVector<LPair_t> LParser::makeTree() {
     QVector<QString> a, b, c, d;
     a.push_back("[&FL!A]/////`[&FL!A]///////`[&FL!A]");
     b.push_back("S ///// F");
-    c.push_back("F");
+    c.push_back("F L");
     d.push_back("[```^^{-f+f+f-|-f+f+f}]");
     QMap<QChar, QVector<QString> > productions {
         {'A', a},
         {'F', b},
+        {'S', c},
+        {'L', d}};
+    return createDrawables(expand(productions, 7, axiom));
+}
+
+/**
+ * @brief LParser::makeCarrieTree
+ * @return
+ */
+QVector<LPair_t> LParser::makeCarrieTree() {
+    QString axiom = "A";
+    QVector<QString> a, b, c, d;
+    a.push_back("----ffffB");
+    b.push_back("q //// qAB");
+    QMap<QChar, QVector<QString> > productions {
+        {'A', a},
+        {'B', b},
         {'S', c},
         {'L', d}};
     return createDrawables(expand(productions, 7, axiom));
@@ -67,7 +84,7 @@ QVector<LPair_t> LParser::createDrawables(const QString &pattern) {
         QChar letter = pattern.at(i);
         LPair_t p;
         p.draw = false;
-        if (letter.toLatin1() == 'f') {
+        if (letter.toLower() == 'f') {
             p.draw = true;
             p.t = glm::translate(glm::mat4(), glm::vec3(0, 0, drawSize));
         } else if (letter == '+') {
@@ -86,7 +103,7 @@ QVector<LPair_t> LParser::createDrawables(const QString &pattern) {
             p.t = glm::rotate(glm::mat4(), 180.0f, glm::vec3(0, 1, 0));
         } else if (letter.toLower() == 'q') {
             // print leaf material
-            p.t = glm::translate(glm::mat4(), glm::vec3(0, 0, 1.0f + drawSize));
+            p.t = glm::translate(glm::mat4(), glm::vec3(0, 0, 1.0f + cylinderRadius));
             float random = ((float) rand()) / (float) RAND_MAX;
             float rot = random * 80.0f;
             random = ((float) rand()) / (float) RAND_MAX;
@@ -95,14 +112,13 @@ QVector<LPair_t> LParser::createDrawables(const QString &pattern) {
             float ry = random * 0.5;
             random = ((float) rand()) / (float) RAND_MAX;
             float rz = random * 0.5;
-            random = ((float) rand()) / (float) RAND_MAX;
             p.t = glm::rotate(p.t, rot, glm::vec3(rx, ry, rz));
             // Make Disk here
             p.draw = true;
             v.push_back(p);
             p.t = glm::rotate(glm::mat4(), rot, glm::vec3( -1 * rx, -1 * ry, -1 *rz));
             p.t = glm::rotate(p.t, 180.0f, glm::vec3(0, 1, 0));
-            p.t = glm::translate(p.t, glm::vec3(0, 0, 1.0f + drawSize));
+            p.t = glm::translate(p.t, glm::vec3(0, 0, 1.0f + cylinderRadius));
             p.draw = false;
             // print bark material
             v.push_back(p);
