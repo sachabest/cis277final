@@ -176,17 +176,17 @@ void Scene::CreateNewChunks()
                                 //chunk->cells[x][y-y_chunk*16][z] = GRASS;
 
                                 //STONE
-                                if (y < 5) {
+                                if (y < 10) {
                                     chunk->cells[x][y-y_chunk*16][z] = STONE;
                                 }
 
                                 //WOOD
-                                else if (y >= 5 && y < 8) {
+                                else if (y >= 10 && y < 15) {
                                     chunk->cells[x][y-y_chunk*16][z] = WOOD;
                                 }
 
                                 //GRASS
-                                else if (y > 8) {
+                                else if (y >= 15) {
                                     chunk->cells[x][y-y_chunk*16][z] = GRASS;
                                 }
                             }
