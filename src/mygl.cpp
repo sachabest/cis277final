@@ -448,6 +448,25 @@ Point3 MyGL::raymarch() {
     return Point3(-INFINITY, -INFINITY, -INFINITY);
 }
 
+Point3* MyGL::raymarchCast() {
+    Ray ray_from_center = gl_camera.raycast();
+    for (float t = 0.1; t < 32.f; t+=0.1) {
+        glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
+                                       t*ray_from_center.direction.z);
+        glm::vec3 position = ray_from_center.origin + new_dir;
+        //floor the position value and check if there is an object in there;
+        //if there is: remove it and break out of the loop
+        Point3* point_cube = new Point3((glm::floor(position.x)), glm::floor(position.y), glm::floor(position.z));
+        Point3 containpoint = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
+
+        //NEW CHUNK STUFF FOR TESTING FILL
+        if (scene.isFilled(containpoint)) {
+            return point_cube;
+        }
+    }
+    return new Point3(-INFINITY, -INFINITY, -INFINITY);
+}
+
 //screen center (0,0,0)
 //FIX DESTRUCTION LATER
 void MyGL::destroyBlocks() {
@@ -483,8 +502,20 @@ void MyGL::destroyBlocks() {
 //        update();
 //    }
 
-    Point3 cube = raymarch();
-    if (cube.x != -INFINITY) {
+    std::cout << "in destroy" << std::endl;
+    Point3* cube = raymarchCast();
+    qDebug() << "raymarch x: " << cube->x;
+    qDebug() << "raymarch y: " << cube->y;
+    qDebug() << "raymarch z: " << cube->z;
+    if (cube->x != -INFINITY) {
+        std::cout << "in cube" << std::endl;
+        Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
+        Chunk* chunk = scene.getContainingChunk(localchunk);
+        qDebug() << "local x: " << localchunk.x;
+        qDebug() << "local y: " << localchunk.y;
+        qDebug() << "local z: " << localchunk.z;
+        chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+        chunk->create();
         update();
     }
 }

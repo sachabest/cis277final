@@ -79,6 +79,7 @@ public:
     //is look is false we are trying to move away
     void collisionZ(bool look);
 
+    Point3* raymarchCast();
     Point3 raymarch();
 
 protected:

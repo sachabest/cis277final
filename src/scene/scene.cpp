@@ -149,7 +149,24 @@ bool Scene::isFilled(Point3 p)
         return false;
     }
     Point3 p_chunk = worldToChunk(p);
-    return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
+    //return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
+//    int enumtype = chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
+//    return enumtype;
+    if (p_chunk.x < chunk->cells.size()) {
+        QList<QList<Texture>> ypart = chunk->cells[p_chunk.x];
+        if (p_chunk.y < ypart.size()) {
+            QList<Texture> zpart = ypart[p_chunk.y];
+            if (p_chunk.z < zpart.size()) {
+                if (zpart[p_chunk.z] == EMPTY) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 // Called whenever the camera moves to a different chunk
