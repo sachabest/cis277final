@@ -81,9 +81,8 @@ public:
 
     Point3* raymarchCast();
     Point3 raymarch();
-
-protected:
     void keyPressEvent(QKeyEvent *e);
+protected:
     void mousePressEvent(QMouseEvent *e);
 
 signals:

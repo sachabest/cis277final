@@ -24,7 +24,8 @@ SOURCES += \
     $$PWD/generators/lparser.cpp \
     $$PWD/scene/octnode.cpp \
     $$PWD/scene/geometry/cross.cpp \
-    $$PWD/scene/ray.cpp
+    $$PWD/scene/ray.cpp \
+    $$PWD/ui/keypassgraphicsview.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -53,4 +54,5 @@ HEADERS += \
     $$PWD/scene/octnode.h \
     $$PWD/scene/geometry/cross.h \
     $$PWD/scene/texture.h \
-    $$PWD/scene/ray.h
+    $$PWD/scene/ray.h \
+    $$PWD/ui/keypassgraphicsview.h
