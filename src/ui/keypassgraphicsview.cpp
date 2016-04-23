@@ -1,6 +1,8 @@
 #include "keypassgraphicsview.h"
+#include <QKeyEvent>
 
-KeyPassGraphicsView::KeyPassGraphicsView(QWidget *parent) : QGraphicsView(parent), gl(nullptr) {
+KeyPassGraphicsView::KeyPassGraphicsView(QWidget *parent) :
+    QGraphicsView(parent), gl(nullptr), hudUp(true), hud(nullptr) {
 }
 
 void KeyPassGraphicsView::keyPressEvent(QKeyEvent *e) {
@@ -10,5 +12,13 @@ void KeyPassGraphicsView::keyPressEvent(QKeyEvent *e) {
             scene()->update();
         }
     }
-    QGraphicsView::keyPressEvent(e);
+    if (hud) {
+        if (e->key() == Qt::Key_I) {
+            hudUp = !hudUp;
+            hud->clearFocus();
+            hud->setVisible(hudUp);
+            scene()->update();
+        }
+    }
+//    QGraphicsView::keyPressEvent(e);
 }
