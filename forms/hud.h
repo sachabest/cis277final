@@ -20,11 +20,13 @@ public:
     ~HUD();
     void addBlockToInventory(Texture t);
     void removeBlockFromInventory(Texture t);
+    void keyPressEvent(QKeyEvent *);
 protected:
     void on_listwidget_select(QListWidgetItem *item);
 private:
     Ui::HUD *ui;
     QVector<QListWidgetItem *> blocks;
+    Texture currentSelected;
     QImage createSubImage(QImage &img, const QRect &rect);
     QPixmap pullTexture(Texture t, bool edged = false);
     QMap<Texture, QPixmap> texmap;

@@ -18,6 +18,11 @@ void KeyPassGraphicsView::keyPressEvent(QKeyEvent *e) {
             hud->clearFocus();
             hud->setVisible(hudUp);
             scene()->update();
+        } else {
+            hud->keyPressEvent(e);
+            if (scene()) {
+                scene()->update();
+            }
         }
     }
 //    QGraphicsView::keyPressEvent(e);
