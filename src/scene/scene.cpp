@@ -193,19 +193,61 @@ void Scene::CreateNewChunks()
                                 }
                                 //qDebug() << "chunk point height " << y;
                                 //chunk->cells[x][y-y_chunk*16][z] = GRASS;
-
+                                /*
                                 //STONE
-                                if (y < 10) {
+                                if (y < 7) {
                                     chunk->cells[x][y-y_chunk*16][z] = STONE;
                                 }
 
                                 //WOOD
-                                else if (y >= 10 && y < 15) {
+                                else if (y >= 10 && y < 12) {
+                                    chunk->cells[x][y-y_chunk*16][z] = WOOD;
+                                }
+
+                                //LAVA
+                                else if (y == 12) {
+                                    chunk->cells[x][y-y][z] = LAVA;
+                                }
+
+                                //
+
+                                //GRASS
+                                else if (y >= 15) {
+                                    chunk->cells[x][y-y_chunk*16][z] = GRASS;
+                                }*/
+
+                                //STONE
+                                if (y < 7) {
+                                    chunk->cells[x][y-y_chunk*16][z] = STONE;
+                                }
+
+                                //LAVA
+                                else if (y >= 7 && y < 9) {
+                                    chunk->cells[x][y-y_chunk*16][z] = LAVA;
+                                }
+
+                                //WATER
+                                else if (y >= 9 && y < 12) {
+                                    chunk->cells[x][y-y_chunk*16][z] = WATER;
+                                }
+
+                                //WOOD
+                                else if (y == 12) {
                                     chunk->cells[x][y-y_chunk*16][z] = WOOD;
                                 }
 
                                 //GRASS
-                                else if (y >= 15) {
+                                else if (y >= 13 && y < 20) {
+                                    chunk->cells[x][y-y_chunk*16][z] = GRASS;
+                                }
+
+                                //WATER
+                                else if (y == 20) {
+                                    chunk->cells[x][y-y_chunk*16][z] = WATER;
+                                }
+
+                                //GRASS; y > 20
+                                else {
                                     chunk->cells[x][y-y_chunk*16][z] = GRASS;
                                 }
                             }

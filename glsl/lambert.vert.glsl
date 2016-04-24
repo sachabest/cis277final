@@ -20,18 +20,20 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
                             // We've written a static matrix for you to use for HW2,
                             // but in HW3 you'll have to generate one yourself
 
+uniform int timer;
+
 in vec3 vs_Pos;  // ---------->The array of vertex positions passed to the shader
 
 in vec3 vs_Nor;  // ---------->The array of vertex normals passed to the shader
 
 in vec3 vs_Col;  // ---------->The array of vertex colors passed to the shader.
 
-in vec2 vs_uv;
+in vec4 vs_uv;
 
 out vec3 fs_Nor;  // --------->The array of normals that has been transformed by u_ModelInvTr. This is implicitly passed to the fragment shader.
 out vec3 fs_LightVec;  // ---->The direction in which our virtual light lies, relative to each vertex. This is implicitly passed to the fragment shader.
 out vec3 fs_Col;  // --------->The color of each vertex. This is implicitly passed to the fragment shader.
-out vec2 fs_uv;
+out vec4 fs_uv;
 //just out = in here; give it to frag shader
 
 
@@ -43,7 +45,44 @@ void main()
 {
     fs_Col = vs_Col;  //                          Pass the vertex color positions to the fragment shader
     fs_Nor = vec3(u_ModelInvTr * vec4(vs_Nor, 0));  //           Transform the geometry's normals
-    fs_uv = vs_uv; // out uv = in uv
+
+    //3rd value is 1 = animation;
+    if (vs_uv.b == 1) {
+        //no offset
+        if (timer == 0) {
+            fs_uv = vs_uv;
+        }
+        //offset = 1
+        else if (timer == 1) {
+            fs_uv = vec4(vs_uv.x + 0.3/16.f, vs_uv.y, vs_uv.z, vs_uv.w);
+            //fs_uv = vec4(1,0,0,0);
+        }
+
+        //offset = 2
+        else if (timer == 2) {
+            fs_uv = vec4(vs_uv.x + 0.6/16.f, vs_uv.y, vs_uv.z, vs_uv.w);
+            //fs_uv = vec4(0,1,0,0);
+        }
+
+        //offset = 3
+        else if (timer == 3) {
+            fs_uv = vec4(vs_uv.x + 0.9/16.f, vs_uv.y, vs_uv.z, vs_uv.w);
+            //fs_uv = vec4(0,0,1,0);
+        }
+
+        //offset = 4
+        else if (timer == 4) {
+            fs_uv = vec4(vs_uv.x + 1/16.f, vs_uv.y, vs_uv.z, vs_uv.w);
+            //fs_uv = vec4(1,1,1,0);
+        }
+    }
+
+    //no animation; out = in
+    else {
+        fs_uv = vs_uv; // out uv = in uv
+        //fs_uv = vec4(1,0,0,0);
+    }
+    //fs_uv = vs_uv;
 
     vec4 modelposition = u_Model * vec4(vs_Pos, 1);  //    Temporarily store the transformed vertex positions for use below
 

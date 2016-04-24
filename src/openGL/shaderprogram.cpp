@@ -17,6 +17,7 @@ void ShaderProgram::create(const char *vertfile, const char *fragfile)
     unifViewProj   = prog.uniformLocation("u_ViewProj");
     //equivalent to GLint unifUV = glGetUniformLocation(program, "myTexture");
     unifUV = prog.uniformLocation("myTexture");
+    unifTime = prog.uniformLocation("timer");
 
 }
 
@@ -41,6 +42,15 @@ void ShaderProgram::setViewProjMatrix(const glm::mat4& vp)
 
     if(unifViewProj != -1){
         prog.setUniformValue(unifViewProj, la::to_qmat(vp));
+    }
+}
+
+void ShaderProgram::setTimer(int time) {
+    prog.bind();
+
+    if (unifTime != -1) {
+        GLint timer = time;
+        prog.setUniformValue(unifTime, timer);
     }
 }
 
@@ -95,7 +105,7 @@ void ShaderProgram::draw(GLWidget277 &f, Drawable &d)
     //ADDED UV STUFF
     if (attrUV != -1 && d.bindUV()) {
         prog.enableAttributeArray(attrUV);
-        f.glVertexAttribPointer(attrUV, 2, GL_FLOAT, false, 0, NULL);
+        f.glVertexAttribPointer(attrUV, 4, GL_FLOAT, false, 0, NULL);
     }
 
     // Bind the index buffer and then draw shapes from it.

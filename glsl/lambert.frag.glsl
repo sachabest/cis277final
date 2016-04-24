@@ -13,7 +13,7 @@
 in vec3 fs_Nor;
 in vec3 fs_LightVec;
 in vec3 fs_Col;
-in vec2 fs_uv;
+in vec4 fs_uv;
 uniform sampler2D myTexture;
 //rememmber to set sampler2d
 
@@ -23,7 +23,8 @@ void main()
 {
     // Material base color (before shading)
     //vec3 diffuseColor = fs_Col;
-    vec3 diffuseColor = texture(myTexture, fs_uv).rgb;
+    vec2 actual_text = vec2(fs_uv.x, fs_uv.y);
+    vec3 diffuseColor = texture(myTexture, actual_text).rgb;
     //CHANGE THIS DIFFUSE COLOR TO BE TEXTURE STUFF
 
     // Calculate the diffuse term for Lambert shading
@@ -38,6 +39,11 @@ void main()
                                                         // lit by our point light are not completely black.
 
     // Compute final shaded color
-    out_Col = diffuseColor;// * lightIntensity;
+    if (fs_uv.w != 1) {
+        out_Col = diffuseColor;// * lightIntensity;
+    }
+    else {
+        out_Col = diffuseColor * 2.0;
+    }
     // out_Col = normalize(abs(fs_Nor));
 }

@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QTime>
 
+int MyGL::frame = 0;
+
 #define SHIFT_DISTANCE 16
 MyGL::MyGL(QWidget *parent)
     : GLWidget277(parent)
@@ -80,6 +82,23 @@ void MyGL::initializeGL()
     //Test scene data initialization
 
     scene.CreateNewChunks();
+
+//    node = new OctNode(Point3(-32,0,-32), 64);
+//    node->getContainingNode(Point3(0,0,0));
+//    node->getContainingNode(Point3(1,1,1));
+//    node->getContainingNode(Point3(10,10,10));
+//    node->getContainingNode(Point3(-51,-20,20));
+//    Ray ray = Ray(glm::vec3(-50,-20,20), glm::vec3(-0.5,-0.5,-0.5));
+//    OctNode* stuff = node->rayCastOct(ray);
+//    if (stuff == nullptr) {
+//        qDebug() << "why is this null";
+//    }
+//    else {
+//        qDebug() << "intersect t " << stuff->intersect.t;
+//        qDebug() << "x intersect " << stuff->base.x;
+//        qDebug() << "x intersect inter " << stuff->intersect.point_val.x;
+//    }
+
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -387,23 +406,26 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     } else if (e->key() == Qt::Key_8) {
         // make plant
         QVector<LPair_t> tree = LParser::makeTree();
-        Point3 collision = raymarch();
-        if (collision.x != -INFINITY) {
-            scene.voxelize(tree, collision);
+        //Point3 collision = raymarch();
+        Point3* collision = raymarchCast();
+        if (collision->x != INFINITY) {
+            scene.voxelize(tree, *collision);
         }
     } else if (e->key() == Qt::Key_9) {
         // make plant
         QVector<LPair_t> tree = LParser::makeBrush();
-        Point3 collision = raymarch();
-        if (collision.x != -INFINITY) {
-            scene.voxelize(tree, collision);
+        //Point3 collision = raymarch();
+        Point3* collision = raymarchCast();
+        if (collision->x != INFINITY) {
+            scene.voxelize(tree, *collision);
         }
     } else if (e->key() == Qt::Key_0) {
         // make plant
         QVector<LPair_t> tree = LParser::makeCarrieTree();
-        Point3 collision = raymarch();
-        if (collision.x != -INFINITY) {
-            scene.voxelize(tree, collision);
+        //Point3 collision = raymarch();
+        Point3* collision = raymarchCast();
+        if (collision->x != INFINITY) {
+            scene.voxelize(tree, *collision);
         }
     }
     gl_camera.RecomputeAttributes();
@@ -430,7 +452,7 @@ void MyGL::keyPressEvent(QKeyEvent *e)
     update();  // Calls paintGL, among other things
 }
 
-Point3 MyGL::raymarch() {
+/*Point3 MyGL::raymarch() {
     Ray ray_from_center = gl_camera.raycast();
     for (float t = 0; t < 32; t+=0.1) {
         glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
@@ -446,10 +468,14 @@ Point3 MyGL::raymarch() {
         }
     }
     return Point3(-INFINITY, -INFINITY, -INFINITY);
-}
+}*/
 
 Point3* MyGL::raymarchCast() {
     Ray ray_from_center = gl_camera.raycast();
+    //qDebug() << "camera eye " << ray_from_center.origin.x;
+    qDebug() << "camera dir x " << ray_from_center.direction.x;
+    qDebug() << "camera dir y " << ray_from_center.direction.y;
+    qDebug() << "camera dir z " << ray_from_center.direction.z;
     for (float t = 0.1; t < 32.f; t+=0.1) {
         glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
                                        t*ray_from_center.direction.z);
@@ -461,60 +487,109 @@ Point3* MyGL::raymarchCast() {
 
         //NEW CHUNK STUFF FOR TESTING FILL
         if (scene.isFilled(containpoint)) {
+            qDebug() << "in is filled";
+            qDebug() << "point x: " << point_cube->x;
+                        qDebug() << "point y: " << point_cube->y;
+                                    qDebug() << "point z: " << point_cube->z;
             return point_cube;
         }
     }
-    return new Point3(-INFINITY, -INFINITY, -INFINITY);
+    return new Point3(INFINITY, INFINITY, INFINITY);
+}
+
+OctNode* MyGL::octreeMarch() {
+    gl_camera.RecomputeAttributes();
+    Ray ray_from_center = gl_camera.raycast();
+    glm::vec3 ray_origin = ray_from_center.origin;
+    qDebug() << "ray origin x " << ray_origin.x;
+    qDebug() << "ray origin y " << ray_origin.y;
+    qDebug() << "ray origin z " << ray_origin.z;
+    qDebug() << "ray dir x " << ray_from_center.direction.x;
+    qDebug() << "ray dir y " << ray_from_center.direction.y;
+    qDebug() << "ray dir z " << ray_from_center.direction.z;
+
+    OctNode* intersection = scene.octree->rayCastOct(ray_from_center);
+    if (intersection != nullptr) {
+//        Point3* pointcube = new Point3(intersection->base.x, intersection->base.y, intersection->base.z);
+//        //qDebug() << scene.octree->length;
+//        //return intersection;
+//        return pointcube;
+        return intersection;
+    }
+    return nullptr;
 }
 
 //screen center (0,0,0)
 //FIX DESTRUCTION LATER
 void MyGL::destroyBlocks() {
-//    std::cout << "destroy blocks" << std::endl;
-//    Ray ray_from_center = gl_camera.raycast();
-
-//    //QList<Point3> points = scene.points;
-//    //std::cout << "points size " << scene.points.size() << std::endl;
-
-//    //RAY MARCH from 1 to 31 (< 32 taxicabs)
-//    for (int t = 1; t < 32; t++) {
-//        glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
-//                                       t*ray_from_center.direction.z);
-//        glm::vec3 position = ray_from_center.origin + new_dir;
-//        //floor the position value and check if there is an object in there;
-//        //if there is: remove it and break out of the loop
-//        Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
-//        //if (points.contains(point_cube))
-
-//        //NEW CHUNK STUFF FOR TESTING FILL
-////        if (scene.isFilled(point_cube))
-////        {
-////            std::cout << "in destroying" << std::endl;
-////            for (int i = 0; i < points.size(); i++) {
-////                if(points[i] == point_cube) {
-////                    std::cout << "remove stuff" << std::endl;
-////                    scene.points.removeAt(i);
-////                    //std::cout << "after remove point size " << scene.points.size() << std::endl;
-////                    break;
-////                }
-////            }
-////        }
-//        update();
-//    }
-
-    std::cout << "in destroy" << std::endl;
+    OctNode* node = octreeMarch();
     Point3* cube = raymarchCast();
-    qDebug() << "raymarch x: " << cube->x;
-    qDebug() << "raymarch y: " << cube->y;
-    qDebug() << "raymarch z: " << cube->z;
-    if (cube->x != -INFINITY) {
-        std::cout << "in cube" << std::endl;
+    qDebug() << "cube world x " << node->intersect.point_val.x;
+    qDebug() << "cube world y " << node->intersect.point_val.y;
+    qDebug() << "cube world z " << node->intersect.point_val.z;
+
+    qDebug() << "cube cast world x " << cube->x;
+    qDebug() << "cube cast world y " << cube->y;
+    qDebug() << "cube cast world z " << cube->z;
+    //Point3* cube = raymarchCast();
+    /*if (node != nullptr) {
+//        Point3 localchunk = scene.worldToChunk(Point3(cube_cast->x, cube_cast->y, cube_cast->z));
+//        Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
+//        qDebug() << "local x: " << cube->x;
+//        qDebug() << "local y: " << cube->y;
+//        qDebug() << "local z: " << cube->z;
+//        qDebug() << "local x: " << localchunk.x;
+//        qDebug() << "local y: " << localchunk.y;
+//        qDebug() << "local z: " << localchunk.z;
+//        chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+//        //chunk->cells[cube->x][cube->y][cube->z] = EMPTY;
+//        chunk->create();
+//        update();
+        Chunk* chunk = node->chunk;
+        if (chunk == nullptr) {
+            qDebug() << "why is chunk null";
+        }
+
+        qDebug() << "intersect point";
+        qDebug() << "intersect x " << (node->intersect.point_val.x)/16.f;
+        qDebug() << "intersect y " << (node->intersect.point_val.y)/16.f;
+        qDebug() << "intersect z " << (node->intersect.point_val.z)/16.f;
+        qDebug() << "--------------------------";
+        Point3 localchunk = scene.worldToChunk(Point3(glm::floor(node->intersect.point_val.x),
+                                                      glm::floor(node->intersect.point_val.y),
+                                                      glm::floor(node->intersect.point_val.z)));
+//        //Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
+//        //chunk->cells[glm::floor((node->intersect.point_val.x)/16)][glm::floor((node->intersect.point_val.y)/16)][glm::floor((node->intersect.point_val.z)/16)] = EMPTY;
+        chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+//        for (int x = 0; x < chunk->cells.size(); x++) {
+//            for (int y = 0; y < chunk->cells.size(); y++) {
+//                for (int z = 0; z < chunk->cells.size(); z++) {
+//                    chunk->cells[x][y][z] = EMPTY;
+//                }
+//            }
+//        }
+
+        chunk->create();
+        update();
+    }*/
+
+    if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
-        Chunk* chunk = scene.getContainingChunk(localchunk);
+        Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
         qDebug() << "local x: " << localchunk.x;
         qDebug() << "local y: " << localchunk.y;
         qDebug() << "local z: " << localchunk.z;
-        chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+        if (localchunk.x < chunk->cells.size()) {
+            QList<QList<Texture>> ypart = chunk->cells[localchunk.x];
+            if (localchunk.y < ypart.size()) {
+                QList<Texture> zpart = ypart[localchunk.y];
+                if (localchunk.z < zpart.size()) {
+                    if (chunk->cells[localchunk.x][localchunk.y][localchunk.z] != EMPTY) {
+                        chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+                    }
+                }
+            }
+        }
         chunk->create();
         update();
     }
@@ -523,95 +598,32 @@ void MyGL::destroyBlocks() {
 //FIX ADDING LATER
 
 void MyGL::addBlocks() {
-    std::cout << "add block" << std::endl;
-    //RAYMARCH THIS
-    Ray ray_from_center = gl_camera.raycast();
-    //QList<QList<QList<bool>>> scene_objs = scene.objects;
-    //QList<Point3>& points = scene.points;
-
-    //QList<Point3> points = scene.points;
-    //std::cout << "points size " << scene.points.size() << std::endl;
-
-    //RAY MARCH from 1 to 31 (< 32 taxicabs)
-    for (int t = 1; t < 32; t++) {
-        glm::vec3 new_dir = glm::vec3 (t*ray_from_center.direction.x, t*ray_from_center.direction.y,
-                                       t*ray_from_center.direction.z);
-        glm::vec3 position = ray_from_center.origin + new_dir;
-        Point3 point_cube = Point3(glm::floor(position.x), glm::floor(position.y), glm::floor(position.z));
-        Ray newRay = Ray(position, ray_from_center.direction);
-        //if (points.contains(point_cube))
-//        if (scene.isFilled(point_cube))
-//        {
-//            std::cout << "in adding" << std::endl;
-//            glm::vec3 T = position;
-//            glm::vec3 R = glm::vec3(0,0,0);
-//            glm::vec3 S = glm::vec3(1,1,1);
-
-//            for (int i = 0; i < points.size(); i++) {
-//                if(points[i] == point_cube) {
-//                    std::cout << "add stuff" << std::endl;
-
-//                    glm::vec3 normal = points[i].intersect(newRay, Transform(T, R, S));
-//                    std::cout << "normal x " << normal.x << std::endl;
-//                    std::cout << "normal y " << normal.y << std::endl;
-//                    std::cout << "normal z " << normal.z << std::endl;
-
-//                    if (normal == glm::vec3(-1,0,0)) {
-//                        //negative x; put one on right
-//                        Point3 potential = Point3(point_cube.x-1, point_cube.y, point_cube.z);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else if (normal == glm::vec3(1,0,0)) {
-//                        Point3 potential = Point3(point_cube.x+1, point_cube.y, point_cube.z);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else if (normal == glm::vec3(0,-1,0)) {
-//                        Point3 potential = Point3(point_cube.x, point_cube.y-1, point_cube.z);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else if (normal == glm::vec3(0,1,0)) {
-//                        Point3 potential = Point3(point_cube.x, point_cube.y+1, point_cube.z);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else if (normal == glm::vec3(0,0,-1)) {
-//                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z-1);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else if (normal == glm::vec3(0,0,1)) {
-//                        Point3 potential = Point3(point_cube.x, point_cube.y, point_cube.z+1);
-//                        if (!points.contains(potential)) {
-//                            scene.points.append(potential);
-//                            break;
-//                        }
-//                    }
-//                    else{
-//                        //dont do anything
-//                    }
-
-//                    //scene.points.removeAt(i);
-//                    std::cout << "after add point size " << scene.points.size() << std::endl;
-//                    break;
-//                }
-//            }
-
-//        }
+    Point3* cube = raymarchCast();
+    if (cube != nullptr && cube->x != INFINITY) {
+        Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
+        Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
+        if (chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] == EMPTY) {
+            chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        else if (chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] == EMPTY) {
+            chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        else if (chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] == EMPTY) {
+            chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        else if (chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] == EMPTY) {
+            chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        else if (chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] == EMPTY) {
+            chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        else {
+            chunk->cells[localchunk.x][localchunk.y][localchunk.z+1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        }
+        chunk->create();
         update();
     }
+    update();
 }
 
 //MOUSE clicking destroying and adding blocks
@@ -625,6 +637,18 @@ void MyGL::mousePressEvent(QMouseEvent *e) {
         addBlocks();
     }
     update();//calls painGL
+}
+
+void MyGL::animate() {
+    int remainTime = timer.remainingTime();
+    //std::cout << "remain time " << remainTime << std::endl;
+
+    //timer is active
+    if (remainTime != -1) {
+        int moduolo = frame % 5;
+        prog_lambert.setTimer(moduolo);
+        frame++;
+    }
 }
 
 void MyGL::timerUpdate()
@@ -663,4 +687,8 @@ void MyGL::timerUpdate()
 //    }
 
 //    update();
+
+    animate();
+    update();
+
 }

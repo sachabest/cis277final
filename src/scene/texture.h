@@ -3,5 +3,5 @@
 
 #endif // TEXTURE_H
 enum Texture {
-    GRASS, WOOD, STONE, EMPTY
+    GRASS, WOOD, STONE, EMPTY, LAVA, WATER
 };
