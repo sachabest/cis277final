@@ -1,5 +1,4 @@
 #include "octnode.h"
-
 struct sort_pred {
     bool operator()(const std::pair<float,OctNode*> &left, const std::pair<float,OctNode*> &right) {
         return left.first < right.first;
@@ -21,27 +20,18 @@ Octree subdivides in this order:
 // +z is toward you!
 // base point = "bottom left" of octnode
 OctNode::OctNode(Point3 base, int length) : base(base), length(length), is_leaf(true), chunk(nullptr)
-{
-    //    qDebug() << "Creating new node at: ";
-    //    qDebug() << QString::fromStdString(glm::to_string(base.toVec3()));
-
-    //    if (!is_leaf) {
-    //        children.append(new OctNode(Point3(base.x, base.y, base.z), length/2));
-    //        children.append(new OctNode(Point3(base.x, base.y, base.z + (length/2)), length/2));
-    //        children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z), length/2));
-    //        children.append(new OctNode(Point3(base.x, base.y + (length/2), base.z + (length/2)), length/2));
-    //        children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z), length/2));
-    //        children.append(new OctNode(Point3(base.x + (length/2), base.y, base.z + (length/2)), length/2));
-    //        children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z), length/2));
-    //        children.append(new OctNode(Point3(base.x + (length/2), base.y + (length/2), base.z + (length/2)), length/2));
-    //    }
-}
+{}
 
 OctNode::~OctNode()
 {
     for (OctNode* child : children) {
         delete child;
     }
+}
+
+void OctNode::setChunk(Chunk* new_chunk) {
+    delete this->chunk;
+    this->chunk = new_chunk;
 }
 
 // Returns the quadrant (0-7) containing the point

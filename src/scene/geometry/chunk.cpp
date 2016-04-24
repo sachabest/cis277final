@@ -27,22 +27,6 @@ Chunk::Chunk(int height) : height(height)
     }
 }
 
-Chunk::Chunk(QOpenGLTexture* t)
-{
-    texture = t;
-    for (int x = 0; x < 16; x++) {
-        QList<QList<Texture>> Xs;
-        for (int y = 0; y < 16; y++) {
-            QList<Texture> Ys;
-            for (int z = 0; z < 16; z++) {
-                Ys.append(EMPTY);
-            }
-            Xs.append(Ys);
-        }
-        cells.append(Xs);
-    }
-}
-
 Chunk::~Chunk()
 {}
 

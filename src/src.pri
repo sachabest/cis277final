@@ -43,7 +43,7 @@ HEADERS += \
     $$PWD/raytracing/film.h \
     $$PWD/raytracing/integrator.h \
     $$PWD/cameracontrolshelp.h \
-    $$PWD/scene/terrain.h \
+    $$PWD/terrain/terrain.h \
     $$PWD/terrain/point.h \
     $$PWD/scene/point3.h \
     $$PWD/util.h \

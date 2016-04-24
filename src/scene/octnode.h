@@ -24,6 +24,7 @@ public:
     OctNode* rayCastOct(Ray ray);
     Intersection findIntersection(Ray ray, float minx, float maxx, float miny, float maxy, float minz, float maxz);
     bool nearlyEqual(float a, float b);
+    void setChunk(Chunk* new_chunk);
 };
 
 #endif // OCTNODE_H

@@ -22,7 +22,7 @@
 
 
 class MyGL
-    : public GLWidget277
+        : public GLWidget277
 {
     Q_OBJECT
 private:
@@ -41,6 +41,7 @@ private:
 
     Point3 getChunkPosition();
     float distanceToEye(Point3 p);
+    QString filename;
 
     //week 1 stuff
     Cross cross;
@@ -95,4 +96,5 @@ signals:
 
 private slots:
     void timerUpdate();
+    void slot_loadImage();
 };

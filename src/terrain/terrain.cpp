@@ -69,11 +69,17 @@ float Terrain::getBlock(float x, float y) {
     float unfloored_y = (y * (bounds.ymax - bounds.ymin)) + (bounds.ymin);
     Point p(unfloored_x, unfloored_y);
     float height;
+    if (!heightmap.contains(p)) {
+        height = getHeight(x, y);
+        heightmap[p] = height;
+    } else {
+        height = heightmap[p];
+    }
     return getHeight(x, y);
 }
 
 /*
- * Use this funciton to create new terrain and destroy old terrain that is outside of the max range.
+ * Use this function to create new terrain and destroy old terrain that is outside of the max range.
  * For example, we can shift +x/+y and dealloc the old blocks that were part of the original terrain
  * but not within the new range.
  *
@@ -100,11 +106,11 @@ void Terrain::shift(int idx, int idy) {
     }
 
     // clean up the heightmap cache
-    for (Point p : heightmap.keys()) {
-        if (p.x > bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
-            heightmap.remove(p);
-        }
-    }
+    //    for (Point p : heightmap.keys()) {
+    //        if (p.x > bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
+    //            heightmap.remove(p);
+    //        }
+    //    }
 }
 
 /**
@@ -135,7 +141,7 @@ float Terrain::dotGridGradient(int x, int y, float dx, float dy) {
 }
 
 float clamp(float n, float lower, float upper) {
-  return fmax(lower, fmin(n, upper));
+    return fmax(lower, fmin(n, upper));
 }
 
 // https://en.wikipedia.org/wiki/Perlin_noise
