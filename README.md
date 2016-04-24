@@ -7,5 +7,5 @@
 * Sacha: Terrain generation. continuous smoothed functions, efficient storage
     * Classes: Terrain, Point, Point3, parts of Scene
 * Carrie:
-* Carolina: Chunk optimization, octree
+* Carolina: Chunk optimization, terrain shifting, octree
 	* Classes: Chunk, OctNode, parts of Scene and MyGL

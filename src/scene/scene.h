@@ -17,6 +17,7 @@ public:
     QOpenGLTexture* texture;
     //void CreateChunkScene();
     void CreateNewChunks();
+    void CreateNewChunks(Point UL, Point LR);
     void shift(int dx, int dy, int dz);
 
     Chunk* getContainingChunk(Point3 p) const;
@@ -25,6 +26,7 @@ public:
     void voxelize(const QVector<LPair_t> &pairs, const Point3 &pt);
     void bresenham(const glm::vec4 &p1, const glm::vec4 &p2);
     bool isFilled(Point3 p);
+    void parseImage(QImage image, glm::vec3 eye);
 
     glm::ivec3 dimensions;
     glm::vec3 origin;
@@ -35,4 +37,5 @@ public:
 
 private:
     void addVoxel(QSet<OctNode *> &set, Point3 &p);
+    QMap<Point, float> heightmap;
 };

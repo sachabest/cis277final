@@ -18,6 +18,7 @@ public:
     OctNode* getContainingNode(Point3 p);
     OctNode* buildTree(Point3 p);
     int getQuadrant(Point3 p);
+    void setChunk(Chunk* new_chunk);
 };
 
 #endif // OCTNODE_H

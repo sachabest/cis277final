@@ -4,8 +4,8 @@
 #include <iostream>
 
 #define MAX_TERRAIN_HEIGHT 6    // Fix dis; make # of y_chunks generated dependent on Perlin noise height
-static const int SCENE_DIM = 128;
-static const int TERRAIN_DIM = 128;
+static const int SCENE_DIM = 80;
+static const int TERRAIN_DIM = 80;
 
 // Dimensions must be a multiple of 16
 Scene::Scene() : dimensions(SCENE_DIM, SCENE_DIM, SCENE_DIM), terrain(TERRAIN_DIM, TERRAIN_DIM), num_chunks(SCENE_DIM/16), origin(glm::vec3(0, 0, 0))
@@ -119,7 +119,30 @@ void Scene::voxelize(const QVector<LPair_t> &pairs, const Point3 &pt) {
     }
 }
 
-// To be phased out
+/**
+ * @brief Scene::parseImage - reads the RGB values of each pixel and finds the corresponding height
+ * @param image - image to create heightmap from
+ * @param eye - the point the image should be centered on
+ */
+void Scene::parseImage(QImage image, glm::vec3 eye) {
+    int min_x = int(eye.x - image.width()/2);
+    int min_z = int(eye.z - image.height()/2);
+
+    qDebug() << min_x;
+    qDebug() << min_z;
+    for (int z = 0; z < image.height(); z++) {
+        QRgb *line = (QRgb *) image.scanLine(z);
+        for (int x = 0; x < image.width(); x++) {
+            // line[x] has an individual pixel
+            heightmap.insert(Point(min_x + x, min_z + z), qGray(line[x])/10.0);
+            //for (int y = 0; y < (MAX_TERRAIN_HEIGHT + 1) * 16; y += 16) {
+                getContainingNode(Point3(min_x + x, 0, min_z + z))->setChunk(nullptr);
+            //}
+        }
+    }
+    CreateNewChunks();
+}
+
 Chunk* Scene::getContainingChunk(Point3 p) const {
     return getContainingNode(p)->chunk;
 }
@@ -149,9 +172,6 @@ bool Scene::isFilled(Point3 p)
         return false;
     }
     Point3 p_chunk = worldToChunk(p);
-    //return chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
-//    int enumtype = chunk->cells[p_chunk.x][p_chunk.y][p_chunk.z];
-//    return enumtype;
     if (p_chunk.x < chunk->cells.size()) {
         QList<QList<Texture>> ypart = chunk->cells[p_chunk.x];
         if (p_chunk.y < ypart.size()) {
@@ -182,8 +202,13 @@ void Scene::CreateNewChunks()
                     Chunk* chunk = new Chunk(p_y.y);
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
-                            float height = terrain.getBlock((x + x_chunk*16.0f) / (float) dimensions[0],
-                                    (z + z_chunk*16.0f) / (float) dimensions[2]);
+                            int x_coord = x + x_chunk*16.0f;
+                            int z_coord = z + z_chunk*16.0f;
+                            float height = terrain.getBlock(x_coord / (float) dimensions[0],
+                                                            z_coord / (float) dimensions[2]);
+                            if (heightmap.contains(Point(x_coord, z_coord))) {
+                                height = heightmap[Point(x_coord, z_coord)];
+                            }
                             if (height < 1) {
                                 height = 1.0f;
                             }
@@ -191,21 +216,11 @@ void Scene::CreateNewChunks()
                                 if (y >= (y_chunk+1)*16) {
                                     break;
                                 }
-                                //qDebug() << "chunk point height " << y;
-                                //chunk->cells[x][y-y_chunk*16][z] = GRASS;
-
-                                //STONE
                                 if (y < 10) {
                                     chunk->cells[x][y-y_chunk*16][z] = STONE;
-                                }
-
-                                //WOOD
-                                else if (y >= 10 && y < 15) {
+                                } else if (y >= 10 && y < 15) {
                                     chunk->cells[x][y-y_chunk*16][z] = WOOD;
-                                }
-
-                                //GRASS
-                                else if (y >= 15) {
+                                } else if (y >= 15) {
                                     chunk->cells[x][y-y_chunk*16][z] = GRASS;
                                 }
                             }
@@ -213,9 +228,7 @@ void Scene::CreateNewChunks()
                     }
                     chunk->create();
                     OctNode* leaf = getContainingNode(p_y);
-                    leaf->chunk = chunk;
-//                    qDebug() << "Set chunk at: ";
-//                    qDebug() << QString::fromStdString(glm::to_string(p.toVec3()));
+                    leaf->setChunk(chunk);
                 }
             }
         }

@@ -73,7 +73,7 @@ float Terrain::getBlock(float x, float y) {
 }
 
 /*
- * Use this funciton to create new terrain and destroy old terrain that is outside of the max range.
+ * Use this function to create new terrain and destroy old terrain that is outside of the max range.
  * For example, we can shift +x/+y and dealloc the old blocks that were part of the original terrain
  * but not within the new range.
  *
@@ -100,11 +100,11 @@ void Terrain::shift(int idx, int idy) {
     }
 
     // clean up the heightmap cache
-    for (Point p : heightmap.keys()) {
-        if (p.x > bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
-            heightmap.remove(p);
-        }
-    }
+//    for (Point p : heightmap.keys()) {
+//        if (p.x > bounds.xmax || p.x < bounds.xmin || p.y > bounds.ymax || p.y < bounds.ymin) {
+//            heightmap.remove(p);
+//        }
+//    }
 }
 
 /**
