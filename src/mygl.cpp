@@ -623,28 +623,49 @@ void MyGL::destroyBlocks() {
 
 //FIX ADDING LATER
 
+//check for index out of range here becuase +/- 1
 void MyGL::addBlocks() {
     Point3* cube = raymarchCast();
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        if (chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] == EMPTY) {
-            chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
-        }
-        else if (chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] == EMPTY) {
-            chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
-        }
-        else if (chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] == EMPTY) {
-            chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
-        }
-        else if (chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] == EMPTY) {
-            chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
-        }
-        else if (chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] == EMPTY) {
-            chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
-        }
-        else {
-            chunk->cells[localchunk.x][localchunk.y][localchunk.z+1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+        if (localchunk.x < chunk->cells.size()) {
+            QList<QList<Texture>> ypart = chunk->cells[localchunk.x];
+            if (localchunk.y < ypart.size()) {
+                QList<Texture> zpart = ypart[localchunk.y];
+                if (localchunk.z < zpart.size()) {
+                    if (localchunk.y + 1 < 16) {
+                        if (chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] == EMPTY) {
+                            chunk->cells[localchunk.x][localchunk.y+1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                    else if (localchunk.y - 1 >= 0) {
+                        if (chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] == EMPTY) {
+                            chunk->cells[localchunk.x][localchunk.y-1][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                    else if (localchunk.x + 1 < 16) {
+                        if (chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] == EMPTY) {
+                            chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                    else if (localchunk.x - 1 >= 0) {
+                        if (chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] == EMPTY) {
+                            chunk->cells[localchunk.x-1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                    else if (localchunk.z - 1 >= 0) {
+                        if (chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] == EMPTY) {
+                            chunk->cells[localchunk.x][localchunk.y][localchunk.z-1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                    else if (localchunk.z + 1 < 16) {
+                        if (chunk->cells[localchunk.x][localchunk.y][localchunk.z+1] == EMPTY) {
+                            chunk->cells[localchunk.x][localchunk.y][localchunk.z+1] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                        }
+                    }
+                }
+            }
         }
         chunk->create();
         update();
