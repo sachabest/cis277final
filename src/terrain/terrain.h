@@ -32,6 +32,7 @@ private:
     float getHeight(float x, float y);
 
     float dotGridGradient(int x, int y, float dx, float dy);
+    QMap<Point, float> heightmap;
 };
 
 #endif // TERRAIN_H

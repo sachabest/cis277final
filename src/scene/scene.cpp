@@ -127,9 +127,6 @@ void Scene::voxelize(const QVector<LPair_t> &pairs, const Point3 &pt) {
 void Scene::parseImage(QImage image, glm::vec3 eye) {
     int min_x = int(eye.x - image.width()/2);
     int min_z = int(eye.z - image.height()/2);
-
-    qDebug() << min_x;
-    qDebug() << min_z;
     for (int z = 0; z < image.height(); z++) {
         QRgb *line = (QRgb *) image.scanLine(z);
         for (int x = 0; x < image.width(); x++) {
@@ -206,8 +203,8 @@ void Scene::CreateNewChunks()
                             int z_coord = z + z_chunk*16.0f;
                             float height = terrain.getBlock(x_coord / (float) dimensions[0],
                                                             z_coord / (float) dimensions[2]);
-                            if (heightmap.contains(Point(x_coord, z_coord))) {
-                                height = heightmap[Point(x_coord, z_coord)];
+                            if (heightmap.contains(Point(x_coord + origin.x, z_coord + origin.z))) {
+                                height = heightmap[Point(x_coord + origin.x, z_coord + origin.z)];
                             }
                             if (height < 1) {
                                 height = 1.0f;
