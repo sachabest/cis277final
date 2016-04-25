@@ -14,10 +14,23 @@ void KeyPassGraphicsView::keyPressEvent(QKeyEvent *e) {
             if (removed != EMPTY) {
                 if (hud) {
                     hud->removeBlock(removed);
+                    SoundManager::playOff();
                 }
+            } else {
+                SoundManager::playMiss();
             }
         } else if (e->key() == Qt::Key_T) {
-
+            if (hud && gl->canAddBlock()) {
+                Texture toAdd = hud->addBlock();
+                if (toAdd != EMPTY) {
+                    gl->sachaAddBlock(toAdd);
+                    SoundManager::playOn();
+                } else {
+                    SoundManager::playMiss();
+                }
+            } else {
+                SoundManager::playMiss();
+            }
         }
         if (scene()) {
             scene()->update();

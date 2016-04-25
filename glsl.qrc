@@ -6,5 +6,8 @@
         <file>glsl/flat.vert.glsl</file>
         <file>minecraft_textures_all.png</file>
         <file>minecraft_textures_all_grey_grass.png</file>
+        <file>sounds/beep_miss.wav</file>
+        <file>sounds/beep_off.wav</file>
+        <file>sounds/beep_on.wav</file>
     </qresource>
 </RCC>

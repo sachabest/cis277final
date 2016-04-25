@@ -18,6 +18,10 @@ HUD::HUD(QWidget *parent) :
     ui->inventory->setAutoFillBackground(false);
     QPalette palette = ui->inventory->palette();
     palette.setColor(QPalette::Base, QColor(255, 255, 255, 50));
+    palette.setColor(QPalette::Window, QColor(255, 255, 255, 50));
+    palette.setColor(QPalette::AlternateBase, QColor(255, 255, 255, 50));
+    palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 255, 50));
+
     palette.setColor(QPalette::Highlight, QColor(255, 0, 255, 50));
     ui->inventory->setPalette(palette);
     ui->inventory->setAttribute(Qt::WA_NoSystemBackground);

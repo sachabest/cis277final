@@ -26,7 +26,8 @@ SOURCES += \
     $$PWD/scene/geometry/cross.cpp \
     $$PWD/scene/ray.cpp \
     $$PWD/ui/keypassgraphicsview.cpp \
-    $$PWD/scene/intersection.cpp
+    $$PWD/scene/intersection.cpp \
+    $$PWD/soundmanager.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -57,4 +58,5 @@ HEADERS += \
     $$PWD/scene/texture.h \
     $$PWD/scene/ray.h \
     $$PWD/ui/keypassgraphicsview.h \
-    $$PWD/scene/intersection.h
+    $$PWD/scene/intersection.h \
+    $$PWD/soundmanager.h

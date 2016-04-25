@@ -626,6 +626,36 @@ Texture MyGL::destroyBlocks() {
 
 //FIX ADDING LATER
 
+bool MyGL::canAddBlock() {
+    Point3* cube = raymarchCast();
+    if (cube != nullptr && cube->x != INFINITY) {
+        Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
+        Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
+        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (pt == EMPTY) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool MyGL::sachaAddBlock(Texture t) {
+    Point3* cube = raymarchCast();
+    if (cube != nullptr && cube->x != INFINITY) {
+        Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
+        Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
+        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (pt == EMPTY) {
+            pt = t;
+            chunk->create();
+            update();
+            return true;
+        }
+    }
+    return false;
+}
+
 //check for index out of range here becuase +/- 1
 void MyGL::addBlocks() {
     Point3* cube = raymarchCast();

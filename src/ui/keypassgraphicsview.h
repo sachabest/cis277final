@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include "mygl.h"
 #include "forms/hud.h"
+#include "soundmanager.h"
 
 class KeyPassGraphicsView : public QGraphicsView
 {

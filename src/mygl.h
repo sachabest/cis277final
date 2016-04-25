@@ -74,6 +74,9 @@ public:
     //to be called with mouse clicking events
     Texture destroyBlocks();
     void addBlocks();
+    bool sachaAddBlock(Texture t);
+    bool canAddBlock();
+
     void collisionX(bool right);
     void collisionY(bool up);
     //if look is true we are trying to move towards us

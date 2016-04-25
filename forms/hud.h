@@ -5,6 +5,7 @@
 #include <QListWidgetItem>
 #include <QBitmap>
 #include "scene/texture.h"
+#include "soundmanager.h"
 #include "la.h"
 
 namespace Ui {

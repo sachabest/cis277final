@@ -1,4 +1,5 @@
 QT += core widgets
+QT += multimedia
 
 TARGET = 277
 TEMPLATE = app
@@ -17,7 +18,7 @@ FORMS += forms/mainwindow.ui \
 RESOURCES += glsl.qrc
 
 HEADERS += \
-    forms/hud.h
+    forms/hud.h \
 
 SOURCES += \
-    forms/hud.cpp
+    forms/hud.cpp \
