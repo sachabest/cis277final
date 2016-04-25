@@ -45,7 +45,7 @@ private:
 
     //week 1 stuff
     Cross cross;
-    float gravity = 0.5;
+    float gravity = 0.05;
     float terminal_v = 3.0;
     QTimer timer;
     bool leftx = false;
@@ -87,6 +87,7 @@ public:
     //Point3 raymarch();
     OctNode* octreeMarch();
     static int frame;
+    static int time;
     //OctNode* node;
     void animate();
     void keyPressEvent(QKeyEvent *e);

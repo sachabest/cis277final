@@ -9,6 +9,7 @@
 #include <QTime>
 
 int MyGL::frame = 0;
+int MyGL::time = 0;
 
 #define SHIFT_DISTANCE 16
 MyGL::MyGL(QWidget *parent)
@@ -54,6 +55,7 @@ void MyGL::initializeGL()
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     prog_lambert.setUVImage(gltexture);
+    prog_flat.setUVImage(gltexture);
 
     geom_cube.create();
 
@@ -62,6 +64,8 @@ void MyGL::initializeGL()
     vao.bind();
 
     cross.create();
+
+    //timer = QTimer(this);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     timer.start(100);
 
@@ -723,13 +727,17 @@ void MyGL::animate() {
     //timer is active
     if (remainTime != -1) {
         int moduolo = frame % 5;
+        qDebug() << "frame " << moduolo;
         prog_lambert.setTimer(moduolo);
+        //update();
         frame++;
     }
+    //update();
 }
 
 void MyGL::timerUpdate()
 {
+    /*
     // This function is called roughly 60 times per second.
     // Use it to update your scene and then tell it to redraw.
     // (Don't update your scene in paintGL, because it
@@ -763,13 +771,34 @@ void MyGL::timerUpdate()
 //        collisionY(false);
 //    }
 
-//    update();
+//    update();*/
 
     animate();
+    qDebug() << "here in timer";
+    //drawChunks(scene.octree);
+    update();
 
     //gravity
-
-
-    update();
+    //up as 0.5; as down by 1.5
+//    glm::vec3 eye = gl_camera.eye;
+//    //Point3 yone = Point3(glm::floor(eye.x), glm::floor(eye.y+0.5), glm::floor(eye.z));
+//    //Point3 ytwo = Point3(glm::floor(eye.x), glm::floor(eye.y-1.5), glm::floor(eye.z));
+//    for (float i = 0.1; i <= 1.5; i+=0.1) {
+//        Point3 y = Point3(glm::floor(eye.x), glm::floor(eye.y-i), glm::floor(eye.z));
+//        if (!scene.isFilled(y)) {
+//            qDebug() << "here in gravity";
+//            float speed = gravity * time;
+//            float position;
+//            if (speed < terminal_v) {
+//                position = speed * time;
+//            }
+//            else {
+//                position = terminal_v * time;
+//            }
+//            gl_camera.TranslateAlongUp(-position);
+//        }
+//        time++;
+//    }
+//    time = 0;
 
 }
