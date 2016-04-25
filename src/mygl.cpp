@@ -629,7 +629,10 @@ bool MyGL::canAddBlock() {
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (localchunk.y + 1 > 15) {
+            chunk = scene.getContainingChunk(Point3(cube->x, cube->y + 1, cube->z));
+        }
+        Texture &pt = chunk->cells[localchunk.x][(int) (localchunk.y+1) % 16][localchunk.z];
         if (pt == EMPTY) {
             return true;
         }
@@ -643,7 +646,10 @@ bool MyGL::sachaAddBlock(Texture t) {
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (localchunk.y + 1 > 15) {
+            chunk = scene.getContainingChunk(Point3(cube->x, cube->y + 1, cube->z));
+        }
+        Texture &pt = chunk->cells[localchunk.x][(int) (localchunk.y+1) % 16][localchunk.z];
         if (pt == EMPTY) {
             pt = t;
             chunk->create();
@@ -677,7 +683,7 @@ void MyGL::addBlocks() {
                     }
                     else if (localchunk.x + 1 < 16) {
                         if (chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] == EMPTY) {
-                            chunk->cells[localchunk.x+1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
+                            chunk->cells[localchunk.x+  1][localchunk.y][localchunk.z] = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
                         }
                     }
                     else if (localchunk.x - 1 >= 0) {
