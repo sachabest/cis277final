@@ -1,5 +1,6 @@
 #include "keypassgraphicsview.h"
 #include <QKeyEvent>
+#include "scene/texture.h"
 
 KeyPassGraphicsView::KeyPassGraphicsView(QWidget *parent) :
     QGraphicsView(parent), gl(nullptr), hudUp(true), hud(nullptr) {
@@ -8,6 +9,16 @@ KeyPassGraphicsView::KeyPassGraphicsView(QWidget *parent) :
 void KeyPassGraphicsView::keyPressEvent(QKeyEvent *e) {
     if (gl) {
         gl->keyPressEvent(e);
+        if (e->key() == Qt::Key_R) {
+            Texture removed = gl->destroyBlocks();
+            if (removed != EMPTY) {
+                if (hud) {
+                    hud->removeBlock(removed);
+                }
+            }
+        } else if (e->key() == Qt::Key_T) {
+
+        }
         if (scene()) {
             scene()->update();
         }

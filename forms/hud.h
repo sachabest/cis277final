@@ -18,9 +18,9 @@ class HUD : public QWidget
 public:
     explicit HUD(QWidget *parent = 0);
     ~HUD();
-    void addBlockToInventory(Texture t);
-    void removeBlockFromInventory(Texture t);
     void keyPressEvent(QKeyEvent *);
+    Texture addBlock();
+    void removeBlock(Texture t);
 protected:
     void on_listwidget_select(QListWidgetItem *item);
 private:
@@ -33,6 +33,9 @@ private:
     QMap<Texture, QPixmap> selectedTexmap;
     QMap<Texture, QListWidgetItem *> itemMap;
     QMap<QListWidgetItem *, Texture> reverseMap;
+    void addBlockToInventory(Texture t);
+    void removeBlockFromInventory(Texture t);
+    int getBlockCount(Texture t);
 };
 
 #endif // HUD_H

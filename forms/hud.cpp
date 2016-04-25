@@ -42,6 +42,19 @@ HUD::HUD(QWidget *parent) :
     ui->inventory->item(0)->setIcon(QIcon(selectedTexmap[currentSelected]));
 }
 
+Texture HUD::addBlock() {
+    if (getBlockCount(currentSelected) > 0) {
+        this->removeBlockFromInventory(currentSelected);
+        return currentSelected;
+    } else {
+        return EMPTY;
+    }
+}
+
+void HUD::removeBlock(Texture t) {
+    this->addBlockToInventory(t);
+}
+
 void HUD::keyPressEvent(QKeyEvent *e) {
     if( e->modifiers() & Qt::ShiftModifier ) {
         qDebug() << e->key();
@@ -101,6 +114,13 @@ QPixmap HUD::pullTexture(Texture t, bool edged) {
         break;
     case GRASS:
         rect = QRect(3 * size, 0, size, size);
+        break;
+    case WATER:
+        rect = QRect(14 * size, 13 * size, size, size);
+        break;
+    case LAVA:
+        rect = QRect(14 * size, 15 * size, size, size);
+        break;
     case EMPTY:
     default:
         break;
@@ -127,6 +147,10 @@ QPixmap HUD::pullTexture(Texture t, bool edged) {
         p = QPixmap::fromImage(img);
     }
     return p;
+}
+
+int HUD::getBlockCount(Texture t) {
+    return itemMap[t]->text().toInt();
 }
 
 void HUD::removeBlockFromInventory(Texture t) {

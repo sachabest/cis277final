@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 enum Texture {
-    GRASS = 0, WOOD, STONE, EMPTY, LAVA, WATER
+    GRASS = 0, WOOD, STONE, LAVA, WATER, EMPTY
 };
 
 #endif // TEXTURE_H

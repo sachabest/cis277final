@@ -72,7 +72,7 @@ public:
     void RaytraceScene();
 
     //to be called with mouse clicking events
-    void destroyBlocks();
+    Texture destroyBlocks();
     void addBlocks();
     void collisionX(bool right);
     void collisionY(bool up);

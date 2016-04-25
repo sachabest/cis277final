@@ -514,7 +514,7 @@ OctNode* MyGL::octreeMarch() {
 
 //screen center (0,0,0)
 //FIX DESTRUCTION LATER
-void MyGL::destroyBlocks() {
+Texture MyGL::destroyBlocks() {
     OctNode* node = octreeMarch();
     Point3* cube = raymarchCast();
     qDebug() << "cube world x " << node->intersect.point_val.x;
@@ -611,14 +611,17 @@ void MyGL::destroyBlocks() {
                 QList<Texture> zpart = ypart[localchunk.y];
                 if (localchunk.z < zpart.size()) {
                     if (chunk->cells[localchunk.x][localchunk.y][localchunk.z] != EMPTY) {
+                        Texture old = chunk->cells[localchunk.x][localchunk.y][localchunk.z];
                         chunk->cells[localchunk.x][localchunk.y][localchunk.z] = EMPTY;
+                        chunk->create();
+                        update();
+                        return old;
                     }
                 }
             }
         }
-        chunk->create();
-        update();
     }
+    return EMPTY;
 }
 
 //FIX ADDING LATER
