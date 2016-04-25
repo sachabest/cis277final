@@ -243,7 +243,7 @@ void MyGL::collisionY(bool up) {
     //std::cout << "here in collision y" << std::endl;
     glm::vec3 eye = gl_camera.eye;
     Point3 yone = Point3(glm::floor(eye.x), glm::floor(eye.y+0.5), glm::floor(eye.z));
-    Point3 ytwo = Point3(glm::floor(eye.x), glm::floor(eye.y-3), glm::floor(eye.z));
+    Point3 ytwo = Point3(glm::floor(eye.x), glm::floor(eye.y-2), glm::floor(eye.z));
 
     //QList<Point3> points = scene.points;
     //you can move up and you are trying to move up
@@ -542,7 +542,6 @@ void MyGL::destroyBlocks() {
         if (chunk == nullptr) {
             qDebug() << "why is chunk null";
         }
-=======
     //    std::cout << "destroy blocks" << std::endl;
     //    Ray ray_from_center = gl_camera.raycast();
 
@@ -574,7 +573,6 @@ void MyGL::destroyBlocks() {
     ////        }
     //        update();
     //    }
->>>>>>> eb9f6b630adc39460954b05857056b646b421a87
 
         qDebug() << "intersect point";
         qDebug() << "intersect x " << (node->intersect.point_val.x)/16.f;
@@ -735,33 +733,10 @@ void MyGL::timerUpdate()
 //    update();
 
     animate();
+
+    //gravity
+
+
     update();
-    //    if (leftx) {
-    //        collisionX(false);
-    //    }
-    //    else if (rightx) {
-    //        collisionX(true);
-    //    }
-    //    else if (upy) {
-    //        collisionY(true);
-    //    }
-    //    else if (downy) {
-    //        collisionY(false);
-    //    }
-    //    else if (outz) {
-    //        //moving away
-    //        collisionZ(false);
-    //    }
-    //    else if (inz) {
-    //        collisionZ(true);
-    //    }
-    //    //we are just starting
-    //    else if (do_nothing) {
 
-    //    }
-    //    else {
-    //        collisionY(false);
-    //    }
-
-    //    update();
 }
