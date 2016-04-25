@@ -25,7 +25,8 @@ SOURCES += \
     $$PWD/scene/octnode.cpp \
     $$PWD/scene/geometry/cross.cpp \
     $$PWD/scene/ray.cpp \
-    $$PWD/ui/keypassgraphicsview.cpp
+    $$PWD/ui/keypassgraphicsview.cpp \
+    $$PWD/scene/intersection.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
@@ -55,4 +56,5 @@ HEADERS += \
     $$PWD/scene/geometry/cross.h \
     $$PWD/scene/texture.h \
     $$PWD/scene/ray.h \
-    $$PWD/ui/keypassgraphicsview.h
+    $$PWD/ui/keypassgraphicsview.h \
+    $$PWD/scene/intersection.h

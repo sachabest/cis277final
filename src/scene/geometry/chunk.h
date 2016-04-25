@@ -28,7 +28,9 @@ public:
 private:
     int index_count;
     int vertex_count;
-    QVector<glm::vec2> uvs;
+    //third position: 0 for no animation; 1 for animatoin
+    //fourth position: 0 for not lava, 1 for lava
+    QVector<glm::vec4> uvs;
     QVector<glm::vec3> createChunkVertexPositions();
     QVector<glm::vec3> createChunkVertexNormals();
     QVector<GLuint> createChunkIndices();

@@ -26,6 +26,7 @@ public:
     int unifViewProj;
     int unifColor;
     int unifUV;
+    int unifTime;
 
     QOpenGLTexture* textSampler;
 
@@ -34,5 +35,6 @@ public:
     void setModelMatrix(const glm::mat4 &model);
     void setViewProjMatrix(const glm::mat4& vp);
     void setUVImage(QOpenGLTexture* texture);
+    void setTimer(int time);
     void draw(GLWidget277 &f, Drawable &d);
 };

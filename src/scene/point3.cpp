@@ -6,6 +6,10 @@ bool fequal(float f1, float f2, float epsilon = 0.001) {
     return fabs(f1 - f2) < epsilon;
 }
 
+Point3::Point3() : x(INFINITY), y(INFINITY), z(INFINITY) {
+
+}
+
 Point3::Point3(float x, float y, float z) : x(x), y(y), z(z) {}
 
 bool Point3::operator<(const Point3 &p) const {

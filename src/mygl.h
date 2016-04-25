@@ -81,7 +81,11 @@ public:
     void collisionZ(bool look);
 
     Point3* raymarchCast();
-    Point3 raymarch();
+    //Point3 raymarch();
+    OctNode* octreeMarch();
+    static int frame;
+    //OctNode* node;
+    void animate();
     void keyPressEvent(QKeyEvent *e);
 protected:
     void mousePressEvent(QMouseEvent *e);
