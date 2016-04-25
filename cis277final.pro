@@ -1,4 +1,5 @@
 QT += core widgets
+QT += multimedia
 
 TARGET = 277
 TEMPLATE = app
@@ -11,6 +12,13 @@ INCLUDEPATH += include
 include(src/src.pri)
 
 FORMS += forms/mainwindow.ui \
-    forms/cameracontrolshelp.ui
+    forms/cameracontrolshelp.ui \
+    forms/hud.ui
 
 RESOURCES += glsl.qrc
+
+HEADERS += \
+    forms/hud.h \
+
+SOURCES += \
+    forms/hud.cpp \

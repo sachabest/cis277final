@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>516</height>
+    <width>668</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,32 +15,32 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="MyGL" name="mygl">
+    <item row="1" column="0">
+     <widget class="KeyPassGraphicsView" name="graphicsView">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>625</width>
-        <height>436</height>
+        <width>512</width>
+        <height>500</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>625</width>
-        <height>436</height>
+        <width>99999</width>
+        <height>99999</height>
        </size>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QPushButton" name="pushButton">
+    <item row="2" column="0">
+     <widget class="QPushButton" name="loadHeightmap">
       <property name="text">
-       <string>Load Image</string>
+       <string>Load Heightmap</string>
       </property>
      </widget>
     </item>
@@ -51,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>649</width>
+     <width>668</width>
      <height>22</height>
     </rect>
    </property>
@@ -103,51 +103,13 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>MyGL</class>
-   <extends>QOpenGLWidget</extends>
-   <header>mygl.h</header>
-   <slots>
-    <signal>sig_ResizeToCamera(int,int)</signal>
-    <slot>slot_SceneDialog()</slot>
-    <slot>slot_loadImage()</slot>
-   </slots>
+   <class>KeyPassGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>ui/keypassgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>mygl</sender>
-   <signal>sig_ResizeToCamera(int,int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>slot_ResizeToCamera(int,int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>305</x>
-     <y>182</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>396</x>
-     <y>32</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>mygl</receiver>
-   <slot>slot_loadImage()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>256</x>
-     <y>488</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>256</x>
-     <y>449</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>slot_ResizeToCamera(int,int)</slot>
  </slots>

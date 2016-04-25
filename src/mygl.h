@@ -72,8 +72,11 @@ public:
     void RaytraceScene();
 
     //to be called with mouse clicking events
-    void destroyBlocks();
+    Texture destroyBlocks();
     void addBlocks();
+    bool sachaAddBlock(Texture t);
+    bool canAddBlock();
+
     void collisionX(bool right);
     void collisionY(bool up);
     //if look is true we are trying to move towards us
@@ -86,15 +89,14 @@ public:
     static int frame;
     //OctNode* node;
     void animate();
-
-protected:
     void keyPressEvent(QKeyEvent *e);
+protected:
     void mousePressEvent(QMouseEvent *e);
 
 signals:
     void sig_ResizeToCamera(int,int);
-
+public slots:
+    void slot_loadImage();
 private slots:
     void timerUpdate();
-    void slot_loadImage();
 };

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
-
+#include "forms/hud.h"
+#include "mygl.h"
 
 namespace Ui
 {
