@@ -771,5 +771,8 @@ void MyGL::timerUpdate()
 
 
     update();
+    if (parentView && parentView->scene()) {
+       parentView->scene()->update();
+    }
 
 }

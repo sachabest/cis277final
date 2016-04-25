@@ -19,7 +19,7 @@
 
 #include "scene/geometry/cross.h"
 #include <QTimer>
-
+#include <QGraphicsView>
 
 class MyGL
         : public GLWidget277
@@ -87,6 +87,7 @@ public:
     //Point3 raymarch();
     OctNode* octreeMarch();
     static int frame;
+    QGraphicsView *parentView;
     //OctNode* node;
     void animate();
     void keyPressEvent(QKeyEvent *e);

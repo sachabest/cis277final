@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    ui->mygl->setFocus();
 //    ui->stackedWidget->setst
     MyGL *gl = new MyGL();
+    gl->parentView = this->ui->graphicsView;
     HUD *hud = new HUD();
     hud->setFocusPolicy(Qt::ClickFocus);
     this->ui->graphicsView->setScene(new QGraphicsScene(this->ui->graphicsView));
