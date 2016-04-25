@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->graphicsView->scene()->addWidget(hud);
     this->ui->graphicsView->gl = gl;
     this->ui->graphicsView->hud = hud;
+    QObject::connect(this->ui->loadHeightmap, &QPushButton::clicked, gl, &MyGL::slot_loadImage);
 }
 
 MainWindow::~MainWindow()

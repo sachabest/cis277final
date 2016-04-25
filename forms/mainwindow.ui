@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>668</width>
-    <height>540</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,13 @@
         <width>99999</width>
         <height>99999</height>
        </size>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="loadHeightmap">
+      <property name="text">
+       <string>Load Heightmap</string>
       </property>
      </widget>
     </item>
