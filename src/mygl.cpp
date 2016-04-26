@@ -375,7 +375,10 @@ bool MyGL::canAddBlock() {
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (localchunk.y + 1 > 15) {
+            chunk = scene.getContainingChunk(Point3(cube->x, cube->y + 1, cube->z));
+        }
+        Texture &pt = chunk->cells[localchunk.x][(int) (localchunk.y+1) % 16][localchunk.z];
         if (pt == EMPTY) {
             return true;
         }
@@ -389,7 +392,10 @@ bool MyGL::sachaAddBlock(Texture t) {
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        Texture &pt = chunk->cells[localchunk.x][localchunk.y+1][localchunk.z];
+        if (localchunk.y + 1 > 15) {
+            chunk = scene.getContainingChunk(Point3(cube->x, cube->y + 1, cube->z));
+        }
+        Texture &pt = chunk->cells[localchunk.x][(int) (localchunk.y+1) % 16][localchunk.z];
         if (pt == EMPTY) {
             pt = t;
             chunk->create();
@@ -408,6 +414,9 @@ void MyGL::animateTextures() {
     if (remainTime != -1) {
         int moduolo = frame % 5;
         prog_lambert.setTimer(moduolo);
+        if (parentView && parentView->scene()) {
+           parentView->scene()->update();
+        }
         frame++;
     }
 }
@@ -431,7 +440,7 @@ Point3 MyGL::collisionX(bool right, float time) {
     }
 
     //posive amt
-    else if(right) {
+    else if (right) {
         float d_speed = time * acceleration;
         character_velocity.x += d_speed;
         if (character_velocity.x > terminal_v) {

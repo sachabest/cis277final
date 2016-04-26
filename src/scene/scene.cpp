@@ -132,9 +132,9 @@ void Scene::parseImage(QImage image, glm::vec3 eye) {
         for (int x = 0; x < image.width(); x++) {
             // line[x] has an individual pixel
             heightmap.insert(Point(min_x + x, min_z + z), qGray(line[x])/10.0);
-            //for (int y = 0; y < (MAX_TERRAIN_HEIGHT + 1) * 16; y += 16) {
-                getContainingNode(Point3(min_x + x, 0, min_z + z))->setChunk(nullptr);
-            //}
+            for (int y = 0; y < (MAX_TERRAIN_HEIGHT + 1) * 16; y += 16) {
+                getContainingNode(Point3(min_x + x, y, min_z + z))->setChunk(nullptr);
+            }
         }
     }
     CreateNewChunks();
