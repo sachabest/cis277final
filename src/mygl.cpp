@@ -580,8 +580,8 @@ void MyGL::timerUpdate()
 
 
     glm::vec3 character = gl_camera.eye;
-    Point3 feet = Point3(character.x, glm::floor(character.y), character.z);
-/*
+    Point3 feet = Point3(character.x, glm::floor(character.y-1.5), character.z);
+
     //collision in z
     //+amount
     if (inz) {
@@ -606,7 +606,7 @@ void MyGL::timerUpdate()
     }
     else if (upy) {
         feet = collisionY(upy, 0.0167f);
-    }*/
+    }
 
 
     //gravity
