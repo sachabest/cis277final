@@ -7,6 +7,12 @@
 * Sacha: Terrain generation. continuous smoothed functions, efficient storage
     * Classes: Terrain, Point, Point3, parts of Scene
 * Carrie:
+	* Classes: Ray, Intersection, Cross, parts of MyGL, ShaderProgram, OctNode, Scene, vertex and fragment shaders
+
+#### Animation is fully working 
+#### Gravity is activated through pressing key "g"
+#### Add and Delete Blocks is fixed - precise accuracy now.
+		   
 * Carolina: Chunk optimization, terrain shifting, octree, image file as heightmap
 	* Classes: Chunk, OctNode, parts of Scene and MyGL
 
