@@ -9,6 +9,7 @@
 #include <QTime>
 
 int MyGL::frame = 0;
+int MyGL::time = 0;
 
 #define SHIFT_DISTANCE 16
 MyGL::MyGL(QWidget *parent)
@@ -63,6 +64,8 @@ void MyGL::initializeGL()
     vao.bind();
 
     cross.create();
+
+    //timer = QTimer(this);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
     timer.start(17);
 
@@ -473,7 +476,6 @@ Point3 MyGL::collisionY(bool up, float time) {
            parentView->scene()->update();
         }
     }
-
     //posive amt
     else if(up) {
         qDebug() << "positive amt y";
@@ -564,6 +566,7 @@ Point3 MyGL::moveCharacter(Point3 character) {
 
 void MyGL::timerUpdate()
 {
+
     // This function is called roughly 60 times per second.
     // Use it to update your scene and then tell it to redraw.
     // (Don't update your scene in paintGL, because it
@@ -575,9 +578,10 @@ void MyGL::timerUpdate()
     //2. Apply gravity, ignoring collisions
     //3. Check if your character is inside the terrain and push him/her out
 
+
     glm::vec3 character = gl_camera.eye;
     Point3 feet = Point3(character.x, glm::floor(character.y), character.z);
-
+/*
     //collision in z
     //+amount
     if (inz) {
@@ -602,7 +606,7 @@ void MyGL::timerUpdate()
     }
     else if (upy) {
         feet = collisionY(upy, 0.0167f);
-    }
+    }*/
 
 
     //gravity
@@ -623,5 +627,4 @@ void MyGL::timerUpdate()
     if (parentView && parentView->scene()) {
        parentView->scene()->update();
     }
-
 }

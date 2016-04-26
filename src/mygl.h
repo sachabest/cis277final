@@ -90,6 +90,7 @@ public:
     OctNode* octreeMarch();
     static int frame;
     QGraphicsView *parentView;
+    static int time;
     //OctNode* node;
     void animateTextures();
     Point3 gravity(float time);
