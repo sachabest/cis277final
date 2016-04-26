@@ -45,8 +45,10 @@ private:
 
     //week 1 stuff
     Cross cross;
-    float gravity = 0.5;
+//    float time = 0.0;
+    float acceleration = 0.5f;
     float terminal_v = 3.0;
+    glm::vec3 character_velocity;
     QTimer timer;
     bool leftx = false;
     bool rightx = false;
@@ -54,7 +56,7 @@ private:
     bool downy = false;
     bool inz = false;
     bool outz = false;
-    bool do_nothing = false;
+    bool isGravity = false;
 
 public:
     explicit MyGL(QWidget *parent = 0);
@@ -77,22 +79,22 @@ public:
     bool sachaAddBlock(Texture t);
     bool canAddBlock();
 
-    void collisionX(bool right);
-    void collisionY(bool up);
+    Point3 collisionX(bool right, float time);
+    Point3 collisionY(bool up, float time);
     //if look is true we are trying to move towards us
     //is look is false we are trying to move away
-    void collisionZ(bool look);
+    Point3 collisionZ(bool look, float time);
+    Point3 moveCharacter(Point3 character);
 
     Point3* raymarchCast();
-    //Point3 raymarch();
     OctNode* octreeMarch();
     static int frame;
     QGraphicsView *parentView;
     //OctNode* node;
-    void animate();
+    void animateTextures();
+    Point3 gravity(float time);
     void keyPressEvent(QKeyEvent *e);
-protected:
-    void mousePressEvent(QMouseEvent *e);
+    void keyReleaseEvent(QKeyEvent *e);
 
 signals:
     void sig_ResizeToCamera(int,int);
