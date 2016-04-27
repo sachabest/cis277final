@@ -46,8 +46,8 @@ private:
     //week 1 stuff
     Cross cross;
 //    float time = 0.0;
-    float acceleration = 0.5f;
-    float terminal_v = 3.0;
+    float acceleration = 11.1f;
+    float terminal_v = 50.0;
     glm::vec3 character_velocity;
     QTimer timer;
     bool leftx = false;

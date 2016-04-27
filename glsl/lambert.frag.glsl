@@ -40,7 +40,7 @@ void main()
 
     // Compute final shaded color
     if (fs_uv.w != 1) {
-        out_Col = diffuseColor;// * lightIntensity;
+        out_Col = diffuseColor;// lightIntensity;
     }
     else {
         out_Col = diffuseColor * 2.0;

@@ -114,6 +114,8 @@ void MyGL::paintGL()
     // Clear the screen so that we only see newly drawn images
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+//    std::cout << glm::to_string(gl_camera.look) << std::endl;
+
     // Update the viewproj matrix
     prog_lambert.setViewProjMatrix(gl_camera.getViewProj());
     prog_flat.setViewProjMatrix(gl_camera.getViewProj());
@@ -203,21 +205,21 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 
     //z direction
     else if (e->key() == Qt::Key_W) {
-        gl_camera.TranslateAlongLook(amount);
-        //inz = true;
+        //gl_camera.TranslateAlongLook(amount);
+        inz = true;
 
     } else if (e->key() == Qt::Key_S) {
-        gl_camera.TranslateAlongLook(-amount);
-        //outz = true;
+        //gl_camera.TranslateAlongLook(-amount);
+        outz = true;
     }
     //x direction
     else if (e->key() == Qt::Key_D) {
-        gl_camera.TranslateAlongRight(amount);
-        //rightx = true;
+        //gl_camera.TranslateAlongRight(amount);
+        rightx = true;
 
     } else if (e->key() == Qt::Key_A) {
-        gl_camera.TranslateAlongRight(-amount);
-        //leftx = true;
+        //gl_camera.TranslateAlongRight(-amount);
+        leftx = true;
     }
 
     //enable gravity
@@ -227,11 +229,11 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 
     //y direction
     else if (e->key() == Qt::Key_Q) {
-        gl_camera.TranslateAlongUp(-amount);
-        //downy = true;
+        //gl_camera.TranslateAlongUp(-amount);
+        downy = true;
     } else if (e->key() == Qt::Key_E) {
-        gl_camera.TranslateAlongUp(amount);
-        //upy = true;
+        //gl_camera.TranslateAlongUp(amount);
+        upy = true;
     } else if (e->key() == Qt::Key_8) {
         // make plant
         QVector<LPair_t> tree = LParser::makeTree();
@@ -550,18 +552,108 @@ Point3 MyGL::moveCharacter(Point3 character) {
     float front = character.z + 0.5;
     float back = character.z - 0.5;
 
-    for (float i = left; i <= right; i+= 0.1) {
-        for (float j = head; j >= feet; j-=0.1) {
-            for (float k = back; k <= front; k+=0.1) {
-                if (scene.isFilled(Point3(glm::floor(i), glm::floor(j), glm::floor(k)))) {
-//                    gl_camera.eye.x = i + 0.5;
-//                    gl_camera.eye.y = j - 0.5;
-//                    gl_camera.eye.z = k + 0.5;
-                    return Point3(i+0.5, j-0.5, k+0.5);
-                }
+    float floor_head = glm::floor(head);
+    float floor_feet = glm::floor(feet);
+    float floor_left = glm::floor(left);
+    float floor_right = glm::floor(right);
+    float floor_front = glm::floor(front);
+    float floor_back = glm::floor(back);
+
+    float new_x = character.x;
+    float new_y = character.y;
+    float new_z = character.z;
+
+    //check front
+    for (float i = floor_left; i <= floor_right; i++) {
+        for (float j = floor_feet; j <= floor_head; j++) {
+            if(scene.isFilled(Point3(i, j, floor_front))) {
+                new_z = front - floor_front - 0.5;
             }
         }
     }
+
+    //check back
+    for (float i = floor_left; i <= floor_right; i++) {
+        for (float j = floor_feet; j <= floor_head; j++) {
+            if(scene.isFilled(Point3(i, j, floor_back))) {
+                new_z = glm::ceil(back) - back + 0.5;
+            }
+        }
+    }
+
+    //check left
+    for (float i = floor_feet; i <= floor_head; i++) {
+        for (float j = floor_back; j <= floor_front; j++) {
+            if (scene.isFilled(Point3(floor_left, i, j))) {
+                new_x = glm::ceil(left) - left + 0.5;
+            }
+        }
+    }
+
+    //check right
+    for (float i = floor_feet; i <= floor_head; i++) {
+        for (float j = floor_back; j <= floor_front; j++) {
+            if (scene.isFilled(Point3(floor_right, i, j))) {
+                new_x = left - floor_right - 0.5;
+            }
+        }
+    }
+
+    //check head
+    for (float i = floor_left; i <= floor_right; i++) {
+        for (float j = floor_back; j <= floor_front; j++) {
+            if(scene.isFilled(Point3(i, floor_head, j))) {
+                new_y = head - floor_head -0.5;
+            }
+        }
+    }
+
+    //check feet
+    for (float i = floor_left; i <= floor_right; i++) {
+        for (float j = floor_back; j <= floor_front; j++) {
+            if(scene.isFilled(Point3(i, floor_feet, j))) {
+                new_y = glm::ceil(feet) - feet + 1.5;
+            }
+        }
+    }
+
+    return Point3(new_x, new_y, new_z);
+
+
+
+//    for (float i = left; i <= right; i+= 0.1) {
+//        for (float j = head; j >= feet; j-=0.1) {
+//            for (float k = back; k <= front; k+=0.1) {
+//                if (scene.isFilled(Point3(glm::floor(i), glm::floor(j), glm::floor(k)))) {
+////                    gl_camera.eye.x = i + 0.5;
+////                    gl_camera.eye.y = j - 0.5;
+////                    gl_camera.eye.z = k + 0.5;
+//                    float new_x;
+//                    float new_y;
+//                    float new_z;
+//                    if (i < character.x) {
+//                        new_x = i + 1.0f;
+//                    }
+//                    else if (i >= character.x) {
+//                        new_x = i - 1.0f;
+//                    }
+//                    if (j < character.y) {
+//                        new_y = j + 1.5f;
+//                    }
+//                    else if (j >= character.y) {
+//                        new_y = j - 1.0f;
+//                    }
+//                    if (k < character.z) {
+//                        new_z = k + 1.0f;
+//                    }
+//                    else if (k >= character.z) {
+//                        new_z = k - 1.0f;
+//                    }
+//                    return Point3(new_x, new_y, new_z);
+//                }
+//            }
+//        }
+//    }
 }
 
 void MyGL::timerUpdate()
@@ -608,6 +700,13 @@ void MyGL::timerUpdate()
         feet = collisionY(upy, 0.0167f);
     }
 
+    if (inz || outz || upy || downy || leftx || rightx) {
+        Point3 new_eye = moveCharacter(Point3(gl_camera.eye.x, gl_camera.eye.y, gl_camera.eye.z));
+        gl_camera.eye.x = new_eye.x;
+        gl_camera.eye.y = new_eye.y;
+        gl_camera.eye.z = new_eye.z;
+    }
+
 
     //gravity
     //float time = 0.0;
@@ -617,10 +716,6 @@ void MyGL::timerUpdate()
         }
     }
 
-//    Point3 new_eye = moveCharacter(Point3(feet.x,feet.y+1.5,feet.z));
-//    gl_camera.eye.x = new_eye.x;
-//    gl_camera.eye.y = new_eye.y;
-//    gl_camera.eye.z = new_eye.z;
 //    gl_camera.RecomputeAttributes();
 
 

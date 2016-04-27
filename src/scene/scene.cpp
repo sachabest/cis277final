@@ -213,37 +213,6 @@ void Scene::CreateNewChunks()
                                 if (y >= (y_chunk+1)*16) {
                                     break;
                                 }
-                                //qDebug() << "chunk point height " << y;
-                                //chunk->cells[x][y-y_chunk*16][z] = GRASS;
-                                /*
-                                //STONE
-                                if (y < 7) {
-                                    chunk->cells[x][y-y_chunk*16][z] = STONE;
-                                }
-
-                                //WOOD
-                                else if (y >= 10 && y < 12) {
-                                    chunk->cells[x][y-y_chunk*16][z] = WOOD;
-                                }
-
-                                //LAVA
-                                else if (y == 12) {
-                                    chunk->cells[x][y-y][z] = LAVA;
-                                }
-
-                                //
-
-                                //GRASS
-                                else if (y >= 15) {
-=======
-                                if (y < 10) {
-                                    chunk->cells[x][y-y_chunk*16][z] = STONE;
-                                } else if (y >= 10 && y < 15) {
-                                    chunk->cells[x][y-y_chunk*16][z] = WOOD;
-                                } else if (y >= 15) {
->>>>>>> eb9f6b630adc39460954b05857056b646b421a87
-                                    chunk->cells[x][y-y_chunk*16][z] = GRASS;
-                                }*/
 
                                 //STONE
                                 if (y < 7) {

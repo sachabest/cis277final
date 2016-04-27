@@ -66,8 +66,8 @@ void ShaderProgram::setUVImage(QOpenGLTexture* texture) {
         //equivalent to this: glUniform1i(unifUV, 0);
         textSampler->create();
         textSampler->setWrapMode(QOpenGLTexture::Repeat);
-        textSampler->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-        textSampler->setMagnificationFilter(QOpenGLTexture::Linear);
+        textSampler->setMinificationFilter(QOpenGLTexture::Nearest);
+        textSampler->setMagnificationFilter(QOpenGLTexture::Nearest);
         textSampler->bind(0);
         GLuint ID = textSampler->textureId();
 
