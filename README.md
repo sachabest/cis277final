@@ -1,20 +1,30 @@
 ## CIS 277 Final Project
 
-### Milestone 2
+### Controls
+
+* WASD: move (shift for extra speed)
+* Arrows: rotate (shift for extra speed)
+* 0, 8, 9: create foliage
+* Q, E: zoom
+* R: remove block
+* T: add block
+* Shift + 1-7: change selected block type
+* I: show/hide inventory
 
 #### Responsibilities
 
-* Sacha: Terrain generation. continuous smoothed functions, efficient storage
-    * Classes: Terrain, Point, Point3, parts of Scene
-* Carrie:
-	* Classes: Ray, Intersection, Cross, parts of MyGL, ShaderProgram, OctNode, Scene, vertex and fragment shaders
+* Sacha: Terrain generation and efficient storage, procedural foliage, HUD (inventory system + ui + sound effects)
+* Carrie: Gravity + collisions + raymarching, texture mapping, animated textures
+* Carolina: Chunk + world shifting, octree, loading image files as heightmaps
 
-#### Animation is fully working 
-#### Gravity is activated through pressing key "g"
-#### Add and Delete Blocks is fixed - precise accuracy now.
-		   
-* Carolina: Chunk optimization, terrain shifting, octree, image file as heightmap
-	* Classes: Chunk, OctNode, parts of Scene and MyGL
+#### Terrain
+Terrain is generated through a random perlin noise function, with caching for poins already visited that are no longer in the visible level (i.e. terrain you have visited persists). 
+
+#### Foliage
+Foliage is generated via the L-system standard and is stochastic in nature, though not fully working. 
+
+#### HUD (inventory, ui, sound)
+The app is a QGraphicsView containing a HUD widget and another QGraphicsView (MyGL) that represents the OpenGL scene. The HUD widget is a highly customized, transparent QWidget with a QListWidget holding hhe current inventory counts of all block types. You must remove blocks from the world of a type in order to place blocks of that type back in the world. 
 
 #### Chunks
 Each world block is part of a 16x16x16 chunk VBO. When the world is initially loaded, it is only a 5x5 space (in terms of chunks), but as the player moves in any direction, new chunks are generated. Chunks more than 32 taxicab units away are not rendered.
