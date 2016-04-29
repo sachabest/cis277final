@@ -71,23 +71,6 @@ void MyGL::initializeGL()
 
     //Test scene data initialization
     scene.CreateNewChunks();
-/*
-//    node = new OctNode(Point3(-32,0,-32), 64);
-//    node->getContainingNode(Point3(0,0,0));
-//    node->getContainingNode(Point3(1,1,1));
-//    node->getContainingNode(Point3(10,10,10));
-//    node->getContainingNode(Point3(-51,-20,20));
-//    Ray ray = Ray(glm::vec3(-50,-20,20), glm::vec3(-0.5,-0.5,-0.5));
-//    OctNode* stuff = node->rayCastOct(ray);
-//    if (stuff == nullptr) {
-//        qDebug() << "why is this null";
-//    }
-//    else {
-//        qDebug() << "intersect t " << stuff->intersect.t;
-//        qDebug() << "x intersect " << stuff->base.x;
-//        qDebug() << "x intersect inter " << stuff->intersect.point_val.x;
-//    }*/
-
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -205,21 +188,37 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 
     //z direction
     else if (e->key() == Qt::Key_W) {
-        //gl_camera.TranslateAlongLook(amount);
-        inz = true;
+        if (!isGravity) {
+            gl_camera.TranslateAlongLook(amount);
+        }
+        else {
+            inz = true;
+        }
 
     } else if (e->key() == Qt::Key_S) {
-        //gl_camera.TranslateAlongLook(-amount);
-        outz = true;
+        if (!isGravity) {
+            gl_camera.TranslateAlongLook(-amount);
+        }
+        else {
+            outz = true;
+        }
     }
     //x direction
     else if (e->key() == Qt::Key_D) {
-        //gl_camera.TranslateAlongRight(amount);
-        rightx = true;
+        if (!isGravity) {
+            gl_camera.TranslateAlongRight(amount);
+        }
+        else {
+            rightx = true;
+        }
 
     } else if (e->key() == Qt::Key_A) {
-        //gl_camera.TranslateAlongRight(-amount);
-        leftx = true;
+        if (!isGravity) {
+            gl_camera.TranslateAlongRight(-amount);
+        }
+        else {
+            leftx = true;
+        }
     }
 
     //enable gravity
@@ -227,13 +226,26 @@ void MyGL::keyPressEvent(QKeyEvent *e)
         isGravity = true;
     }
 
+    //disable gravity
+    else if (e->key() == Qt::Key_H) {
+        isGravity = false;
+    }
+
     //y direction
     else if (e->key() == Qt::Key_Q) {
-        //gl_camera.TranslateAlongUp(-amount);
-        downy = true;
-    } else if (e->key() == Qt::Key_E) {
-        //gl_camera.TranslateAlongUp(amount);
-        upy = true;
+        if (!isGravity) {
+            gl_camera.TranslateAlongUp(-amount);
+        }
+    }
+
+    else if (e->key() == Qt::Key_E) {
+        if (!isGravity) {
+            gl_camera.TranslateAlongUp(amount);
+        }
+        else {
+            upy = true;
+        }
+
     } else if (e->key() == Qt::Key_8) {
         // make plant
         QVector<LPair_t> tree = LParser::makeTree();
@@ -277,6 +289,7 @@ void MyGL::keyPressEvent(QKeyEvent *e)
 void MyGL::keyReleaseEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_W) {
         inz = false;
+        qDebug() << "w is release";
     }
     else if (e->key() == Qt::Key_S) {
         outz = false;
@@ -293,9 +306,9 @@ void MyGL::keyReleaseEvent(QKeyEvent *e) {
     else if (e->key() == Qt::Key_E) {
         upy = false;
     }
-    else if (e->key() == Qt::Key_G) {
-        isGravity = false;
-    }
+//    else if (e->key() == Qt::Key_G) {
+//        isGravity = false;
+//    }
     gl_camera.RecomputeAttributes();
     update();
 }
@@ -323,12 +336,6 @@ OctNode* MyGL::octreeMarch() {
     gl_camera.RecomputeAttributes();
     Ray ray_from_center = gl_camera.raycast();
     glm::vec3 ray_origin = ray_from_center.origin;
-    /*qDebug() << "ray origin x " << ray_origin.x;
-    qDebug() << "ray origin y " << ray_origin.y;
-    qDebug() << "ray origin z " << ray_origin.z;
-    qDebug() << "ray dir x " << ray_from_center.direction.x;
-    qDebug() << "ray dir y " << ray_from_center.direction.y;
-    qDebug() << "ray dir z " << ray_from_center.direction.z;*/
 
     OctNode* intersection = scene.octree->rayCastOct(ray_from_center);
     if (intersection != nullptr) {
@@ -340,20 +347,10 @@ OctNode* MyGL::octreeMarch() {
 Texture MyGL::destroyBlocks() {
     OctNode* node = octreeMarch();
     Point3* cube = raymarchCast();
-    qDebug() << "cube world x " << node->intersect.point_val.x;
-    qDebug() << "cube world y " << node->intersect.point_val.y;
-    qDebug() << "cube world z " << node->intersect.point_val.z;
-
-    qDebug() << "cube cast world x " << cube->x;
-    qDebug() << "cube cast world y " << cube->y;
-    qDebug() << "cube cast world z " << cube->z;
 
     if (cube != nullptr && cube->x != INFINITY) {
         Point3 localchunk = scene.worldToChunk(Point3(cube->x, cube->y, cube->z));
         Chunk* chunk = scene.getContainingChunk(Point3(cube->x, cube->y, cube->z));
-        qDebug() << "local x: " << localchunk.x;
-        qDebug() << "local y: " << localchunk.y;
-        qDebug() << "local z: " << localchunk.z;
         if (localchunk.x < chunk->cells.size()) {
             QList<QList<Texture>> ypart = chunk->cells[localchunk.x];
             if (localchunk.y < ypart.size()) {
@@ -413,8 +410,6 @@ bool MyGL::sachaAddBlock(Texture t) {
 
 void MyGL::animateTextures() {
     int remainTime = timer.remainingTime();
-    //std::cout << "remain time " << remainTime << std::endl;
-
     //timer is active
     if (remainTime != -1) {
         int moduolo = frame % 5;
@@ -430,15 +425,10 @@ void MyGL::animateTextures() {
 //right is true -> move to right
 //false-> try to move to left
 Point3 MyGL::collisionX(bool right, float time) {
+    float position = time * time * acceleration;
     //negative
     if (!right) {
-        float d_speed = time * acceleration;
-        character_velocity.x -= d_speed;
-        if (character_velocity.x < -terminal_v) {
-            character_velocity.x = -terminal_v;
-        }
-        float position = character_velocity.x * time;
-        gl_camera.TranslateAlongRight(position);
+        gl_camera.TranslateAlongRight(-position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
         }
@@ -446,12 +436,6 @@ Point3 MyGL::collisionX(bool right, float time) {
 
     //posive amt
     else if (right) {
-        float d_speed = time * acceleration;
-        character_velocity.x += d_speed;
-        if (character_velocity.x > terminal_v) {
-            character_velocity.x = terminal_v;
-        }
-        float position = character_velocity.x * time;
         gl_camera.TranslateAlongRight(position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
@@ -464,28 +448,17 @@ Point3 MyGL::collisionX(bool right, float time) {
 //if up is true we are moving up;
 //else we are trying to move down;
 Point3 MyGL::collisionY(bool up, float time) {
-    float d_speed = time * acceleration;
+    //float d_speed = time * acceleration;
+    float position = time * time * acceleration;
     //negative
     if (!up) {
-        qDebug() << "negative amt y";
-        character_velocity.y -= d_speed;
-        if (character_velocity.y < -terminal_v) {
-            character_velocity.y = -terminal_v;
-        }
-        float position = character_velocity.y * time;
-        gl_camera.TranslateAlongUp(position);
+        gl_camera.TranslateAlongUp(-position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
         }
     }
     //posive amt
     else if(up) {
-        qDebug() << "positive amt y";
-        character_velocity.y += d_speed;
-        if (character_velocity.y > terminal_v) {
-            character_velocity.y = terminal_v;
-        }
-        float position = character_velocity.y * time;
         gl_camera.TranslateAlongUp(position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
@@ -498,15 +471,10 @@ Point3 MyGL::collisionY(bool up, float time) {
 //if look is true we are trying to move towards us
 //is look is false we are trying to move away
 Point3 MyGL::collisionZ(bool look, float time) {
+    float position =  time * time * acceleration;
     //negative
     if (!look) {
-        float d_speed = time * acceleration;
-        character_velocity.z -= d_speed;
-        if (character_velocity.z < -terminal_v) {
-            character_velocity.z = -terminal_v;
-        }
-        float position = character_velocity.z * time;
-        gl_camera.TranslateAlongLook(position);
+        gl_camera.TranslateAlongLook(-position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
         }
@@ -514,12 +482,6 @@ Point3 MyGL::collisionZ(bool look, float time) {
 
     //posive amt
     else if(look) {
-        float d_speed = time * acceleration;
-        character_velocity.z += d_speed;
-        if (character_velocity.z > terminal_v) {
-            character_velocity.z = terminal_v;
-        }
-        float position = character_velocity.z * time;
         gl_camera.TranslateAlongLook(position);
         if (parentView && parentView->scene()) {
            parentView->scene()->update();
@@ -564,96 +526,74 @@ Point3 MyGL::moveCharacter(Point3 character) {
     float new_z = character.z;
 
     //check front
-    for (float i = floor_left; i <= floor_right; i++) {
-        for (float j = floor_feet; j <= floor_head; j++) {
+    for (int i = floor_left; i <= floor_right; i++) {
+        for (int j = floor_feet; j <= floor_head; j++) {
             if(scene.isFilled(Point3(i, j, floor_front))) {
-                new_z = front - floor_front - 0.5;
+                new_z = new_z - (front - floor_front);
+                front = new_z + 0.5;
+                floor_front = glm::floor(front);
+                back = new_z - 0.5;
+                floor_back = glm::floor(back);
+                break;
+            }
+            if (scene.isFilled(Point3(i, j, floor_back))) {
+                new_z = new_z + (glm::ceil(back) - back);
+                front = new_z + 0.5;
+                floor_front = glm::floor(front);
+                back = new_z - 0.5;
+                floor_back = glm::floor(back);
+                break;
             }
         }
     }
 
-    //check back
-    for (float i = floor_left; i <= floor_right; i++) {
-        for (float j = floor_feet; j <= floor_head; j++) {
-            if(scene.isFilled(Point3(i, j, floor_back))) {
-                new_z = glm::ceil(back) - back + 0.5;
-            }
-        }
-    }
 
     //check left
-    for (float i = floor_feet; i <= floor_head; i++) {
-        for (float j = floor_back; j <= floor_front; j++) {
+    for (int i = floor_feet; i <= floor_head; i++) {
+        for (int j = floor_back; j <= floor_front; j++) {
             if (scene.isFilled(Point3(floor_left, i, j))) {
-                new_x = glm::ceil(left) - left + 0.5;
+                new_x = new_x + (glm::ceil(left) - left);
+                left = new_x - 0.5;
+                floor_left = glm::floor(left);
+                right = new_z + 0.5;
+                floor_right = glm::floor(right);
+                break;
+            }
+            if (scene.isFilled(Point3(floor_right, i, j))) {
+                new_x = new_x - (left - floor_right);
+                left = new_x - 0.5;
+                floor_left = glm::floor(left);
+                right = new_z + 0.5;
+                floor_right = glm::floor(right);
+                break;
             }
         }
     }
 
-    //check right
-    for (float i = floor_feet; i <= floor_head; i++) {
-        for (float j = floor_back; j <= floor_front; j++) {
-            if (scene.isFilled(Point3(floor_right, i, j))) {
-                new_x = left - floor_right - 0.5;
-            }
-        }
-    }
 
     //check head
-    for (float i = floor_left; i <= floor_right; i++) {
-        for (float j = floor_back; j <= floor_front; j++) {
+    for (int i = floor_left; i <= floor_right; i++) {
+        for (int j = floor_back; j <= floor_front; j++) {
             if(scene.isFilled(Point3(i, floor_head, j))) {
-                new_y = head - floor_head -0.5;
+                new_y = new_y - (head - floor_head);
+                head = new_y + 0.5;
+                floor_head = glm::floor(head);
+                feet = new_y - 1.5;
+                floor_feet = glm::floor(feet);
+                break;
             }
-        }
-    }
-
-    //check feet
-    for (float i = floor_left; i <= floor_right; i++) {
-        for (float j = floor_back; j <= floor_front; j++) {
             if(scene.isFilled(Point3(i, floor_feet, j))) {
-                new_y = glm::ceil(feet) - feet + 1.5;
+                new_y = new_y + (glm::ceil(feet) - feet);
+                head = new_y + 0.5;
+                floor_head = glm::floor(head);
+                feet = new_y - 1.5;
+                floor_feet = glm::floor(feet);
+                break;
             }
         }
     }
 
     return Point3(new_x, new_y, new_z);
-
-
-
-//    for (float i = left; i <= right; i+= 0.1) {
-//        for (float j = head; j >= feet; j-=0.1) {
-//            for (float k = back; k <= front; k+=0.1) {
-//                if (scene.isFilled(Point3(glm::floor(i), glm::floor(j), glm::floor(k)))) {
-////                    gl_camera.eye.x = i + 0.5;
-////                    gl_camera.eye.y = j - 0.5;
-////                    gl_camera.eye.z = k + 0.5;
-//                    float new_x;
-//                    float new_y;
-//                    float new_z;
-//                    if (i < character.x) {
-//                        new_x = i + 1.0f;
-//                    }
-//                    else if (i >= character.x) {
-//                        new_x = i - 1.0f;
-//                    }
-//                    if (j < character.y) {
-//                        new_y = j + 1.5f;
-//                    }
-//                    else if (j >= character.y) {
-//                        new_y = j - 1.0f;
-//                    }
-//                    if (k < character.z) {
-//                        new_z = k + 1.0f;
-//                    }
-//                    else if (k >= character.z) {
-//                        new_z = k - 1.0f;
-//                    }
-//                    return Point3(new_x, new_y, new_z);
-//                }
-//            }
-//        }
-//    }
 }
 
 void MyGL::timerUpdate()
@@ -674,30 +614,38 @@ void MyGL::timerUpdate()
     glm::vec3 character = gl_camera.eye;
     Point3 feet = Point3(character.x, glm::floor(character.y-1.5), character.z);
 
+    if (isGravity) {
+        if (!scene.isFilled(feet)) {
+            feet = gravity(0.0167f);
+        }
+        else {
+            character_velocity.y = 0;
+        }
+
     //collision in z
     //+amount
     if (inz) {
-        feet = collisionZ(inz, 0.0167f);
+        feet = collisionZ(inz, 0.2f);
     }
     //-amt
-    else if (outz) {
-        feet = collisionZ(!outz, 0.0167f);
+    if (outz) {
+        feet = collisionZ(!outz, 0.2f);
     }
 
     //collision in x
-    else if (rightx) {
-        feet = collisionX(rightx, 0.0167f);
+    if (rightx) {
+        feet = collisionX(rightx, 0.2f);
     }
-    else if (leftx) {
-        feet = collisionX(!leftx, 0.0167f);
+    if (leftx) {
+        feet = collisionX(!leftx, 0.2f);
     }
 
     //collision in y
-    else if (downy) {
-        feet = collisionY(!downy, 0.0167f);
+    if (downy) {
+        feet = collisionY(!downy, 0.2f);
     }
-    else if (upy) {
-        feet = collisionY(upy, 0.0167f);
+    if (upy) {
+        feet = collisionY(upy, 0.2f);
     }
 
     if (inz || outz || upy || downy || leftx || rightx) {
@@ -705,18 +653,16 @@ void MyGL::timerUpdate()
         gl_camera.eye.x = new_eye.x;
         gl_camera.eye.y = new_eye.y;
         gl_camera.eye.z = new_eye.z;
+        gl_camera.RecomputeAttributes();
+        inz = false;
+        outz = false;
+        upy = false;
+        downy = false;
+        leftx = false;
+        rightx = false;
     }
+}
 
-
-    //gravity
-    //float time = 0.0;
-    if (isGravity) {
-        if (!scene.isFilled(feet)) {
-            feet = gravity(0.0167f);
-        }
-    }
-
-//    gl_camera.RecomputeAttributes();
 
 
     if (parentView && parentView->scene()) {

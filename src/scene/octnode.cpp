@@ -128,22 +128,9 @@ Intersection OctNode::findIntersection(Ray ray, float minx, float maxx, float mi
     float t_near = -100000;
     float t_far = 100000;
 
-    //glm::vec3 R0 = glm::vec3(glm::floor(ray.origin.x/16), glm::floor(ray.origin.y/16), glm::floor(ray.origin.z/16));
+
     glm::vec3 R0 = ray.origin;
     glm::vec3 Rd = ray.direction;
-    //glm::vec3 invdir = glm::vec3(1.0f/Rd.x, 1.0f/Rd.y, 1.0f/Rd.z);
-
-    /*
-//    //negative direction
-//    if (Rd.x < 0) {
-//        Rd.x = -1 * Rd.x;
-//    }
-//    if (Rd.y < 0) {
-//        Rd.y = -1 * Rd.y;
-//    }
-//    if (Rd.z < 0) {
-//        Rd.z = -1 * Rd.z;
-//    }*/
 
     //no intersection
     if ((Rd.x == 0 && (R0.x < minx || R0.x > maxx)) ||
@@ -278,33 +265,11 @@ Intersection OctNode::findIntersection(Ray ray, float minx, float maxx, float mi
         glm::vec3 intersect_point = glm::vec3(R0.x + Rd.x*t,
                                               R0.y + Rd.y*t,
                                               R0.z + Rd.z*t);
-        //return Point3(intersect_point.x, intersect_point.y, intersect_point.z);
         this->intersect = Intersection(Point3(intersect_point.x, intersect_point.y, intersect_point.z), t);
-//        this->intersect = Intersection(Point3(glm::floor(intersect_point.x),
-//                                              glm::floor(intersect_point.y),
-//                                              glm::floor(intersect_point.z)), t);
+
         return this->intersect;
-        /*
-        //return Intersection(Point3(intersect_point.x, intersect_point.y, intersect_point.z), t_near);
 
-//        std::cout << "cube x " << intersect_point.x << std::endl;
-//        std::cout << "cube y " << intersect_point.y << std::endl;
-//        std::cout << "cube z " << intersect_point.z << std::endl;
-//        std::cout << "____________" << std::endl;
-
-
-        //find t value
-        //float t = t_near;
-        //glm::vec4 point = model*glm::vec4(intersect_point, 1);
-        //glm::vec4 world_normal = inverse_transpose*glm::vec4(normal, 0);
-
-        //return Intersection(glm::vec3(point.x, point.y, point.z), glm::vec3(world_normal.x, world_normal.y, world_normal.z), t, this);
-
-        //return Intersection(intersect_point, normal, t, this);*/
     }
-   /* //nullptr = NO INTERSECTION
-    //return Intersection();
-    //return Intersection(Point3(), INFINITY);*/
     this->intersect = Intersection(Point3(), INFINITY);
     return this->intersect;
 }
@@ -319,14 +284,6 @@ OctNode* OctNode::rayCastOct(Ray ray) {
     float maxz = (base.z + length) * 16;
 
     Intersection isIntersect = findIntersection(ray, minx, maxx, miny, maxy, minz, maxz);
-    qDebug() << "length cube level " << this->length;
-    qDebug() << "base x " << base.x;
-    qDebug() << "base y " << base.y;
-    qDebug() << "base z " << base.z;
-    qDebug() << "big cube intersect x " << isIntersect.point_val.x;
-    qDebug() << "big cube intersect y " << isIntersect.point_val.y;
-    qDebug() << "big cube intersect z " << isIntersect.point_val.z;
-    qDebug() << "----------------------------------";
 
     //does it hit the big cube or not
     if (isIntersect.t != INFINITY) {
